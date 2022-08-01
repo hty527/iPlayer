@@ -1,0 +1,12 @@
+<resources>
+    <!-- default controller style -->
+    <style name="DefaultProgress" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    <!--悬浮窗显示动画-->
+    <style name="WindowAnimation">
+        <item name="android:windowEnterAnimation">@anim/window_in</item>
+        <item name="android:windowExitAnimation">@anim/window_out</item>
+    </style>
+</resources>

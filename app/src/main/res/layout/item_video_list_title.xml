@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/item_video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="11dp"
+        android:paddingTop="11dp"
+        android:paddingLeft="3dp"
+        android:drawableLeft="@mipmap/ic_category"
+        android:layout_gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:layout_centerVertical="true"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:text="分类分类"
+        android:gravity="center_vertical"
+        android:drawablePadding="6dp"
+        android:textSize="15dp"/>
+</LinearLayout>

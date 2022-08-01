@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+//应用打包配置
+apply from: 'iplayer.gradle'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+//下列注释配置被apply from: 'iplayer.gradle'替换 配置模块未本地Maven仓库
+//uploadArchives{
+//    repositories.mavenDeployer{
+//        // 配置本地仓库路径，这里是项目的根目录下的maven目录中
+//        repository(url: uri('../maven'))
+//        // 唯一标识 一般为模块包名 也可其他
+//        pom.groupId = rootProject.ext.groupId
+//        // 项目名称（一般为模块名称 也可其他
+//        pom.artifactId = rootProject.ext.artifactId
+//        // 发布的版本号
+//        pom.version = rootProject.ext.version
+//    }
+//}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    //基础
+    implementation 'com.android.support:appcompat-v7:+'
+}

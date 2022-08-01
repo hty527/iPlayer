@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/view_title_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
+    <LinearLayout
+        android:id="@+id/view_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/view_status_bar"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="49dp">
+            <TextView
+                android:id="@+id/view_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="#333333"
+                tools:text="Title"/>
+            <ImageView
+                android:id="@+id/view_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/ic_video_play_back"/>
+        </RelativeLayout>
+    </LinearLayout>
+</FrameLayout>

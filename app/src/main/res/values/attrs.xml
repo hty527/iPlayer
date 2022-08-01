@@ -1,0 +1,21 @@
+<resources>
+    <declare-styleable name="TitleView">
+        <!--标题栏风格，状态栏 0：白底黑字 1：透明底白字-->
+        <attr name="titleStyle" format="integer" />
+    </declare-styleable>
+    <!--左右上下圆角ImageView-->
+    <declare-styleable name="RoundCornerImageView">
+        <attr name="radius" format="dimension"/>
+        <attr name="left_top_radius" format="dimension"/>
+        <attr name="right_top_radius" format="dimension"/>
+        <attr name="right_bottom_radius" format="dimension"/>
+        <attr name="left_bottom_radius" format="dimension"/>
+    </declare-styleable>
+    <!--轻度加粗字体-->
+    <declare-styleable name="BoldTextView">
+        <!--字体粗细-->
+        <attr name="boldStorkeWidth" format="float"></attr>
+        <!--是否自动轮播-->
+        <attr name="boldMarquee" format="boolean"></attr>
+    </declare-styleable>
+</resources>

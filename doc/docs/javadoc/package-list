@@ -1,0 +1,9 @@
+com.android.iplayer.base
+com.android.iplayer.controller
+com.android.iplayer.interfaces
+com.android.iplayer.listener
+com.android.iplayer.manager
+com.android.iplayer.media
+com.android.iplayer.model
+com.android.iplayer.utils
+com.android.iplayer.widget

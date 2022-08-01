@@ -1,0 +1,41 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.0.1"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        //本地Maven仓库地址,取决于你的磁盘目录
+        maven {
+            url 'file://D://AndroidStudioProjects//iPlayer//maven'
+        }
+    }
+    //编译时报注释GBK编码错误解决
+    tasks.withType(Javadoc) {
+        //方法上忽略@return和@param注解未添加说明注释
+        options.addStringOption('Xdoclint:none', '-quiet')
+        //解决GBK编码错误提示
+        options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('charSet', 'UTF-8')
+    }
+    //跳过构建时link检查
+    tasks.whenTaskAdded { task ->
+        if (task.name.equals("lint")) {
+            task.enabled = false
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

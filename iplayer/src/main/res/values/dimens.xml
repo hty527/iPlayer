@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources >
+    <dimen name="player_play_width">45dp</dimen>
+    <dimen name="player_btn_width">36dp</dimen>
+    <dimen name="player_window_width">38dp</dimen>
+</resources>
