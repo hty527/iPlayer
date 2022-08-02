@@ -6,7 +6,7 @@
 ### 项目介绍：
 一个封装基础视频播放器功能交互的SDK。
 
-### 文件下载：
+### Apk下载：
 [Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
 **[Demo apk下载]**
 
