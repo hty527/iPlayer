@@ -35,6 +35,11 @@ import com.android.videoplayer.utils.ScreenUtils;
 import com.android.videoplayer.utils.WindowPermission;
 import com.android.videoplayer.video.ui.activity.PagerListActivity;
 
+/**
+ * created by hty
+ * 2022/6/28
+ * Desc:示例入口
+ */
 public class MainActivity extends BaseActivity {
 
     @Override
@@ -124,7 +129,7 @@ public class MainActivity extends BaseActivity {
                         case 17://项目主页 https://gitee.com/hty_Yuye/iPlayer
                             intent = new Intent(Intent.ACTION_VIEW);
                             intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                            intent.setData(Uri.parse("https://github.com/Yuye584312311/iPlayer"));
+                            intent.setData(Uri.parse("https://github.com/hty527/iPlayer"));
                             break;
                     }
                     if(null!=intent){
