@@ -33,14 +33,19 @@
     集成前请下载体验Demo,复杂场景集成请参考Demo
 ```
 #### 一、SDK配置及基础功能:
-* 1.复制aar文件到主项目libs目录中,并在主项目模块build.gradle文件中引入必须组件和aar</br>
+* 1.项目根build.gradle及模块build.gradle配置</br>
 ```
+    //1.在你的根build.gradle中添加：
+    allprojects {
+        repositories {
+            maven { url 'https://jitpack.io' }
+        }
+    }
+    //2.在你的模块build.gradle中添加：   
     dependencies {
-        implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
-        implementation 'com.android.support:appcompat-v7:+'//support环境
-        implementation 'androidx.appcompat:appcompat:1.0.2'//androidX环境
-        //以上环境二选一,播放器SDK
-        implementation(name: 'iplayer-1.0.0', ext: 'aar')
+        implementation 'com.android.support:appcompat-v7:+'
+        //或androidX环境：implementation 'androidx.appcompat:appcompat:1.0.2'
+        implementation 'com.github.hty527:iPlayer:1.0.0'//播放器SDK
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
