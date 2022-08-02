@@ -10,9 +10,6 @@
 [Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
 **[Demo apk下载]**
 
-[SDK aar下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/aar/iplayer-1.0.0.zip "Download"
-**[SDK aar下载]**
-
 ### 功能支持:
 * 基础的网络地址视频播放、本地Raw和Assets资源视频播放</br>
 * 直播拉流</br>
