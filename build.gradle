@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.1"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -16,9 +17,8 @@ allprojects {
         google()
         jcenter()
         //本地Maven仓库地址,取决于你的磁盘目录
-        maven {
-            url 'file://D://AndroidStudioProjects//iPlayer//maven'
-        }
+//        maven { url 'file://D://AndroidStudioProjects//iPlayer//maven' }
+        maven { url 'https://jitpack.io' }
     }
     //编译时报注释GBK编码错误解决
     tasks.withType(Javadoc) {

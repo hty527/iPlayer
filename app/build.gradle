@@ -36,9 +36,9 @@ android {
         }
         release {
             debuggable false
-            zipAlignEnabled false
-            shrinkResources false
-            minifyEnabled false
+            zipAlignEnabled true
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.app
         }
@@ -71,11 +71,13 @@ dependencies {
     implementation project(':ijk')
     //视频缓存,根据自己需要实现
     implementation project(':videocache')
+    //播放器
+    implementation project(':iplayer')
 
     //播放器SDK
     implementation 'com.android.support:appcompat-v7:+'
-    implementation project(':iplayer')
-    implementation 'com.android.iplayer:iplayer:1.0.0'//本地maven仓库
+//    implementation 'com.github.hty527:iPlayer:1.0.0'
+//    implementation 'com.android.iplayer:iplayer:1.0.0'//本地maven仓库
 //    implementation(name: 'iplayer-1.0.0.aar', ext: 'aar')
 //    implementation(name: 'ijk-1.0.0', ext: 'aar')
 }

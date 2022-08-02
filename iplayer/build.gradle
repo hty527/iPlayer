@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 //应用打包配置
-apply from: 'iplayer.gradle'
+//apply from: 'iplayer.gradle'
+//发布到jitpack应用配置
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.hty527'//xxx:代表你的github用户名
 
 android {
     compileSdkVersion 30
@@ -30,6 +33,12 @@ android {
 //        pom.version = rootProject.ext.version
 //    }
 //}
+
+// 打包源码jar
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = 'sources'
+}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
