@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:background="#000000"/>
     </FrameLayout>
-   <android.support.v4.widget.NestedScrollView
+   <androidx.core.widget.NestedScrollView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:fillViewport="true">
@@ -89,33 +89,34 @@
                    android:layout_marginRight="12dp">
                    <TextView
                        android:id="@+id/btn_core_1"
-                       android:layout_width="86dp"
+                       android:layout_width="90dp"
                        android:layout_height="match_parent"
                        android:background="@drawable/bg_menu_left"
                        android:textColor="@color/menu_text_selector"
                        android:textSize="13dp"
-                       android:text="系统默认"
+                       android:text="MediaPlayer"
                        android:gravity="center"/>
                    <TextView
                        android:id="@+id/btn_core_2"
-                       android:layout_width="86dp"
+                       android:layout_width="90dp"
                        android:layout_height="match_parent"
-                       android:background="@drawable/bg_menu_right"
+                       android:background="@drawable/bg_menu_center"
                        android:textColor="@color/menu_text_selector"
                        android:textSize="13dp"
                        android:layout_marginLeft="-1dp"
-                       android:text="ijk解码器"
+                       android:text="IjkPlayer"
                        android:gravity="center"/>
                    <TextView
                        android:id="@+id/btn_core_3"
-                       android:layout_width="86dp"
+                       android:layout_width="90dp"
                        android:layout_height="match_parent"
                        android:background="@drawable/bg_menu_right"
                        android:textColor="@color/menu_text_selector"
                        android:textSize="13dp"
                        android:layout_marginLeft="-1dp"
-                       android:text="exo解码器"
-                       android:gravity="center"/>
+                       android:text="ExoPlayer"
+                       android:gravity="center"
+                       android:visibility="visible"/>
                </LinearLayout>
                <com.android.videoplayer.video.ui.widget.PlayerMenuView
                    android:id="@+id/menu_view"
@@ -172,5 +173,5 @@
                android:text="开启画中画"
                android:visibility="gone"/>
        </LinearLayout>
-   </android.support.v4.widget.NestedScrollView>
+   </androidx.core.widget.NestedScrollView>
 </LinearLayout>

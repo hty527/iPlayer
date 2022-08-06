@@ -5,9 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.os.Build;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.appcompat.widget.AppCompatImageView;
 import com.android.videoplayer.R;
 
 /**

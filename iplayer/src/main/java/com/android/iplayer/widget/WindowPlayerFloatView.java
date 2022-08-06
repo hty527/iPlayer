@@ -1,8 +1,6 @@
 package com.android.iplayer.widget;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,15 +31,15 @@ public class WindowPlayerFloatView extends FrameLayout {
     private BasePlayer mBasePlayer;//当全局悬浮窗启用时,此播放器实例不为空
     private int mStatusBarHeight;
 
-    public WindowPlayerFloatView(@NonNull Context context) {
+    public WindowPlayerFloatView(Context context) {
         this(context,null);
     }
 
-    public WindowPlayerFloatView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public WindowPlayerFloatView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public WindowPlayerFloatView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public WindowPlayerFloatView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.player_window_float,this);
     }

@@ -1,8 +1,8 @@
 package com.android.videoplayer.ui.widget;
 
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;
 

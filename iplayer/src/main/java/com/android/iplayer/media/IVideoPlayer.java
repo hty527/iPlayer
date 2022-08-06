@@ -18,6 +18,7 @@ import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AudioFocus;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ILogger;
+import com.android.iplayer.utils.ThreadPool;
 import com.android.iplayer.widget.MediaTextureView;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -78,7 +79,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      * @param buffer 当前缓冲进度 百分比
      */
     private void onProgress(long currentPosition, long duration, int buffer) {
-        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.progress(currentPosition,duration,buffer);
+        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onProgress(currentPosition,duration,buffer);
     }
 
     //===========================================视频播放逻辑=========================================
@@ -390,36 +391,23 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-//        ILogger.d(TAG,"onSurfaceTextureAvailable-->width:"+width+",height:"+height+",mSurfaceTexture:"+mSurfaceTexture);
-        if (mSurfaceTexture == null) {
+//        ILogger.d(TAG,"onSurfaceTextureAvailable-->width:"+width+",height:"+height);
+        if(null==mTextureView||null==mMediaPlayer) return;
+        if(null!=mSurfaceTexture){
+            mTextureView.setSurfaceTexture(mSurfaceTexture);
+        }else{
             mSurfaceTexture = surfaceTexture;
-            //绑定渲染视图到解码器
-            if(null!=mMediaPlayer){
-                if(null!=mSurface){
-                    mSurface.release();
-                    mSurface=null;
-                }
-                mSurface =new Surface(mSurfaceTexture);
-                mMediaPlayer.setSurface(mSurface);
-            }
-        } else {
-            if(null!=mTextureView&&null==mTextureView.getSurfaceTexture()) {
-                mTextureView.setSurfaceTexture(mSurfaceTexture);
-            }
+            mSurface =new Surface(surfaceTexture);
+            mMediaPlayer.setSurface(mSurface);
         }
     }
 
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
-//        ILogger.d(TAG,"onSurfaceTextureSizeChanged-->width:"+width+",height:"+height);
-        if(null!=mTextureView) mTextureView.setZoomMode(IVideoManager.getInstance().getZoomModel());
-    }
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {}
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-//        ILogger.d(TAG,"onSurfaceTextureDestroyed");
-        releaseSurfaceTexture();
-        return null==mSurfaceTexture;
+        return false;
     }
 
     @Override
@@ -434,8 +422,13 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
         @Override
         public void run() {
             try {
-                if(null!=mMediaPlayer&&mMediaPlayer.isPlaying()){
-                    onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration(),0);
+                if(null!=mMediaPlayer&&isPlaying()){
+                    ThreadPool.getInstance().runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration(),0);
+                        }
+                    });
                 }
             }catch (RuntimeException e){
                 e.printStackTrace();
@@ -747,10 +740,6 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      */
     public void seekTo(long msec, boolean accurate) {
         if(msec<0||!checkedDataSource()) return;
-        if(0==msec){
-            playOrPause();
-            return;
-        }
         if(isPlaying()){
             try {
                 if(null!=mMediaPlayer){
@@ -785,6 +774,21 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
         if(null!=mMediaPlayer){
             try {
                 return mMediaPlayer.getDuration();
+            }catch (RuntimeException e){
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 返回当前正在播放的位置
+     * @return 毫秒
+     */
+    public long getCurrentPosition() {
+        if(null!=mMediaPlayer){
+            try {
+                return mMediaPlayer.getCurrentPosition();
             }catch (RuntimeException e){
                 e.printStackTrace();
             }

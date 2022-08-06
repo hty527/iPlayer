@@ -22,12 +22,15 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+
 import com.android.iplayer.widget.LayoutProvider;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Formatter;
@@ -177,10 +180,6 @@ public class PlayerUtils {
 
     public int dpToPxInt(float dp) {
         return (int) (dpToPx(PlayerUtils.getInstance().getContext(),dp) + 0.5f);
-    }
-
-    public int dpToPxInt(Context context, float dp) {
-        return (int) (dpToPx(context,dp) + 0.5f);
     }
 
     /**
@@ -551,5 +550,16 @@ public class PlayerUtils {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * 边缘检测
+     */
+    public boolean isEdge(Context context, MotionEvent e) {
+        float edgeSize = dpToPx(context, 40);
+        return e.getRawX() < edgeSize
+                || e.getRawX() > getScreenWidth(context) - edgeSize
+                || e.getRawY() < edgeSize
+                || e.getRawY() > getScreenHeight(context) - edgeSize;
     }
 }

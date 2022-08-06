@@ -12,12 +12,12 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Rational;
 import android.view.View;
 import android.widget.Toast;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -30,6 +30,7 @@ import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.Logger;
+
 import java.util.ArrayList;
 
 /**

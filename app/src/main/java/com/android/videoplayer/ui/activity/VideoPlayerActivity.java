@@ -1,7 +1,6 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -9,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -16,16 +16,16 @@ import com.android.iplayer.listener.OnMenuActionListener;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
-import com.android.videoplayer.media.ExoMediaPlayer;
-import com.android.videoplayer.video.ui.widget.PlayerMenuView;
+import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.controller.DanmuController;
-import com.android.videoplayer.R;
+import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
+import com.android.videoplayer.video.ui.widget.PlayerMenuView;
 
 /**
  * created by hty
@@ -66,9 +66,12 @@ public class VideoPlayerActivity extends BaseActivity {
      * 播放器初始化及调用示例
      */
     private void initPlayer() {
+
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
-        findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
+        findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
+        //绑定控制器
+        VideoController controller = new VideoController(mVideoPlayer.getContext());
+        controller.showBackBtn(false);
         controller.showMenus(true,true,true);
         //设置交互监听
         controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
@@ -97,8 +100,10 @@ public class VideoPlayerActivity extends BaseActivity {
                 Logger.d(TAG,"onCompletion");
             }
         });
-//        controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
-        Logger.d(TAG,"init-->mDanmu:"+mDanmu);
+        //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
+        //绑定UI控制器
+        mVideoPlayer.setController(controller);
+
         //弹幕控制器处理
         if(mDanmu){
             mDanmuController = new DanmuController(controller.getContext());

@@ -1,8 +1,7 @@
 package com.android.iplayer.widget;
 
+import android.annotation.SuppressLint;
 import android.graphics.Outline;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
@@ -11,7 +10,7 @@ import android.view.ViewOutlineProvider;
  * 2022/6/30
  * Desc:View圆角设置
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+@SuppressLint("NewApi")
 public class LayoutProvider extends ViewOutlineProvider {
 
     private float mRadius;

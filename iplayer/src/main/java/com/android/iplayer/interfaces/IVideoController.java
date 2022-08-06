@@ -32,11 +32,11 @@ public interface IVideoController {
     void onState(PlayerState state, String message);
 
     /**
-     * @param currentDurtion 播放进度 子线程回调：当前播放位置,单位：总进度的毫秒进度
+     * @param currentDurtion 播放进度 主线程回调：当前播放位置,单位：总进度的毫秒进度
      * @param totalDurtion 总时长,单位：毫秒
      * @param bufferPercent 已缓冲进度,单位：百分比
      */
-    void progress(long currentDurtion, long totalDurtion, int bufferPercent);
+    void onProgress(long currentDurtion, long totalDurtion, int bufferPercent);
 
     /**
      * @param bufferPercent 缓冲进度 主线程回调,单位:百分比

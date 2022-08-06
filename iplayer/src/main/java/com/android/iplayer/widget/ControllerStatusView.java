@@ -1,7 +1,6 @@
 package com.android.iplayer.widget;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -25,11 +24,11 @@ public class ControllerStatusView extends LinearLayout {
         this(context,null);
     }
 
-    public ControllerStatusView(Context context, @Nullable AttributeSet attrs) {
+    public ControllerStatusView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public ControllerStatusView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ControllerStatusView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.player_view_status,this);
         View btnContinue = findViewById(R.id.player_status_btn);

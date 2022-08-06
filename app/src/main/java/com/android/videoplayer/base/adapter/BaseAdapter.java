@@ -1,9 +1,9 @@
 package com.android.videoplayer.base.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import com.android.videoplayer.base.adapter.interfaces.OnItemChildClickListener;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;

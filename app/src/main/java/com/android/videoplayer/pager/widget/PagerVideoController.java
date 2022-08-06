@@ -1,16 +1,16 @@
 package com.android.videoplayer.pager.widget;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.android.videoplayer.R;
-import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.pager.base.BaseViewPager;
+import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.utils.GlideModel;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;

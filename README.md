@@ -6,24 +6,30 @@
 ### 项目介绍：
 一个封装基础视频播放器功能交互的SDK。
 
-### Apk下载：
+### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
 [Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
 **[Demo apk下载]**
 
-### 功能支持:
-* 基础的网络地址视频播放、本地Raw和Assets资源视频播放</br>
-* 直播拉流</br>
-* 内置基础UI控制器交互、横屏、静音、画面镜像、缩放模式等设置</br>
-* 支持自定义播放器解码器内核</br>
-* 多播放器同时播放</br>
-* 支持完全自定义UI控制器</br>
-* 无权限Activity窗口播放</br>
-* 全局悬浮窗窗口播放,Demo内置悬浮窗和Activity无缝转场示例<br/>
-* 支持列表播放转场到落地页无缝衔接播放</br>
-* Android 8.0画中画</br>
-* Demo内置仿抖音滚动播放示例(支持秒播)</br>
-* Demo内置列表滑动自动播放示例</br>
-* Demo内置自定义弹幕交互控制器示例</br>
+### SDK功能支持:
+* 支持常规http或https等网络地址播放</br>
+* 支持本地Assets和Raw资源文件播放</br>
+* SDK自带默认解码器+UI控制器交互+手势识别交互控制器</br>
+* 支持倍速、缩放模式、静音、镜像等调节设置</br>
+* 支持多播放器同时播放</br>
+* 支持解码器动态切换和完全自定义视频解码器</br>
+* 支持完全自定义UI控制器、手势识别控制器交互等</br>
+* 支持直播拉流</br>
+* 支持任意界面开启无权限Activity级别可拖拽小窗口播放</br>
+* 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
+* 支持任意界面直接启动全屏播放</br>
+* 支持连续播放视频列表</br>
+* 默认UI控制器支持片段试看交互</br>
+* Demo列表或组件之间无缝转场播放示例</br>
+* Demo悬浮窗窗口播放带参无缝跳转Activity示例</br>
+* Demo支持MediaPlayer、IjkPlayer、ExoPlayer三种解码器切换示例</br>
+* Demo仿抖音播放示例</br>
+* Demo弹幕交互示例</br>
+* Demo Android8.0+画中画示例</br>
 ***
 ### Android SDK集成：
 ```
@@ -40,9 +46,10 @@
     }
     //2.在你的模块build.gradle中添加：   
     dependencies {
-        implementation 'com.android.support:appcompat-v7:+'
-        //或androidX环境：implementation 'androidx.appcompat:appcompat:1.0.2'
-        implementation 'com.github.hty527:iPlayer:1.0.0'//播放器SDK
+        implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
+
+        //播放器SDK
+        implementation 'com.github.hty527:iPlayer:1.0.0'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>

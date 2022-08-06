@@ -2,17 +2,16 @@ package com.android.videoplayer.pager.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.util.SparseArrayCompat;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import androidx.annotation.Nullable;
+import androidx.collection.SparseArrayCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -21,6 +20,7 @@ import com.android.videoplayer.pager.fragment.PagerPlayerFragment;
 import com.android.videoplayer.pager.fragment.VideoListFragment;
 import com.android.videoplayer.utils.ScreenUtils;
 import com.android.videoplayer.utils.StatusUtils;
+import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
@@ -146,7 +146,9 @@ public class PagerPlayerActivity extends BaseActivity {
     private class FragmentAdapter extends FragmentPagerAdapter{
 
         public FragmentAdapter(FragmentManager fm) {
-            super(fm);
+            //setUserVisibleHint和setMaxLifecycle二选一,
+            //当传入的behavior为BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT时，会切换到新版本的setMaxLifecycle(@NonNull Fragment fragment,@NonNull Lifecycle.State state)中
+            super(fm,BEHAVIOR_SET_USER_VISIBLE_HINT);//这里兼容旧版本的setUserVisibleHint方法
         }
 
         @Override

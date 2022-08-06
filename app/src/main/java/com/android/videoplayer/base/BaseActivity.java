@@ -4,13 +4,12 @@ import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import com.android.iplayer.listener.OnMenuActionListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.VideoPlayer;

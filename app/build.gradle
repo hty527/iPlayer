@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.android.iplayer"
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 0
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -36,9 +36,9 @@ android {
         }
         release {
             debuggable false
-            zipAlignEnabled true
-            shrinkResources true
-            minifyEnabled true
+            zipAlignEnabled false
+            shrinkResources false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.app
         }
@@ -49,34 +49,53 @@ android {
             dirs 'libs'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core:1.7.0'//强制
+    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'com.android.support:recyclerview-v7:+'
-    implementation 'com.android.support:design:+'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+//    implementation 'com.android.support:appcompat-v7:+'
+//    implementation 'com.android.support:recyclerview-v7:28.0.0'
+//    implementation 'com.android.support:design:28.0.0'
+//    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+
     //Glide4.x图片加载
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     //弹幕
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.16'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.16'
     //EXO解码器
-//    implementation 'com.google.android.exoplayer:exoplayer:+'
-//    implementation 'com.google.android.exoplayer:exoplayer-core:+'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
+    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
     //网络数据
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
     //解码器,根据自己需要实现
     implementation project(':ijk')
     //视频缓存,根据自己需要实现
     implementation project(':videocache')
     //播放器
-//    implementation project(':iplayer')
+    implementation project(':iplayer')
 
     //播放器SDK
-    implementation 'com.android.support:appcompat-v7:+'
-    implementation 'com.github.hty527:iPlayer:1.0.0'
+//    implementation 'com.github.hty527:iPlayer:1.0.0'
 //    implementation 'com.android.iplayer:iplayer:1.0.0'//本地maven仓库
 //    implementation(name: 'iplayer-1.0.0.aar', ext: 'aar')
 //    implementation(name: 'ijk-1.0.0', ext: 'aar')

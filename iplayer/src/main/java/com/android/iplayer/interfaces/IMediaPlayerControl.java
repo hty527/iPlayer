@@ -51,10 +51,10 @@ public interface IMediaPlayerControl {
     void onVideoSizeChanged(int width, int height);
 
     /**
-     * 播放进度 子线程回调
+     * 播放进度 主线程回调
      * @param currentDurtion 当前播放位置,单位：总进度的毫秒进度
      * @param totalDurtion 总时长,单位：毫秒
      * @param bufferPercentage 已缓冲进度,单位：百分比
      */
-    void progress(long currentDurtion, long totalDurtion, int bufferPercentage);
+    void onProgress(long currentDurtion, long totalDurtion, int bufferPercentage);
 }

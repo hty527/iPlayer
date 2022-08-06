@@ -2,19 +2,19 @@ package com.android.videoplayer.video.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.manager.PlayerManager;
-import com.android.videoplayer.video.ui.activity.VideoDetailsActivity;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.bean.VideoParams;
+import com.android.videoplayer.video.ui.activity.VideoDetailsActivity;
 import com.google.gson.Gson;
 
 /**

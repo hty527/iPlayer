@@ -3,20 +3,21 @@ package com.android.iplayer.controller;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseController;
+import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.ControllerStatusView;
+import com.android.iplayer.widget.GesturePositionView;
 
 /**
  * created by hty
@@ -24,7 +25,7 @@ import com.android.iplayer.widget.ControllerStatusView;
  * Desc:默认的视频控制器弹窗
  * 功能菜单：控制栏和底部进度条二选一显示,播放中时允许点击显示\隐藏,列表模式下播放视频首帧渲染不显示控制器和标题栏,只显示底部播放进度条
  */
-public class VideoController extends BaseController {
+public class VideoController extends GestureController implements IGestureControl {
 
     public static final int SCENE_MOBILE     =1;//移动网络播放提示
     public static final int SCENE_COMPLETION =2;//试看结束
@@ -42,10 +43,12 @@ public class VideoController extends BaseController {
     protected long mPreViewTotalTime;//给用户看的预览总时长
     protected ImageView mPlayIcon;//左下角的迷你播放状态按钮
     private int mTitleOffset=0;//标题栏距离顶部偏移量
-    //小窗口模式
+    //小窗口模式交互控制器
     private VideoWindowController mWindowController;
+    //手势UI交互
+    private GesturePositionView mGesturePositionView;
 
-    public VideoController(@NonNull Context context) {
+    public VideoController(Context context) {
         super(context);
     }
 
@@ -56,6 +59,7 @@ public class VideoController extends BaseController {
 
     @Override
     public void initViews() {
+        super.initViews();
         OnClickListener onClickListener=new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +92,7 @@ public class VideoController extends BaseController {
         };
         findViewById(R.id.controller_title_back).setOnClickListener(onClickListener);
         findViewById(R.id.controller_btn_fullscreen).setOnClickListener(onClickListener);
-        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);
+//        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);//启用手势识别器后不能消费点击事件了
         mControllerPlay = findViewById(R.id.controller_play);
         mControllerPlay.setOnClickListener(onClickListener);
         mControllerReplay = findViewById(R.id.controller_replay);
@@ -164,7 +168,7 @@ public class VideoController extends BaseController {
                     int seekBarProgress = seekBar.getProgress();
 //                    ILogger.d(TAG,"onStopTrackingTouch-->seekBarProgress:"+seekBarProgress+",ViewTotalTime:"+ mPreViewTotalTime +",duration:"+ mVideoPlayerControl.getDurtion()+getOrientationStr());
                     if(mPreViewTotalTime >0){ //跳转至某处,如果滑动的时长超过真实的试看时长,则直接播放完成需要解锁
-                        long durtion = mVideoPlayerControl.getDurtion();
+                        long durtion = mVideoPlayerControl.getDuration();
                         if(0==seekBarProgress){//重新从头开始播放
                             //改变UI为缓冲状态
                             onState(PlayerState.STATE_BUFFER,"seek");
@@ -186,6 +190,8 @@ public class VideoController extends BaseController {
                 }
             }
         });
+        //手势交互控制
+        mGesturePositionView = (GesturePositionView) findViewById(R.id.gesture_present_layout);
     }
 
     @Override
@@ -279,23 +285,18 @@ public class VideoController extends BaseController {
     }
 
     @Override
-    public void progress(final long currentDurtion, final long totalDurtion, int bufferPercent) {
+    public void onProgress(final long currentDurtion, final long totalDurtion, int bufferPercent) {
         if(null!=mSeekBar){
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    if(null!=mProgressBar&&mProgressBar.getMax()==0){
-                        mProgressBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                    }
-                    if(null!=mSeekBar){
-                        if(mSeekBar.getMax()<=0){//总进度总时长只更新一次,如果是虚拟的总时长,则在setViewTotalDuration中更新总时长
-                            mSeekBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                            if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                        }
-                        if(!isTouchSeekBar) mSeekBar.setProgress((int) currentDurtion);
-                    }
+            if(null!=mProgressBar&&mProgressBar.getMax()==0){
+                mProgressBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
+            }
+            if(null!=mSeekBar){
+                if(mSeekBar.getMax()<=0){//总进度总时长只更新一次,如果是虚拟的总时长,则在setViewTotalDuration中更新总时长
+                    mSeekBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
+                    if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
                 }
-            });
+                if(!isTouchSeekBar) mSeekBar.setProgress((int) currentDurtion);
+            }
         }
     }
 
@@ -307,7 +308,7 @@ public class VideoController extends BaseController {
     public void onBuffer(int bufferPercent) {
 //        ILogger.d(TAG,"onBuffer-->"+bufferPercent);
         if(null!=mVideoPlayerControl){
-            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDurtion());
+            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDuration());
             if(null!= mSeekBar&&mSeekBar.getSecondaryProgress()!=percent) {
                 mSeekBar.setSecondaryProgress(percent);
             }
@@ -323,23 +324,38 @@ public class VideoController extends BaseController {
      */
     @Override
     public void setScreenOrientation(int orientation) {
+        super.setScreenOrientation(orientation);
         ILogger.d(TAG,"setScreenOrientation-->"+getOrientationStr());
+        findViewById(R.id.controller_title).setVisibility(isOrientationPortrait()?View.GONE:View.VISIBLE);
+        LinearLayout titleBar = (LinearLayout) findViewById(R.id.controller_title_bar);
+        LinearLayout controllerBar = (LinearLayout) findViewById(R.id.controller_controller);
+        int margin = PlayerUtils.getInstance().dpToPxInt(22f);
         if(isOrientationPortrait()){
             findViewById(R.id.controller_title_tv).setVisibility(showTv?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(showWindow?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(showMenu?View.VISIBLE:View.GONE);
+            setGestureEnabled(false);//禁止手势识别控制器
+            setDoubleTapTogglePlayEnabled(false);//双击开始\暂停播放
+            //标题栏间距处理
+            findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
+            findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
+            //竖屏下处理标题栏和控制栏的左右两侧缩放
+            titleBar.setPadding(0,0,0,0);
+            controllerBar.setPadding(0,0,0,0);
+            findViewById(R.id.controller_locker).setVisibility(GONE);
+            setLocker(false);
         }else{
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(View.GONE);
-        }
-        findViewById(R.id.controller_title).setVisibility(isOrientationPortrait()?View.GONE:View.VISIBLE);
-        if(isOrientationPortrait()){
-            findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
-            findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
-        }else{
+            setGestureEnabled(true);//允许手势识别控制器交互
+            setDoubleTapTogglePlayEnabled(true);//双击开始\暂停播放
+            //标题栏间距处理
             findViewById(R.id.controller_title_back).setVisibility(View.VISIBLE);
             findViewById(R.id.controller_title_margin).getLayoutParams().height=0;
+            //横屏下处理标题栏和控制栏的左右两侧缩放
+            titleBar.setPadding(margin,0,margin,0);
+            controllerBar.setPadding(margin,0,margin,0);
         }
         toggleController(true);//控制器不可见
     }
@@ -475,7 +491,7 @@ public class VideoController extends BaseController {
     private ExHandel mExHandel=new ExHandel(Looper.getMainLooper()){
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            ILogger.d(TAG,"handleMessage-->");
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
@@ -668,8 +684,46 @@ public class VideoController extends BaseController {
     @Override
     public void onDestroy() {
 //        ILogger.d(TAG,"onDestroy-->"+getOrientationStr());
+        removeAllController();
         reset();
         itemPlayerMode =false;showBackBtn=false;showTv=false;showWindow=false;showMenu=false;
         changedUIState(View.GONE,View.VISIBLE,View.GONE,View.GONE,View.GONE,View.GONE,0);
+    }
+
+    //============================================手势交互============================================
+
+    @Override
+    public void onSingleTap() {
+        toggleController(false);
+    }
+
+    @Override
+    public void onDoubleTap() {
+        if(null!=mVideoPlayerControl) mVideoPlayerControl.togglePlay();
+    }
+
+    @Override
+    public void onStartSlide() {
+        if(null!=mGesturePositionView) mGesturePositionView.onStartSlide();
+    }
+
+    @Override
+    public void onStopSlide() {
+        if(null!=mGesturePositionView) mGesturePositionView.onStopSlide();
+    }
+
+    @Override
+    public void onPositionChange(int slidePosition, int currentPosition, int duration) {
+        if(null!=mGesturePositionView) mGesturePositionView.onPositionChange(slidePosition,currentPosition,duration);
+    }
+
+    @Override
+    public void onBrightnessChange(int percent) {
+        if(null!=mGesturePositionView) mGesturePositionView.onBrightnessChange(percent);
+    }
+
+    @Override
+    public void onVolumeChange(int percent) {
+        if(null!=mGesturePositionView) mGesturePositionView.onVolumeChange(percent);
     }
 }

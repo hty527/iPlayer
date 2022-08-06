@@ -1,12 +1,12 @@
 package com.android.videoplayer.pager.controller;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.model.PlayerState;
@@ -142,7 +142,7 @@ public class FullScreenController extends BaseController {
     }
 
     @Override
-    public void progress(long currentDurtion, long totalDurtion, int bufferPercent) {
+    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {
         if(null!= mSeekBar){
             if(mSeekBar.getMax()==0){
                 mSeekBar.setMax((int) totalDurtion);
@@ -155,7 +155,7 @@ public class FullScreenController extends BaseController {
     public void onBuffer(int bufferPercent) {
         Logger.d(TAG,"onBuffer-->bufferPercent:"+bufferPercent);
         if(null!=mVideoPlayerControl){
-            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDurtion());
+            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDuration());
             if(null!= mSeekBar&&mSeekBar.getSecondaryProgress()!=percent) {
                 mSeekBar.setSecondaryProgress(percent);
             }

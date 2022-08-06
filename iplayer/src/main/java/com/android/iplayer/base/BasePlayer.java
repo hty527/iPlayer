@@ -11,8 +11,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -60,15 +58,15 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private boolean mIsWindowProperty,mContinuityPlay,mIsGlobalWindow;//是否开启了窗口播放模式/是否开启了连续播放模式/是否处于全局悬浮窗|画中画模式
     private Context mTempContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
 
-    public BasePlayer(@NonNull Context context) {
+    public BasePlayer(Context context) {
         this(context,null);
     }
 
-    public BasePlayer(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public BasePlayer(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public BasePlayer(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BasePlayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context,R.layout.player_base_video,this);
         if(null!=attrs){
@@ -240,10 +238,10 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     @Override
-    public void progress(long currentDurtion, long totalDurtion, int bufferPercent) {
+    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {
 //        ILogger.d(TAG,"progress-->currentDurtion:"+currentDurtion+",totalDurtion:"+totalDurtion+",bufferPercent:"+bufferPercent);
-        if(null!= mController) mController.progressPlayer(currentDurtion,totalDurtion,bufferPercent);
-        if(null!=mOnPlayerActionListener) mOnPlayerActionListener.progress(currentDurtion,totalDurtion,bufferPercent);
+        if(null!= mController) mController.onProgressPlayer(currentDurtion,totalDurtion,bufferPercent);
+        if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onProgress(currentDurtion,totalDurtion,bufferPercent);
     }
 
     //=========================来自控制器的回调事件,也提供给外界调用的公开方法============================
@@ -988,9 +986,21 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @return 单位:毫秒
      */
     @Override
-    public long getDurtion() {
+    public long getDuration() {
         if(null!=mIVideoPlayer) {
             return mIVideoPlayer.getDurtion();
+        }
+        return 0;
+    }
+
+    /**
+     * 返回当前正在播放的位置
+     * @return 单位:毫秒
+     */
+    @Override
+    public long getCurrentPosition() {
+        if(null!=mIVideoPlayer) {
+            return mIVideoPlayer.getCurrentPosition();
         }
         return 0;
     }
@@ -1011,7 +1021,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void seekTo(long msec) {
-        if(null!=mIVideoPlayer) mIVideoPlayer.seekTo(msec);
+        seekTo(msec,true);
     }
 
     /**
