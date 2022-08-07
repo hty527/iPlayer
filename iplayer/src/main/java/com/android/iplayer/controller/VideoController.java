@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.iplayer.R;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.manager.IVideoManager;
@@ -31,8 +33,10 @@ public class VideoController extends GestureController implements IGestureContro
     public static final int SCENE_COMPLETION =2;//试看结束
     public static final int SCENE_ERROR      =3;//播放失败
     private static final int MESSAGE_HIDE_CONTROLLER      = 100;//隐藏控制器
+    private static final int MESSAGE_HIDE_LOCKER          = 101;//隐藏控制锁
     //播放按钮,控制器,标题栏,重新播放
     protected View mControllerPlay,mControllerController,mControllerTitle,mControllerReplay;
+    private ImageView mControllerLocker;//控制锁
     private ControllerStatusView mControllerStatus;
     protected ProgressBar mControllerLoading;
     protected TextView mCurrentDuration,mTotalDuration;
@@ -43,6 +47,7 @@ public class VideoController extends GestureController implements IGestureContro
     protected long mPreViewTotalTime;//给用户看的预览总时长
     protected ImageView mPlayIcon;//左下角的迷你播放状态按钮
     private int mTitleOffset=0;//标题栏距离顶部偏移量
+    private int MATION_DRAUTION=300;
     //小窗口模式交互控制器
     private VideoWindowController mWindowController;
     //手势UI交互
@@ -87,6 +92,22 @@ public class VideoController extends GestureController implements IGestureContro
                     if(null!=mControllerListener) mControllerListener.onTv();
                 }else if (id == R.id.controller_title_window) {//开启全局悬浮窗窗口播放
                     if (null != mControllerListener) mControllerListener.onGobalWindow();//回调给宿主界面
+                }else if (id == R.id.controller_locker) {//屏幕锁
+                    removeDelayedRunnable(MESSAGE_HIDE_LOCKER);
+                    if(isLocked()){
+                        setLocker(false);
+                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);
+                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_flase),Toast.LENGTH_SHORT).show();
+                        //立刻恢复所有控制器
+                        toggleController(false,true);
+                    }else{
+                        setLocker(true);
+                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_true);
+                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_true),Toast.LENGTH_SHORT).show();
+                        //立刻屏蔽所有控制器屏蔽
+                        toggleController(true);
+                    }
+                    delayedInvisibleLocker();
                 }
             }
         };
@@ -103,7 +124,9 @@ public class VideoController extends GestureController implements IGestureContro
         mCurrentDuration = findViewById(R.id.controller_current_duration);
         mTotalDuration = findViewById(R.id.controller_total_duration);
         mPlayIcon = findViewById(R.id.controller_start);
+        mControllerLocker = findViewById(R.id.controller_locker);
         mPlayIcon.setOnClickListener(onClickListener);
+        mControllerLocker.setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_tv).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_window).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_menu).setOnClickListener(onClickListener);
@@ -147,7 +170,7 @@ public class VideoController extends GestureController implements IGestureContro
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 isTouchSeekBar=true;
-                removeDelayedControllerRunnable();//取消定时隐藏任务
+                removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);//取消定时隐藏任务
             }
 
             /**
@@ -197,7 +220,7 @@ public class VideoController extends GestureController implements IGestureContro
     @Override
     public void onState(PlayerState state, String message) {
         ILogger.d(TAG,"onState-->state:"+state+getOrientationStr()+",message:"+message);
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);
         switch (state) {
             case STATE_RESET://初始状态\播放器还原重置
             case STATE_STOP://初始\停止
@@ -336,14 +359,15 @@ public class VideoController extends GestureController implements IGestureContro
             findViewById(R.id.controller_title_menu).setVisibility(showMenu?View.VISIBLE:View.GONE);
             setGestureEnabled(false);//禁止手势识别控制器
             setDoubleTapTogglePlayEnabled(false);//双击开始\暂停播放
+            //控制锁不可用
+            toggleLocker(true);
+            setLocker(false);
             //标题栏间距处理
             findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
             //竖屏下处理标题栏和控制栏的左右两侧缩放
             titleBar.setPadding(0,0,0,0);
             controllerBar.setPadding(0,0,0,0);
-            findViewById(R.id.controller_locker).setVisibility(GONE);
-            setLocker(false);
         }else{
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
@@ -356,6 +380,7 @@ public class VideoController extends GestureController implements IGestureContro
             //横屏下处理标题栏和控制栏的左右两侧缩放
             titleBar.setPadding(margin,0,margin,0);
             controllerBar.setPadding(margin,0,margin,0);
+            toggleLocker(false);
         }
         toggleController(true);//控制器不可见
     }
@@ -368,7 +393,7 @@ public class VideoController extends GestureController implements IGestureContro
     @Override
     public void setWindowProperty(boolean isWindowProperty, boolean isGlobalWindow) {
 //        ILogger.d(TAG,"setWindowProperty-->isWindowProperty:"+isWindowProperty);
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);
         if(null==mControllerController) return;
         if(isWindowProperty){
             mControllerController.setVisibility(GONE);
@@ -388,7 +413,7 @@ public class VideoController extends GestureController implements IGestureContro
             removeController(mWindowController);
             if(null!=mWindowController) mWindowController.onReset();
             mWindowController=new VideoWindowController(getContext());
-            mWindowController.setWindowProperty(isWindowProperty,isGlobalWindow);
+            mWindowController.setWindowProperty(true,isGlobalWindow);
             addController(mWindowController);
         }else{
             if(null!=mWindowController){
@@ -447,9 +472,19 @@ public class VideoController extends GestureController implements IGestureContro
      * 横屏标题栏页参与显示隐藏,竖屏不处理标题栏
      * @param isHide 标题栏和菜单控制器是否强制隐藏
      */
-    private void toggleController(boolean isHide) {
-        removeDelayedControllerRunnable();
-//        ILogger.d(TAG,"toggleController-->isHide:"+isHide);
+    private void toggleController(boolean isHide){
+        toggleController(isHide,false);
+    }
+
+    /**
+     显示\隐藏视图控制器
+     * 横屏标题栏页参与显示隐藏,竖屏不处理标题栏
+     * @param isHide 标题栏和菜单控制器是否强制隐藏
+     * @param isShow 标题栏和菜单控制器是否强制显示
+     */
+    private void toggleController(boolean isHide,boolean isShow) {
+        removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);
+        ILogger.d(TAG,"toggleController-->isHide:"+isHide+",isShow:"+isShow);
         if(null!=mControllerController&&null!=mControllerTitle){
             if(isHide){//强制隐藏
                 mControllerController.setVisibility(View.GONE);
@@ -457,30 +492,95 @@ public class VideoController extends GestureController implements IGestureContro
                 mControllerTitle.setVisibility(View.GONE);
                 return;
             }
+            if(isShow){
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
+                if(!itemPlayerMode){//列表模式下menu栏不可用
+                    PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
+                }
+                delayedInvisibleController();
+                return;
+            }
+
             boolean controllerShow=false;
             //控制栏显示中
             if(mControllerController.getVisibility()==View.VISIBLE){
                 controllerShow=true;
-                mControllerController.setVisibility(View.GONE);
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerController) mControllerController.setVisibility(GONE);
+                    }
+                });
                 if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
             }else{
-                mControllerController.setVisibility(View.VISIBLE);
                 if(null!=mProgressBar) mProgressBar.setVisibility(View.GONE);
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
             }
             if(controllerShow){//标题栏跟随控制器栏
-                mControllerTitle.setVisibility(View.GONE);
-            }else{
-                if(isOrientationPortrait()){
-                    if(!itemPlayerMode){//列表模式下menu栏不可用
-                        mControllerTitle.setVisibility(View.VISIBLE);
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
                     }
+                });
+            }else{
+                if(!itemPlayerMode){//列表模式下menu栏不可用
+                    PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
+                }
+            }
+            //控制锁
+            if(null!=mControllerLocker&&!isOrientationPortrait()){
+                if(controllerShow){
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
+                        }
+                    });
                 }else{
-                    mControllerTitle.setVisibility(View.VISIBLE);//横屏不影响
+                    if(mControllerLocker.getVisibility()!=View.VISIBLE){
+                        PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerLocker, MATION_DRAUTION, false, null);
+                    }
                 }
             }
             //所有交互处理完成启动定时隐藏控制器任务
             if(!controllerShow){
                 delayedInvisibleController();
+                if(!isOrientationPortrait()){
+                    delayedInvisibleLocker();
+                }
+            }
+        }
+    }
+
+    /**
+     显示\隐藏控制锁
+     * @param isHide 标题栏和菜单控制器是否强制隐藏
+     */
+    private void toggleLocker(boolean isHide) {
+        removeDelayedRunnable(MESSAGE_HIDE_LOCKER);
+        ILogger.d(TAG,"toggleLocker-->isHide:"+isHide);
+        if(null!=mControllerLocker){
+            if(isHide){//强制隐藏
+                mControllerLocker.setVisibility(View.GONE);
+                return;
+            }
+            boolean controllerShow=false;
+            //控制锁显示中
+            if(mControllerLocker.getVisibility()==View.VISIBLE){
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
+                    }
+                });
+            }else{
+                controllerShow=true;
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerLocker, MATION_DRAUTION, false, null);
+            }
+            //所有交互处理完成启动定时隐藏控制器任务
+            if(!controllerShow){
+                delayedInvisibleLocker();
             }
         }
     }
@@ -493,10 +593,10 @@ public class VideoController extends GestureController implements IGestureContro
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-//            ILogger.d(TAG,"handleMessage-->");
+            ILogger.d(TAG,"handleMessage-->whit:"+msg.what);
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
                 if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerController) mControllerController.setVisibility(GONE);
@@ -505,10 +605,19 @@ public class VideoController extends GestureController implements IGestureContro
                     });
                 }
                 if(null!=mControllerTitle&&mControllerTitle.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerTitle, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
+                        }
+                    });
+                }
+            }if(null!=msg&&MESSAGE_HIDE_LOCKER==msg.what){
+                if(null!=mControllerLocker){
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
                         }
                     });
                 }
@@ -518,15 +627,24 @@ public class VideoController extends GestureController implements IGestureContro
 
     /**
      * 取消控制器隐藏延时任务
+     * @param message
      */
-    private void removeDelayedControllerRunnable(){
-        if(null!=mExHandel) mExHandel.removeCallbacksAndMessages(null);
+    private void removeDelayedRunnable(int message){
+        ILogger.d(TAG,"removeDelayedRunnable-->message:"+message);
+        if(null!=mExHandel){
+            if(0==message){
+                mExHandel.removeCallbacksAndMessages(null);
+            }else{
+                mExHandel.removeMessages(message);
+            }
+        }
     }
 
     /**
      * 启动延时隐藏控制器任务
      */
     private void delayedInvisibleController() {
+        ILogger.d(TAG,"delayedInvisibleController-->");
         try {
             if(null!=mControllerController&&null!=mExHandel){
                 Message obtain = Message.obtain();
@@ -539,11 +657,27 @@ public class VideoController extends GestureController implements IGestureContro
     }
 
     /**
+     * 启动延时隐藏控制锁
+     */
+    private void delayedInvisibleLocker() {
+        ILogger.d(TAG,"delayedInvisibleLocker-->");
+        try {
+            if(null!=mControllerLocker&&null!=mExHandel){
+                Message obtain = Message.obtain();
+                obtain.what=MESSAGE_HIDE_LOCKER;
+                mExHandel.sendMessageDelayed(obtain,5000);
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 重置内部状态
      */
     private void reset(){
 //        ILogger.d(TAG,"reset-->"+getOrientationStr());
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(0);
         if(null!=mSeekBar) {
             mSeekBar.setProgress(0);
             mSeekBar.setSecondaryProgress(0);
@@ -692,9 +826,18 @@ public class VideoController extends GestureController implements IGestureContro
 
     //============================================手势交互============================================
 
+
+
     @Override
     public void onSingleTap() {
-        toggleController(false);
+        if(PlayerUtils.getInstance().isFastClick(500)){
+            ILogger.d(TAG,"onSingleTap-->");
+            if(isLocked()){
+                toggleLocker(false);
+            }else{
+                toggleController(false);
+            }
+        }
     }
 
     @Override

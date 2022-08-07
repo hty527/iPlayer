@@ -200,7 +200,7 @@ public class VideoWindowController extends BaseController {
             super.handleMessage(msg);
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
                 if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerController) mControllerController.setVisibility(GONE);

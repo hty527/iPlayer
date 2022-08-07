@@ -311,11 +311,11 @@ public abstract class GestureController extends BaseController implements Gestur
      * 是否锁住了屏幕
      * @return
      */
-    private boolean isLocked() {
+    protected boolean isLocked() {
         return isLocker;
     }
 
-    public void setLocker(boolean locker) {
+    protected void setLocker(boolean locker) {
         isLocker = locker;
     }
 }

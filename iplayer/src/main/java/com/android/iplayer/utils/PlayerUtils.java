@@ -452,7 +452,7 @@ public class PlayerUtils {
      * @param isFillAfter
      * @param listener
      */
-    public void startAlphaAnimation(View view, int duration,boolean isFillAfter,OnAnimationListener listener) {
+    public void startAlphaAnimatioTo(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
         new AnimationTask().start(view,duration,isFillAfter,listener);
     }
@@ -469,6 +469,53 @@ public class PlayerUtils {
             this.mView=view;
             this.mOnAnimationListener=listener;
             AlphaAnimation alphaAnim = new AlphaAnimation(1f, 0);
+            alphaAnim.setDuration(duration);
+            alphaAnim.setFillAfter(isFillAfter);
+            alphaAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(null!=mOnAnimationListener) mOnAnimationListener.onAnimationEnd(animation);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            mView.startAnimation(alphaAnim);
+        }
+    }
+
+    /**
+     * 播放透明动画
+     * @param view
+     * @param duration
+     * @param isFillAfter
+     * @param listener
+     */
+    public void startAlphaAnimatioFrom(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+        if(null==view) return;
+        new AnimationTaskFrom().start(view,duration,isFillAfter,listener);
+    }
+
+    /**
+     * 动画执行
+     */
+    private class AnimationTaskFrom{
+
+        private View mView;
+        private OnAnimationListener mOnAnimationListener;
+
+        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+            this.mView=view;
+            this.mOnAnimationListener=listener;
+            mView.setVisibility(View.VISIBLE);
+            AlphaAnimation alphaAnim = new AlphaAnimation(0f, 1f);
             alphaAnim.setDuration(duration);
             alphaAnim.setFillAfter(isFillAfter);
             alphaAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -561,5 +608,22 @@ public class PlayerUtils {
                 || e.getRawX() > getScreenWidth(context) - edgeSize
                 || e.getRawY() < edgeSize
                 || e.getRawY() > getScreenHeight(context) - edgeSize;
+    }
+
+    private static long lastClickTime;
+
+    /**
+     * 限定时间内响应点击时间
+     * @param maxDuration 间隔的最大时长
+     * @return
+     */
+    public boolean isFastClick(int maxDuration) {
+        boolean flag = false;
+        long curClickTime = System.currentTimeMillis();
+        if ((curClickTime - lastClickTime) >= maxDuration) {
+            flag = true;
+        }
+        lastClickTime = curClickTime;
+        return flag;
     }
 }
