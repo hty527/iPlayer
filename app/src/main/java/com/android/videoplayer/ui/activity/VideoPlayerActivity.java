@@ -39,6 +39,7 @@ public class VideoPlayerActivity extends BaseActivity {
     private DanmuController mDanmuController;
     private PlayerMenuView mMenuView;
     private int mediaCore;//多媒体解码器 0:系统默认 1:ijk 2:exo
+    private VideoController mController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,11 +71,11 @@ public class VideoPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
         //绑定控制器
-        VideoController controller = new VideoController(mVideoPlayer.getContext());
-        controller.showBackBtn(false);
-        controller.showMenus(true,true,true);
+        mController = new VideoController(mVideoPlayer.getContext());
+        mController.showBackBtn(false);//竖屏下是否显示返回按钮
+        mController.showMenus(true,true,true);//是否显示右上角菜单栏功能按钮
         //设置交互监听
-        controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+        mController.setOnControllerListener(new BaseController.OnControllerEventListener() {
 
             //菜单按钮交给控制器内部处理
             @Override
@@ -102,12 +103,12 @@ public class VideoPlayerActivity extends BaseActivity {
         });
         //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
         //绑定UI控制器
-        mVideoPlayer.setController(controller);
+        mVideoPlayer.setController(mController);
 
         //弹幕控制器处理
         if(mDanmu){
-            mDanmuController = new DanmuController(controller.getContext());
-            controller.addController(0,mDanmuController);
+            mDanmuController = new DanmuController(mController.getContext());
+            mController.addController(0,mDanmuController);
             Switch aSwitch = (Switch) findViewById(R.id.switch_danmu);
             aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -196,6 +197,27 @@ public class VideoPlayerActivity extends BaseActivity {
                     rePlay(null);
                 }
             });
+            //竖屏模式下的手势交互开关监听
+            if(null!=mController) mController.setCanTouchInPortrait(true);//竖屏状态下是否开启手势交互
+            View touch_1 = findViewById(R.id.touch_1);
+            touch_1.setSelected(true);
+            touch_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    findViewById(R.id.touch_1).setSelected(true);
+                    findViewById(R.id.touch_2).setSelected(false);
+                    if(null!=mController) mController.setCanTouchInPortrait(true);
+                }
+            });
+            findViewById(R.id.touch_2).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    findViewById(R.id.touch_1).setSelected(false);
+                    findViewById(R.id.touch_2).setSelected(true);
+                    if(null!=mController) mController.setCanTouchInPortrait(false);
+                }
+            });
+
             findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

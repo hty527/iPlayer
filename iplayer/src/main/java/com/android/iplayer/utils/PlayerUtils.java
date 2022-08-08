@@ -33,6 +33,7 @@ import com.android.iplayer.widget.LayoutProvider;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -618,12 +619,12 @@ public class PlayerUtils {
      * @return
      */
     public boolean isFastClick(int maxDuration) {
-        boolean flag = false;
-        long curClickTime = System.currentTimeMillis();
-        if ((curClickTime - lastClickTime) >= maxDuration) {
-            flag = true;
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (currentTime - lastClickTime > maxDuration) {
+            lastClickTime = currentTime;
+            return true;
         }
-        lastClickTime = curClickTime;
-        return flag;
+        lastClickTime = currentTime;
+        return false;
     }
 }

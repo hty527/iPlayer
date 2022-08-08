@@ -18,8 +18,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2022/8/5
  * Desc:带有手势交互的基础控制器,需要实现手势交互的控制器可继承此类
  */
-public abstract class GestureController extends BaseController implements GestureDetector.OnGestureListener,
-        GestureDetector.OnDoubleTapListener, View.OnTouchListener ,IGestureControl{
+public abstract class GestureController extends BaseController implements View.OnTouchListener ,IGestureControl{//GestureDetector.OnGestureListener
 
     private GestureDetector mGestureDetector;
     private AudioManager mAudioManager;
@@ -27,8 +26,8 @@ public abstract class GestureController extends BaseController implements Gestur
     private boolean mChangeBrightness;//是否允许滑动更改屏幕亮度
     private boolean mChangeVolume;//是否允许滑动更改系统音量
     private boolean mCanTouchPosition = true;//是否可以滑动调节进度，默认可以
-    private boolean mEnableInPortrait;//是否在竖屏模式下开始手势控制，默认关闭
-    private boolean mIsGestureEnabled;//是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
+    private boolean mCanTouchInPortrait;//是否在竖屏模式下开始手势控制，默认关闭
+    private boolean mIsGestureEnabled = true;//是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
     private boolean mIsDoubleTapTogglePlayEnabled;//是否开启双击播放/暂停，默认关闭
     private int mStreamVolume;
     private float mBrightness;
@@ -49,26 +48,30 @@ public abstract class GestureController extends BaseController implements Gestur
     @Override
     public void initViews() {
         mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        mGestureDetector = new GestureDetector(getContext(), this);
+        mGestureDetector = new GestureDetector(getContext(), new SimpleOnGesture());
         this.setOnTouchListener(this);
     }
 
     /**
      * 设置是否可以滑动调节进度，默认可以
+     * @param canTouchPosition true:允许滑动快进快退 false:不允许滑动快进快退
      */
     public void setCanTouchPosition(boolean canTouchPosition) {
         mCanTouchPosition = canTouchPosition;
     }
 
     /**
-     * 是否在竖屏模式下开始手势控制，默认关闭
+     * 是否在竖屏模式下开始手势控制，默认开启
+     * @param canTouchInPortrait true:开始竖屏状态下的手势交互 false:关闭竖屏状态下的手势交互
      */
-    public void setEnableInPortrait(boolean enableInPortrait) {
-        mEnableInPortrait = enableInPortrait;
+    public void setCanTouchInPortrait(boolean canTouchInPortrait) {
+        mCanTouchInPortrait = canTouchInPortrait;
+        mCanSlide=mCanTouchInPortrait;
     }
 
     /**
      * 是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
+     * @param gestureEnabled true:允许手势交互 false:不允许手势交互
      */
     public void setGestureEnabled(boolean gestureEnabled) {
         mIsGestureEnabled = gestureEnabled;
@@ -76,140 +79,123 @@ public abstract class GestureController extends BaseController implements Gestur
 
     /**
      * 是否开启双击播放/暂停，默认关闭
+     * @param enabled true:允许双击播放\暂停 false:不允许双击播放\暂停
      */
     public void setDoubleTapTogglePlayEnabled(boolean enabled) {
         mIsDoubleTapTogglePlayEnabled = enabled;
     }
 
+    /**
+     * 接管处理手势识别
+     */
+    private class SimpleOnGesture extends GestureDetector.SimpleOnGestureListener{
+
+        private boolean isDoubleTap=false;
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            if (!isPlayering() //不处于播放状态
+                    || !mIsGestureEnabled //关闭了手势
+                    || PlayerUtils.getInstance().isEdge(getContext(), e)) //处于屏幕边沿
+                return true;
+            mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            Activity activity = PlayerUtils.getInstance().getActivity(getContext());
+            if (activity == null) {
+                mBrightness = 0;
+            } else {
+                mBrightness = activity.getWindow().getAttributes().screenBrightness;
+            }
+            mFirstTouch = true;
+            mChangePosition = false;
+            mChangeBrightness = false;
+            mChangeVolume = false;
+            return true;
+        }
+
+        /**
+         * 单机
+         * @param e
+         * @return
+         */
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if(isDoubleTap){//如果刚刚响应了双击事件，则放弃此次单击事件
+                isDoubleTap=false;
+                return true;
+            }
+//            ILogger.d(TAG,"onSingleTapConfirmed");
+            onSingleTap();
+            return true;
+        }
+
+        /**
+         * 双击，双击事件消费后单击事件也消费了
+         * @param e
+         * @return
+         */
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+//            ILogger.d(TAG,"onDoubleTap");
+            isDoubleTap=true;
+            if(mIsDoubleTapTogglePlayEnabled){
+                GestureController.this.onDoubleTap();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//            boolean edge1 = PlayerUtils.getInstance().isEdge(getContext(), e1);
+//            boolean edge2 = PlayerUtils.getInstance().isEdge(getContext(), e2);
+//        ILogger.d(TAG,"onScroll-->e1:"+e1.getAction()+",e2:"+e2+",distanceX:"+distanceX+",distanceY:"+distanceY+",mIsGestureEnabled:"+mIsGestureEnabled+",mCanSlide:"+mCanSlide+",edge1:"+edge1+",edge2:"+edge2+",mFirstTouch:"+mFirstTouch);
+            if (!isPlayering() //不处于播放状态
+                    || !mIsGestureEnabled //关闭了手势
+                    || !mCanSlide //关闭了滑动手势
+                    || isLocked() //锁住了屏幕
+                    || PlayerUtils.getInstance().isEdge(getContext(), e1)) {// //处于屏幕边沿
+                return true;
+            }
+            float deltaX = e1.getX() - e2.getX();
+            float deltaY = e1.getY() - e2.getY();
+            if (mFirstTouch) {
+                mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
+                if (!mChangePosition) {
+                    //半屏宽度
+                    int halfScreen = PlayerUtils.getInstance().getScreenWidth(getContext()) / 2;
+                    if (e2.getX() > halfScreen) {
+                        mChangeVolume = true;
+                    } else {
+                        mChangeBrightness = true;
+                    }
+                }
+                if (mChangePosition) {
+                    //根据用户设置是否可以滑动调节进度来决定最终是否可以滑动调节进度
+                    mChangePosition = mCanTouchPosition;
+                }
+                if (mChangePosition || mChangeBrightness || mChangeVolume) {
+                    onStartSlide();
+                }
+                mFirstTouch = false;
+            }
+            ILogger.d(TAG,"onScroll-->mChangePosition:"+mChangePosition+",mChangeBrightness:"+mChangeBrightness+",mChangeVolume"+mChangeVolume);
+            if (mChangePosition) {//seek播放进度
+                slideToChangePosition(deltaX);
+            } else if (mChangeBrightness) {//更改屏幕亮度
+                slideToChangeBrightness(deltaY);
+            } else if (mChangeVolume) {//更改系统音量
+                slideToChangeVolume(deltaY);
+            }
+            return true;
+        }
+    }
+
     @Override
     public void setScreenOrientation(int orientation) {
         if(isOrientationPortrait()){
-            mCanSlide=mEnableInPortrait;
+            mCanSlide= mCanTouchInPortrait;
         }else{
             mCanSlide=true;
         }
-    }
-
-    /**
-     * 单击
-     */
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent motionEvent) {
-        onSingleTap();
-        return false;
-    }
-
-    /**
-     * 双击
-     * @param motionEvent
-     * @return
-     */
-    @Override
-    public boolean onDoubleTap(MotionEvent motionEvent) {
-        if(mIsDoubleTapTogglePlayEnabled){
-            onDoubleTap();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent motionEvent) {
-        return false;
-    }
-
-    /**
-     * 手指按下的瞬间
-     * @param motionEvent
-     * @return
-     */
-    @Override
-    public boolean onDown(MotionEvent motionEvent) {
-        if (!isPlayering() //不处于播放状态
-                || !mIsGestureEnabled //关闭了手势
-                || PlayerUtils.getInstance().isEdge(getContext(), motionEvent)) //处于屏幕边沿
-            return true;
-        mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        Activity activity = PlayerUtils.getInstance().getActivity(getContext());
-        if (activity == null) {
-            mBrightness = 0;
-        } else {
-            mBrightness = activity.getWindow().getAttributes().screenBrightness;
-        }
-        mFirstTouch = true;
-        mChangePosition = false;
-        mChangeBrightness = false;
-        mChangeVolume = false;
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent motionEvent) {
-
-    }
-
-    /**
-     * 单击
-     * @param motionEvent
-     * @return
-     */
-    @Override
-    public boolean onSingleTapUp(MotionEvent motionEvent) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        boolean edge1 = PlayerUtils.getInstance().isEdge(getContext(), e1);
-        boolean edge2 = PlayerUtils.getInstance().isEdge(getContext(), e2);
-//        ILogger.d(TAG,"onScroll-->e1:"+e1.getAction()+",e2:"+e2+",distanceX:"+distanceX+",distanceY:"+distanceY+",mIsGestureEnabled:"+mIsGestureEnabled+",mCanSlide:"+mCanSlide+",edge1:"+edge1+",edge2:"+edge2+",mFirstTouch:"+mFirstTouch);
-        if (!isPlayering() //不处于播放状态
-                || !mIsGestureEnabled //关闭了手势
-                || !mCanSlide //关闭了滑动手势
-                || isLocked() //锁住了屏幕
-                || PlayerUtils.getInstance().isEdge(getContext(), e1)) {// //处于屏幕边沿
-            return true;
-        }
-        float deltaX = e1.getX() - e2.getX();
-        float deltaY = e1.getY() - e2.getY();
-        if (mFirstTouch) {
-            mChangePosition = Math.abs(distanceX) >= Math.abs(distanceY);
-            if (!mChangePosition) {
-                //半屏宽度
-                int halfScreen = PlayerUtils.getInstance().getScreenWidth(getContext()) / 2;
-                if (e2.getX() > halfScreen) {
-                    mChangeVolume = true;
-                } else {
-                    mChangeBrightness = true;
-                }
-            }
-            if (mChangePosition) {
-                //根据用户设置是否可以滑动调节进度来决定最终是否可以滑动调节进度
-                mChangePosition = mCanTouchPosition;
-            }
-            if (mChangePosition || mChangeBrightness || mChangeVolume) {
-                onStartSlide();
-            }
-            mFirstTouch = false;
-        }
-        ILogger.d(TAG,"onScroll-->mChangePosition:"+mChangePosition+",mChangeBrightness:"+mChangeBrightness+",mChangeVolume"+mChangeVolume);
-        if (mChangePosition) {//seek播放进度
-            slideToChangePosition(deltaX);
-        } else if (mChangeBrightness) {//更改屏幕亮度
-            slideToChangeBrightness(deltaY);
-        } else if (mChangeVolume) {//更改系统音量
-            slideToChangeVolume(deltaY);
-        }
-        return true;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-        return false;
     }
 
     @Override

@@ -3,20 +3,21 @@
     <item android:id="@android:id/background">
         <shape>
             <solid android:color="@color/player_gesture_background" />
-            <size android:height="2dp" />
+            <size android:height="3dp" />
             <corners android:radius="2dp"></corners>
         </shape>
     </item>
     <item android:id="@android:id/progress">
         <scale android:scaleWidth="100%">
             <shape android:shape="rectangle" >
+                <size android:height="3dp" />
                 <corners android:radius="2dp"></corners>
                 <gradient
                     android:startColor="@color/player_progress_start"
                     android:endColor="@color/player_progress_end"
                     android:type="linear"
                     android:angle="360"/>
-                <size android:height="2dp" />
+                <size android:height="3dp" />
             </shape>
         </scale>
     </item>

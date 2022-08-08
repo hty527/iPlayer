@@ -70,7 +70,7 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:orientation="vertical"
-               android:visibility="gone">
+               android:visibility="visible">
                <TextView
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
@@ -117,6 +117,42 @@
                        android:text="ExoPlayer"
                        android:gravity="center"
                        android:visibility="visible"/>
+               </LinearLayout>
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginLeft="12dp"
+                   android:layout_marginTop="12dp"
+                   android:text="竖屏手势交互"
+                   android:textColor="@color/menu_sub_title_color"
+                   android:textStyle="bold"
+                   android:textSize="15dp"/>
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="33dp"
+                   android:orientation="horizontal"
+                   android:layout_marginTop="10dp"
+                   android:layout_marginLeft="12dp"
+                   android:layout_marginRight="12dp">
+                   <TextView
+                       android:id="@+id/touch_1"
+                       android:layout_width="66dp"
+                       android:layout_height="match_parent"
+                       android:background="@drawable/bg_menu_left"
+                       android:textColor="@color/menu_text_selector"
+                       android:textSize="13dp"
+                       android:text="开启"
+                       android:gravity="center"/>
+                   <TextView
+                       android:id="@+id/touch_2"
+                       android:layout_width="66dp"
+                       android:layout_height="match_parent"
+                       android:background="@drawable/bg_menu_right"
+                       android:textColor="@color/menu_text_selector"
+                       android:textSize="13dp"
+                       android:layout_marginLeft="-1dp"
+                       android:text="关闭"
+                       android:gravity="center"/>
                </LinearLayout>
                <com.android.videoplayer.video.ui.widget.PlayerMenuView
                    android:id="@+id/menu_view"

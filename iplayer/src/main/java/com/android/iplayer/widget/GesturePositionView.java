@@ -4,13 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.R;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.utils.PlayerUtils;
@@ -116,5 +120,41 @@ public class GesturePositionView extends FrameLayout implements IGestureControl 
             mPresentProgress.setVisibility(View.VISIBLE);
             mPresentProgress.setProgress(percent);
         }
+    }
+
+    /**
+     * 进入竖屏模式 默认竖屏模式
+     */
+    public void enterPortrait() {
+        if(null!=mGesturePresent){
+            mGesturePresent.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(146f);
+            mGesturePresent.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(79f);
+            mGesturePresent.setBackgroundResource(R.drawable.player_gesture_content_portrait_bg);
+        }
+        if(null!=mPresentProgress){
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
+            int toPxInt10 = PlayerUtils.getInstance().dpToPxInt(10f);
+            int toPxInt16 = PlayerUtils.getInstance().dpToPxInt(16);
+            layoutParams.setMargins(toPxInt10,toPxInt16,toPxInt10,0);
+        }
+        if(null!=mPresentText) mPresentText.setTextSize(TypedValue.COMPLEX_UNIT_PX,PlayerUtils.getInstance().dpToPxInt(14f));
+    }
+
+    /**
+     * 进入横屏模式
+     */
+    public void enterLandscape() {
+        if(null!=mGesturePresent){
+            mGesturePresent.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(168f);
+            mGesturePresent.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(99f);
+            mGesturePresent.setBackgroundResource(R.drawable.player_gesture_content_bg);
+        }
+        if(null!=mPresentProgress){
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
+            int toPxInt12 = PlayerUtils.getInstance().dpToPxInt(12f);
+            int toPxInt20 = PlayerUtils.getInstance().dpToPxInt(20);
+            layoutParams.setMargins(toPxInt12,toPxInt20,toPxInt12,0);
+        }
+        if(null!=mPresentText) mPresentText.setTextSize(TypedValue.COMPLEX_UNIT_PX,PlayerUtils.getInstance().dpToPxInt(15f));
     }
 }

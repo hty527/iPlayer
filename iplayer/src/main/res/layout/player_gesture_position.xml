@@ -6,20 +6,19 @@
     <!--声音、亮度调、播放进度调节-->
     <LinearLayout
         android:id="@+id/gesture_present"
-        android:layout_width="168dp"
-        android:layout_height="99dp"
+        android:layout_width="146dp"
+        android:layout_height="79dp"
         android:layout_gravity="center"
-        android:background="@drawable/player_gesture_content_bg"
+        android:background="@drawable/player_gesture_content_portrait_bg"
         android:orientation="vertical"
         android:visibility="invisible"
-        android:padding="10dp">
+        android:gravity="center">
         <ImageView
             android:id="@+id/gesture_present_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:src="@mipmap/ic_player_gesture_next"
-            android:layout_margin="10dp"/>
+            android:src="@mipmap/ic_player_gesture_next"/>
         <TextView
             android:id="@+id/gesture_present_text"
             android:layout_width="wrap_content"
@@ -28,14 +27,14 @@
             android:textColor="#FFFFFF"
             android:layout_gravity="center_horizontal"
             android:text="00:00/00:00"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:layout_marginTop="10dp" />
         <ProgressBar
             android:id="@+id/gesture_present_progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="3dp"
             android:layout_gravity="center_vertical"
-            android:layout_alignParentBottom="true"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"

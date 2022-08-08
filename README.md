@@ -13,7 +13,8 @@
 ### SDK功能支持:
 * 支持常规http或https等网络地址播放</br>
 * 支持本地Assets和Raw资源文件播放</br>
-* SDK自带默认解码器+UI控制器交互+手势识别交互控制器</br>
+* SDK自带默认解码器+UI控制器交互</br>
+* 支持手势识别交互设置屏幕亮度、音量、快进、快退</br>
 * 支持倍速、缩放模式、静音、镜像等调节设置</br>
 * 支持多播放器同时播放</br>
 * 支持解码器动态切换和完全自定义视频解码器</br>
@@ -49,7 +50,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.0'
+        implementation 'com.github.hty527:iPlayer:1.0.1'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
@@ -158,8 +159,6 @@
     IVideoManager.getInstance().setInterceptTAudioFocus(true);
     //设置移动网络下是否允许播放
     IVideoManager.getInstance().setMobileNetwork(true);
-    
-    //更多API文档使用，请参阅目录文件/iPlayer/doc/docs/javadoc/index.html
 ```
 #### 二、权限:
 * 1.请根据需要在您的AndroidManifest中声明权限</br>

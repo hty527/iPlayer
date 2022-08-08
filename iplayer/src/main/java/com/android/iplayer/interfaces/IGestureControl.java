@@ -8,12 +8,12 @@ package com.android.iplayer.interfaces;
 public interface IGestureControl {
 
     /**
-     * 单机空白区域
+     * 组件发生点击事件
      */
     void onSingleTap();
 
     /**
-     * 双击空白区域
+     * 组件发生双击事件
      */
     void onDoubleTap();
 
