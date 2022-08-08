@@ -7,7 +7,7 @@
 一个封装基础视频播放器功能交互的SDK。
 
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.1.apk "Download"
 **[Demo apk下载]**
 
 ### SDK功能支持:
@@ -45,6 +45,7 @@
             maven { url 'https://jitpack.io' }
         }
     }
+
     //2.在你的模块build.gradle中添加：   
     dependencies {
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
@@ -134,6 +135,7 @@
     if(null!=controller){
         controller.showBackBtn(false);//竖屏状态下是否显示返回按钮
         controller.showMenus(false,true,true);//竖屏状态是否显示控制器右上角的功能菜单按钮,默认是显示的(横屏不显示所有菜单按钮)
+        controller.setCanTouchInPortrait(true);//竖屏状态下启用手势交互
         //监听控制器交互事件(设置开启了返回showBackBtn\菜单栏showMenus等功能后可设置监听,回调方法请参阅：OnControllerEventListener)
         controller.setOnControllerListener(new BaseController.OnControllerEventListener(){
 
@@ -223,14 +225,14 @@
 ```
 ### SDK及Demo快照：
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/1.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/2.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/1.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/2.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/3.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/4.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/3.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/4.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/5.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/6.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/5.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/6.jpg?q=1" width="270",height="585">
 </div>
