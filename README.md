@@ -7,8 +7,12 @@
 一个封装基础视频播放器功能交互的SDK。
 
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.1.apk "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.1.apk?version=1.0.1 "Download"
 **[Demo apk下载]**
+
+### 历史版本
+[查看历史版本]: https://github.com/hty527/iPlayer/wiki/HistoryVersion "历史版本"
+**[查看历史版本]**
 
 ### SDK功能支持:
 * 支持常规http或https等网络地址播放</br>
