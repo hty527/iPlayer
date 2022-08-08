@@ -343,10 +343,8 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     protected Activity getActivity() {
         if(null!=mVideoPlayerControl&&null!=mVideoPlayerControl.getTempContext()){
-            ILogger.d(TAG,"getActivity-->1");
             return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
         }
-        ILogger.d(TAG,"getActivity-->2");
         return PlayerUtils.getInstance().getActivity(getContext());
     }
 

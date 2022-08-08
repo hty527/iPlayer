@@ -7,7 +7,7 @@
 一个封装基础视频播放器功能交互的SDK。
 
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.1.apk?version=1.0.1 "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.2.apk?version=1.0.2 "Download"
 **[Demo apk下载]**
 
 ### 历史版本
@@ -55,7 +55,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.1'
+        implementation 'com.github.hty527:iPlayer:1.0.2'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
