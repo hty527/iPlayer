@@ -1,16 +1,16 @@
 package com.android.videoplayer.pager.fragment;
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
-import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.pager.activity.PagerPlayerActivity;
 import com.android.videoplayer.pager.adapter.VideoListAdapter;
+import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.ScreenUtils;
 import java.util.List;
@@ -34,7 +34,7 @@ public class VideoListFragment extends BaseFragment {
     protected void initViews() {
         ImageView status_bar = (ImageView) findViewById(R.id.status_bar);
         status_bar.getLayoutParams().height= ScreenUtils.getInstance().getStatusBarHeight(getContext())+ScreenUtils.getInstance().dpToPxInt(49f);
-        status_bar.setImageResource(R.mipmap.ic_title_bg);
+        status_bar.setImageResource(R.mipmap.ic_dialog_bg);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         //列表适配器初始化

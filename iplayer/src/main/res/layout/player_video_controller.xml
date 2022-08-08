@@ -204,6 +204,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"/>
+        <!--手势锁-->
+        <ImageView
+            android:id="@+id/controller_locker"
+            android:layout_width="@dimen/player_play_width"
+            android:layout_height="@dimen/player_play_width"
+            android:visibility="gone"
+            android:src="@mipmap/ic_player_locker_false"
+            android:scaleType="center"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="32dp"
+            android:background="@drawable/player_locker_bg"/>
     </FrameLayout>
     <!--底部副进度条和窗口控制器共用-->
     <ProgressBar
@@ -216,4 +227,9 @@
         android:max="0"
         android:progress="0"
         android:progressDrawable="@drawable/player_bottom_progress"/>
+    <!--手势交互UI控制器-->
+    <com.android.iplayer.widget.GesturePositionView
+        android:id="@+id/gesture_present_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </FrameLayout>

@@ -1,7 +1,7 @@
 package com.android.videoplayer.pager.adapter;
 
-import android.support.annotation.NonNull;
 import android.view.View;
+import androidx.annotation.NonNull;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.BaseNoimalAdapter;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;
@@ -9,7 +9,6 @@ import com.android.videoplayer.cache.PreloadManager;
 import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.pager.widget.PagerVideoController;
 import com.android.videoplayer.utils.Logger;
-
 import java.util.List;
 
 /**

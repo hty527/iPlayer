@@ -15,7 +15,7 @@
         </clip>
     </item>
     <item android:id="@android:id/progress">
-        <clip>
+        <scale android:scaleWidth="100%">
             <shape android:shape="rectangle" >
                 <gradient
                     android:startColor="@color/player_progress_start"
@@ -24,6 +24,6 @@
                     android:angle="360"/>
                 <size android:height="2dp" />
             </shape>
-        </clip>
+        </scale>
     </item>
 </layer-list>

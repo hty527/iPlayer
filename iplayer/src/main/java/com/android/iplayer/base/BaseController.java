@@ -3,8 +3,6 @@ package com.android.iplayer.base;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -14,7 +12,6 @@ import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
 import com.android.iplayer.model.PlayerState;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected static final String TAG = BaseController.class.getSimpleName();
     protected IVideoPlayerControl mVideoPlayerControl;//播放器代理人
     protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT;//当前控制器方向
-    private List<BaseController> mControllers;//用户自定义的各控制器
+    protected List<BaseController> mControllers;//用户自定义的各控制器
     protected boolean itemPlayerMode, isWindowProperty,isGlobalWindow;//交互控制器是否处于列表播放模式\是否是窗口模式\是否处于全局悬浮窗或画中画模式
 
     protected class ExHandel extends Handler{
@@ -39,15 +36,15 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
         }
     }
 
-    public BaseController(@NonNull Context context) {
+    public BaseController(Context context) {
         this(context,null);
     }
 
-    public BaseController(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public BaseController(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public BaseController(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BaseController(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         int layoutId = getLayoutId();
         View rootView = View.inflate(context, R.layout.player_base_controller, this);
@@ -89,11 +86,11 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * @param totalDurtion 视频总时长 单位:视频总时长毫秒
      * @param bufferPercent 当前缓冲进度 百分比
      */
-    public void progressPlayer(long currentDurtion, long totalDurtion, int bufferPercent){
-        progress(currentDurtion,totalDurtion,bufferPercent);
+    public void onProgressPlayer(long currentDurtion, long totalDurtion, int bufferPercent){
+        onProgress(currentDurtion,totalDurtion,bufferPercent);
         if(null!=mControllers&&mControllers.size()>0){
             for (BaseController controller : mControllers) {
-                controller.progress(currentDurtion,totalDurtion,bufferPercent);
+                controller.onProgress(currentDurtion,totalDurtion,bufferPercent);
             }
         }
     }
@@ -333,6 +330,13 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     protected String getOrientationStr(){
         return ",Orientation:"+getOrientation();
+    }
+
+    protected boolean isPlayering() {
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.isPlaying();
+        }
+        return false;
     }
 
     /**

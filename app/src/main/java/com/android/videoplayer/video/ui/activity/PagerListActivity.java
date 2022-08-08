@@ -1,7 +1,6 @@
 package com.android.videoplayer.video.ui.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.widget.Toast;
 import com.android.videoplayer.R;
@@ -24,7 +23,7 @@ public class PagerListActivity extends BaseActivity {
     private ListPlayerChangeFragment mPlayerChangeFragment;//列表自动播放+点击跳转无缝播放
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
         TitleView titleView = (TitleView) findViewById(R.id.title_view);

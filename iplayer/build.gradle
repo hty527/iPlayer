@@ -11,9 +11,10 @@ android {
 
     defaultConfig {
         minSdkVersion 16
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 10001
+        versionName "1.0.1"
     }
     lintOptions {
         abortOnError false
@@ -43,5 +44,5 @@ task sourcesJar(type: Jar) {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //基础
-    implementation 'com.android.support:appcompat-v7:+'
+    implementation 'com.android.support:support-compat:+'
 }

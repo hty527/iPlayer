@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Surface;
 import com.android.iplayer.base.AbstractMediaPlayer;
+import com.android.videoplayer.media.help.RawDataSourceProvider;
 import java.io.IOException;
 import java.util.Map;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -16,7 +17,7 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
 /**
  * created by hty
  * 2022/7/1
- * Desc:IJK解码器
+ * Desc:IJK解码器示例
  */
 public class JkMediaPlayer extends AbstractMediaPlayer {
 

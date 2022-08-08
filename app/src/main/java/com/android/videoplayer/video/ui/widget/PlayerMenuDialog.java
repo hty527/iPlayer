@@ -1,7 +1,6 @@
 package com.android.videoplayer.video.ui.widget;
 
 import android.content.Context;
-import android.support.design.widget.BottomSheetDialog;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -10,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import com.android.iplayer.listener.OnMenuActionListener;
 import com.android.videoplayer.R;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 /**
  * created by hty

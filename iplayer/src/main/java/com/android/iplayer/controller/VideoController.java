@@ -3,20 +3,22 @@ package com.android.iplayer.controller;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseController;
+import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.ControllerStatusView;
+import com.android.iplayer.widget.GesturePositionView;
 
 /**
  * created by hty
@@ -24,14 +26,16 @@ import com.android.iplayer.widget.ControllerStatusView;
  * Desc:默认的视频控制器弹窗
  * 功能菜单：控制栏和底部进度条二选一显示,播放中时允许点击显示\隐藏,列表模式下播放视频首帧渲染不显示控制器和标题栏,只显示底部播放进度条
  */
-public class VideoController extends BaseController {
+public class VideoController extends GestureController implements IGestureControl {
 
     public static final int SCENE_MOBILE     =1;//移动网络播放提示
     public static final int SCENE_COMPLETION =2;//试看结束
     public static final int SCENE_ERROR      =3;//播放失败
     private static final int MESSAGE_HIDE_CONTROLLER      = 100;//隐藏控制器
+    private static final int MESSAGE_HIDE_LOCKER          = 101;//隐藏控制锁
     //播放按钮,控制器,标题栏,重新播放
     protected View mControllerPlay,mControllerController,mControllerTitle,mControllerReplay;
+    private ImageView mControllerLocker;//控制锁
     private ControllerStatusView mControllerStatus;
     protected ProgressBar mControllerLoading;
     protected TextView mCurrentDuration,mTotalDuration;
@@ -42,10 +46,13 @@ public class VideoController extends BaseController {
     protected long mPreViewTotalTime;//给用户看的预览总时长
     protected ImageView mPlayIcon;//左下角的迷你播放状态按钮
     private int mTitleOffset=0;//标题栏距离顶部偏移量
-    //小窗口模式
+    private int MATION_DRAUTION=300;
+    //小窗口模式交互控制器
     private VideoWindowController mWindowController;
+    //手势UI交互
+    private GesturePositionView mGesturePositionView;
 
-    public VideoController(@NonNull Context context) {
+    public VideoController(Context context) {
         super(context);
     }
 
@@ -56,6 +63,7 @@ public class VideoController extends BaseController {
 
     @Override
     public void initViews() {
+        super.initViews();
         OnClickListener onClickListener=new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,12 +91,27 @@ public class VideoController extends BaseController {
                     if(null!=mControllerListener) mControllerListener.onTv();
                 }else if (id == R.id.controller_title_window) {//开启全局悬浮窗窗口播放
                     if (null != mControllerListener) mControllerListener.onGobalWindow();//回调给宿主界面
+                }else if (id == R.id.controller_locker) {//屏幕锁
+                    if(isLocked()){
+                        setLocker(false);
+                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);
+                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_flase),Toast.LENGTH_SHORT).show();
+                        //立刻恢复所有控制器
+                        toggleController(false,true);
+                    }else{
+                        setLocker(true);
+                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_true);
+                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_true),Toast.LENGTH_SHORT).show();
+                        //立刻屏蔽所有控制器屏蔽
+                        toggleController(true);
+                    }
+                    delayedInvisibleLocker();
                 }
             }
         };
         findViewById(R.id.controller_title_back).setOnClickListener(onClickListener);
         findViewById(R.id.controller_btn_fullscreen).setOnClickListener(onClickListener);
-        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);
+//        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);//启用手势识别器后不能消费点击事件了
         mControllerPlay = findViewById(R.id.controller_play);
         mControllerPlay.setOnClickListener(onClickListener);
         mControllerReplay = findViewById(R.id.controller_replay);
@@ -99,7 +122,9 @@ public class VideoController extends BaseController {
         mCurrentDuration = findViewById(R.id.controller_current_duration);
         mTotalDuration = findViewById(R.id.controller_total_duration);
         mPlayIcon = findViewById(R.id.controller_start);
+        mControllerLocker = findViewById(R.id.controller_locker);
         mPlayIcon.setOnClickListener(onClickListener);
+        mControllerLocker.setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_tv).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_window).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_menu).setOnClickListener(onClickListener);
@@ -143,7 +168,7 @@ public class VideoController extends BaseController {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 isTouchSeekBar=true;
-                removeDelayedControllerRunnable();//取消定时隐藏任务
+                removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);//取消定时隐藏任务
             }
 
             /**
@@ -164,7 +189,7 @@ public class VideoController extends BaseController {
                     int seekBarProgress = seekBar.getProgress();
 //                    ILogger.d(TAG,"onStopTrackingTouch-->seekBarProgress:"+seekBarProgress+",ViewTotalTime:"+ mPreViewTotalTime +",duration:"+ mVideoPlayerControl.getDurtion()+getOrientationStr());
                     if(mPreViewTotalTime >0){ //跳转至某处,如果滑动的时长超过真实的试看时长,则直接播放完成需要解锁
-                        long durtion = mVideoPlayerControl.getDurtion();
+                        long durtion = mVideoPlayerControl.getDuration();
                         if(0==seekBarProgress){//重新从头开始播放
                             //改变UI为缓冲状态
                             onState(PlayerState.STATE_BUFFER,"seek");
@@ -186,12 +211,15 @@ public class VideoController extends BaseController {
                 }
             }
         });
+        //手势交互控制
+        mGesturePositionView = (GesturePositionView) findViewById(R.id.gesture_present_layout);
+        setDoubleTapTogglePlayEnabled(true);//横屏竖屏状态下都允许双击开始\暂停播放
     }
 
     @Override
     public void onState(PlayerState state, String message) {
         ILogger.d(TAG,"onState-->state:"+state+getOrientationStr()+",message:"+message);
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);
         switch (state) {
             case STATE_RESET://初始状态\播放器还原重置
             case STATE_STOP://初始\停止
@@ -279,23 +307,18 @@ public class VideoController extends BaseController {
     }
 
     @Override
-    public void progress(final long currentDurtion, final long totalDurtion, int bufferPercent) {
+    public void onProgress(final long currentDurtion, final long totalDurtion, int bufferPercent) {
         if(null!=mSeekBar){
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    if(null!=mProgressBar&&mProgressBar.getMax()==0){
-                        mProgressBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                    }
-                    if(null!=mSeekBar){
-                        if(mSeekBar.getMax()<=0){//总进度总时长只更新一次,如果是虚拟的总时长,则在setViewTotalDuration中更新总时长
-                            mSeekBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                            if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
-                        }
-                        if(!isTouchSeekBar) mSeekBar.setProgress((int) currentDurtion);
-                    }
+            if(null!=mProgressBar&&mProgressBar.getMax()==0){
+                mProgressBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
+            }
+            if(null!=mSeekBar){
+                if(mSeekBar.getMax()<=0){//总进度总时长只更新一次,如果是虚拟的总时长,则在setViewTotalDuration中更新总时长
+                    mSeekBar.setMax((int) (mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
+                    if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mPreViewTotalTime >0? mPreViewTotalTime :totalDurtion));
                 }
-            });
+                if(!isTouchSeekBar) mSeekBar.setProgress((int) currentDurtion);
+            }
         }
     }
 
@@ -307,7 +330,7 @@ public class VideoController extends BaseController {
     public void onBuffer(int bufferPercent) {
 //        ILogger.d(TAG,"onBuffer-->"+bufferPercent);
         if(null!=mVideoPlayerControl){
-            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDurtion());
+            int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDuration());
             if(null!= mSeekBar&&mSeekBar.getSecondaryProgress()!=percent) {
                 mSeekBar.setSecondaryProgress(percent);
             }
@@ -323,23 +346,38 @@ public class VideoController extends BaseController {
      */
     @Override
     public void setScreenOrientation(int orientation) {
+        super.setScreenOrientation(orientation);
         ILogger.d(TAG,"setScreenOrientation-->"+getOrientationStr());
+        findViewById(R.id.controller_title).setVisibility(isOrientationPortrait()?View.GONE:View.VISIBLE);
+        LinearLayout titleBar = (LinearLayout) findViewById(R.id.controller_title_bar);
+        LinearLayout controllerBar = (LinearLayout) findViewById(R.id.controller_controller);
+        int margin = PlayerUtils.getInstance().dpToPxInt(22f);
         if(isOrientationPortrait()){
             findViewById(R.id.controller_title_tv).setVisibility(showTv?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(showWindow?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(showMenu?View.VISIBLE:View.GONE);
+            //控制锁不可用
+            toggleLocker(true);
+            setLocker(false);
+            if(null!=mGesturePositionView) mGesturePositionView.enterPortrait();
+            //标题栏间距处理
+            findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
+            findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
+            //竖屏下处理标题栏和控制栏的左右两侧缩放
+            titleBar.setPadding(0,0,0,0);
+            controllerBar.setPadding(0,0,0,0);
         }else{
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(View.GONE);
-        }
-        findViewById(R.id.controller_title).setVisibility(isOrientationPortrait()?View.GONE:View.VISIBLE);
-        if(isOrientationPortrait()){
-            findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
-            findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
-        }else{
+            //标题栏间距处理
             findViewById(R.id.controller_title_back).setVisibility(View.VISIBLE);
             findViewById(R.id.controller_title_margin).getLayoutParams().height=0;
+            if(null!=mGesturePositionView) mGesturePositionView.enterLandscape();
+            //横屏下处理标题栏和控制栏的左右两侧缩放
+            titleBar.setPadding(margin,0,margin,0);
+            controllerBar.setPadding(margin,0,margin,0);
+            toggleLocker(false);
         }
         toggleController(true);//控制器不可见
     }
@@ -352,7 +390,7 @@ public class VideoController extends BaseController {
     @Override
     public void setWindowProperty(boolean isWindowProperty, boolean isGlobalWindow) {
 //        ILogger.d(TAG,"setWindowProperty-->isWindowProperty:"+isWindowProperty);
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(MESSAGE_HIDE_CONTROLLER);
         if(null==mControllerController) return;
         if(isWindowProperty){
             mControllerController.setVisibility(GONE);
@@ -372,7 +410,7 @@ public class VideoController extends BaseController {
             removeController(mWindowController);
             if(null!=mWindowController) mWindowController.onReset();
             mWindowController=new VideoWindowController(getContext());
-            mWindowController.setWindowProperty(isWindowProperty,isGlobalWindow);
+            mWindowController.setWindowProperty(true,isGlobalWindow);
             addController(mWindowController);
         }else{
             if(null!=mWindowController){
@@ -431,40 +469,121 @@ public class VideoController extends BaseController {
      * 横屏标题栏页参与显示隐藏,竖屏不处理标题栏
      * @param isHide 标题栏和菜单控制器是否强制隐藏
      */
-    private void toggleController(boolean isHide) {
-        removeDelayedControllerRunnable();
-//        ILogger.d(TAG,"toggleController-->isHide:"+isHide);
+    private void toggleController(boolean isHide){
+        toggleController(isHide,false);
+    }
+
+    /**
+     显示\隐藏视图控制器
+     * 横屏标题栏页参与显示隐藏,竖屏不处理标题栏
+     * @param isHide 标题栏和菜单控制器是否强制隐藏
+     * @param isShow 标题栏和菜单控制器是否强制显示
+     */
+    private void toggleController(boolean isHide,boolean isShow) {
+        removeDelayedRunnable(0);
+//        ILogger.d(TAG,"toggleController-->isHide:"+isHide+",isShow:"+isShow);
         if(null!=mControllerController&&null!=mControllerTitle){
             if(isHide){//强制隐藏
                 mControllerController.setVisibility(View.GONE);
-                if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
                 mControllerTitle.setVisibility(View.GONE);
                 return;
             }
+            //强制显示全部控制器
+            if(isShow){
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
+                if(!itemPlayerMode){//列表模式下menu栏不可用
+                    PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
+                }
+                delayedInvisibleController();
+                mProgressBar.setVisibility(View.GONE);
+                return;
+            }
+
             boolean controllerShow=false;
             //控制栏显示中
             if(mControllerController.getVisibility()==View.VISIBLE){
                 controllerShow=true;
-                mControllerController.setVisibility(View.GONE);
-                if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerController) mControllerController.setVisibility(GONE);
+                    }
+                });
+                mProgressBar.setVisibility(View.VISIBLE);
             }else{
-                mControllerController.setVisibility(View.VISIBLE);
-                if(null!=mProgressBar) mProgressBar.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
             }
             if(controllerShow){//标题栏跟随控制器栏
-                mControllerTitle.setVisibility(View.GONE);
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
+                    }
+                });
             }else{
                 if(isOrientationPortrait()){
                     if(!itemPlayerMode){//列表模式下menu栏不可用
-                        mControllerTitle.setVisibility(View.VISIBLE);
+                        PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
                     }
                 }else{
-                    mControllerTitle.setVisibility(View.VISIBLE);//横屏不影响
+                    PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
+                }
+            }
+            //控制锁
+            if(null!=mControllerLocker&&!isOrientationPortrait()){
+                if(controllerShow){
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
+                        }
+                    });
+                }else{
+                    if(mControllerLocker.getVisibility()!=View.VISIBLE){
+                        PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerLocker, MATION_DRAUTION, false, null);
+                    }
                 }
             }
             //所有交互处理完成启动定时隐藏控制器任务
             if(!controllerShow){
                 delayedInvisibleController();
+                if(!isOrientationPortrait()){
+                    delayedInvisibleLocker();
+                }
+            }
+        }
+    }
+
+    /**
+     显示\隐藏控制锁
+     * @param isHide 标题栏和菜单控制器是否强制隐藏
+     */
+    private void toggleLocker(boolean isHide) {
+        removeDelayedRunnable(MESSAGE_HIDE_LOCKER);
+//        ILogger.d(TAG,"toggleLocker-->isHide:"+isHide);
+        if(null!=mControllerLocker){
+            if(isHide){//强制隐藏
+                mControllerLocker.setVisibility(View.GONE);
+                return;
+            }
+            boolean controllerShow=false;
+            //控制锁显示中
+            if(mControllerLocker.getVisibility()==View.VISIBLE){
+                PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
+                    }
+                });
+            }else{
+                controllerShow=true;
+                PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerLocker, MATION_DRAUTION, false, null);
+            }
+            //所有交互处理完成启动定时隐藏控制器任务
+            if(controllerShow){
+                delayedInvisibleLocker();
             }
         }
     }
@@ -475,12 +594,12 @@ public class VideoController extends BaseController {
     private ExHandel mExHandel=new ExHandel(Looper.getMainLooper()){
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             super.handleMessage(msg);
-//            ILogger.d(TAG,"handleMessage-->");
+//            ILogger.d(TAG,"handleMessage-->whit:"+msg.what);
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
                 if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerController) mControllerController.setVisibility(GONE);
@@ -489,10 +608,19 @@ public class VideoController extends BaseController {
                     });
                 }
                 if(null!=mControllerTitle&&mControllerTitle.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerTitle, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
+                        }
+                    });
+                }
+            }if(null!=msg&&MESSAGE_HIDE_LOCKER==msg.what){
+                if(null!=mControllerLocker){
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerLocker, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            if(null!=mControllerLocker) mControllerLocker.setVisibility(GONE);
                         }
                     });
                 }
@@ -502,15 +630,24 @@ public class VideoController extends BaseController {
 
     /**
      * 取消控制器隐藏延时任务
+     * @param message
      */
-    private void removeDelayedControllerRunnable(){
-        if(null!=mExHandel) mExHandel.removeCallbacksAndMessages(null);
+    private void removeDelayedRunnable(int message){
+//        ILogger.d(TAG,"removeDelayedRunnable-->message:"+message);
+        if(null!=mExHandel){
+            if(0==message){
+                mExHandel.removeCallbacksAndMessages(null);
+            }else{
+                mExHandel.removeMessages(message);
+            }
+        }
     }
 
     /**
      * 启动延时隐藏控制器任务
      */
     private void delayedInvisibleController() {
+//        ILogger.d(TAG,"delayedInvisibleController-->");
         try {
             if(null!=mControllerController&&null!=mExHandel){
                 Message obtain = Message.obtain();
@@ -523,11 +660,27 @@ public class VideoController extends BaseController {
     }
 
     /**
+     * 启动延时隐藏控制锁
+     */
+    private void delayedInvisibleLocker() {
+//        ILogger.d(TAG,"delayedInvisibleLocker-->");
+        try {
+            if(null!=mControllerLocker&&null!=mExHandel){
+                Message obtain = Message.obtain();
+                obtain.what=MESSAGE_HIDE_LOCKER;
+                mExHandel.sendMessageDelayed(obtain,5000);
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 重置内部状态
      */
     private void reset(){
 //        ILogger.d(TAG,"reset-->"+getOrientationStr());
-        removeDelayedControllerRunnable();
+        removeDelayedRunnable(0);
         if(null!=mSeekBar) {
             mSeekBar.setProgress(0);
             mSeekBar.setSecondaryProgress(0);
@@ -668,8 +821,54 @@ public class VideoController extends BaseController {
     @Override
     public void onDestroy() {
 //        ILogger.d(TAG,"onDestroy-->"+getOrientationStr());
+        removeAllController();
         reset();
         itemPlayerMode =false;showBackBtn=false;showTv=false;showWindow=false;showMenu=false;
         changedUIState(View.GONE,View.VISIBLE,View.GONE,View.GONE,View.GONE,View.GONE,0);
+    }
+
+    //============================================手势交互============================================
+
+    @Override
+    public void onSingleTap() {
+        if(PlayerUtils.getInstance().isFastClick(500)){
+            if(isLocked()){
+                toggleLocker(false);
+            }else{
+                toggleController(false);
+            }
+        }
+    }
+
+    @Override
+    public void onDoubleTap() {
+        if(!isLocked()){
+            if (null != mVideoPlayerControl) mVideoPlayerControl.togglePlay();//回调给播放器
+        }
+    }
+
+    @Override
+    public void onStartSlide() {
+        if(null!=mGesturePositionView) mGesturePositionView.onStartSlide();
+    }
+
+    @Override
+    public void onStopSlide() {
+        if(null!=mGesturePositionView) mGesturePositionView.onStopSlide();
+    }
+
+    @Override
+    public void onPositionChange(int slidePosition, int currentPosition, int duration) {
+        if(null!=mGesturePositionView) mGesturePositionView.onPositionChange(slidePosition,currentPosition,duration);
+    }
+
+    @Override
+    public void onBrightnessChange(int percent) {
+        if(null!=mGesturePositionView) mGesturePositionView.onBrightnessChange(percent);
+    }
+
+    @Override
+    public void onVolumeChange(int percent) {
+        if(null!=mGesturePositionView) mGesturePositionView.onVolumeChange(percent);
     }
 }

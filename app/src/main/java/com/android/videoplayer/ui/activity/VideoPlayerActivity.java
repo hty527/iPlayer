@@ -1,7 +1,6 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -9,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -16,16 +16,16 @@ import com.android.iplayer.listener.OnMenuActionListener;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
-import com.android.videoplayer.media.ExoMediaPlayer;
-import com.android.videoplayer.video.ui.widget.PlayerMenuView;
+import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.controller.DanmuController;
-import com.android.videoplayer.R;
+import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
+import com.android.videoplayer.video.ui.widget.PlayerMenuView;
 
 /**
  * created by hty
@@ -39,6 +39,7 @@ public class VideoPlayerActivity extends BaseActivity {
     private DanmuController mDanmuController;
     private PlayerMenuView mMenuView;
     private int mediaCore;//多媒体解码器 0:系统默认 1:ijk 2:exo
+    private VideoController mController;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,12 +67,15 @@ public class VideoPlayerActivity extends BaseActivity {
      * 播放器初始化及调用示例
      */
     private void initPlayer() {
+
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
-        findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-        controller.showMenus(true,true,true);
+        findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
+        //绑定控制器
+        mController = new VideoController(mVideoPlayer.getContext());
+        mController.showBackBtn(false);//竖屏下是否显示返回按钮
+        mController.showMenus(true,true,true);//是否显示右上角菜单栏功能按钮
         //设置交互监听
-        controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+        mController.setOnControllerListener(new BaseController.OnControllerEventListener() {
 
             //菜单按钮交给控制器内部处理
             @Override
@@ -97,12 +101,14 @@ public class VideoPlayerActivity extends BaseActivity {
                 Logger.d(TAG,"onCompletion");
             }
         });
-//        controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
-        Logger.d(TAG,"init-->mDanmu:"+mDanmu);
+        //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
+        //绑定UI控制器
+        mVideoPlayer.setController(mController);
+
         //弹幕控制器处理
         if(mDanmu){
-            mDanmuController = new DanmuController(controller.getContext());
-            controller.addController(0,mDanmuController);
+            mDanmuController = new DanmuController(mController.getContext());
+            mController.addController(0,mDanmuController);
             Switch aSwitch = (Switch) findViewById(R.id.switch_danmu);
             aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -191,6 +197,27 @@ public class VideoPlayerActivity extends BaseActivity {
                     rePlay(null);
                 }
             });
+            //竖屏模式下的手势交互开关监听
+            if(null!=mController) mController.setCanTouchInPortrait(true);//竖屏状态下是否开启手势交互
+            View touch_1 = findViewById(R.id.touch_1);
+            touch_1.setSelected(true);
+            touch_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    findViewById(R.id.touch_1).setSelected(true);
+                    findViewById(R.id.touch_2).setSelected(false);
+                    if(null!=mController) mController.setCanTouchInPortrait(true);
+                }
+            });
+            findViewById(R.id.touch_2).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    findViewById(R.id.touch_1).setSelected(false);
+                    findViewById(R.id.touch_2).setSelected(true);
+                    if(null!=mController) mController.setCanTouchInPortrait(false);
+                }
+            });
+
             findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

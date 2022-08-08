@@ -1,8 +1,6 @@
 package com.android.iplayer.media;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
@@ -18,15 +16,15 @@ import com.android.iplayer.controller.VideoController;
  */
 public class VideoPlayer extends BasePlayer {
 
-    public VideoPlayer(@NonNull Context context) {
+    public VideoPlayer(Context context) {
         super(context);
     }
 
-    public VideoPlayer(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public VideoPlayer(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public VideoPlayer(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public VideoPlayer(Context context,  AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

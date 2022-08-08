@@ -6,6 +6,7 @@
 ### 项目介绍：
 一个封装基础视频播放器功能交互的SDK。
 
+<<<<<<< HEAD
 ### Apk下载：
 [Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
 **[Demo apk下载]**
@@ -24,6 +25,33 @@
 * Demo内置仿抖音滚动播放示例(支持秒播)</br>
 * Demo内置列表滑动自动播放示例</br>
 * Demo内置自定义弹幕交互控制器示例</br>
+=======
+### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
+**[Demo apk下载]**
+
+### SDK功能支持:
+* 支持常规http或https等网络地址播放</br>
+* 支持本地Assets和Raw资源文件播放</br>
+* SDK自带默认解码器+UI控制器交互</br>
+* 支持手势识别交互设置屏幕亮度、音量、快进、快退</br>
+* 支持倍速、缩放模式、静音、镜像等调节设置</br>
+* 支持多播放器同时播放</br>
+* 支持解码器动态切换和完全自定义视频解码器</br>
+* 支持完全自定义UI控制器、手势识别控制器交互等</br>
+* 支持直播拉流</br>
+* 支持任意界面开启无权限Activity级别可拖拽小窗口播放</br>
+* 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
+* 支持任意界面直接启动全屏播放</br>
+* 支持连续播放视频列表</br>
+* 默认UI控制器支持片段试看交互</br>
+* Demo列表或组件之间无缝转场播放示例</br>
+* Demo悬浮窗窗口播放带参无缝跳转Activity示例</br>
+* Demo支持MediaPlayer、IjkPlayer、ExoPlayer三种解码器切换示例</br>
+* Demo仿抖音播放示例</br>
+* Demo弹幕交互示例</br>
+* Demo Android8.0+画中画示例</br>
+>>>>>>> develop
 ***
 ### Android SDK集成：
 ```
@@ -40,9 +68,16 @@
     }
     //2.在你的模块build.gradle中添加：   
     dependencies {
+<<<<<<< HEAD
         implementation 'com.android.support:appcompat-v7:+'
         //或androidX环境：implementation 'androidx.appcompat:appcompat:1.0.2'
         implementation 'com.github.hty527:iPlayer:1.0.0'//播放器SDK
+=======
+        implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
+
+        //播放器SDK
+        implementation 'com.github.hty527:iPlayer:1.0.1'
+>>>>>>> develop
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
@@ -151,8 +186,6 @@
     IVideoManager.getInstance().setInterceptTAudioFocus(true);
     //设置移动网络下是否允许播放
     IVideoManager.getInstance().setMobileNetwork(true);
-    
-    //更多API文档使用，请参阅目录文件/iPlayer/doc/docs/javadoc/index.html
 ```
 #### 二、权限:
 * 1.请根据需要在您的AndroidManifest中声明权限</br>

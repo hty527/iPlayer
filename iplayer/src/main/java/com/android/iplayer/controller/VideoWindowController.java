@@ -3,7 +3,6 @@ package com.android.iplayer.controller;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.Animation;
 import android.widget.ImageView;
@@ -37,7 +36,7 @@ public class VideoWindowController extends BaseController {
     //失败\移动网络
     private ControllerStatusView mControllerStatus;
 
-    public VideoWindowController(@NonNull Context context) {
+    public VideoWindowController(Context context) {
         super(context);
     }
 
@@ -128,7 +127,7 @@ public class VideoWindowController extends BaseController {
     }
 
     @Override
-    public void progress(long currentDurtion, long totalDurtion, int bufferPercent) {
+    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {
 
     }
 
@@ -197,11 +196,11 @@ public class VideoWindowController extends BaseController {
     private ExHandel mExHandel=new ExHandel(Looper.getMainLooper()){
 
         @Override
-        public void handleMessage(@NonNull Message msg) {
+        public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
                 if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
-                    PlayerUtils.getInstance().startAlphaAnimation(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
+                    PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, 200, false, new PlayerUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             if(null!=mControllerController) mControllerController.setVisibility(GONE);

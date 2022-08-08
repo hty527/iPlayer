@@ -22,14 +22,18 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+
 import com.android.iplayer.widget.LayoutProvider;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -177,10 +181,6 @@ public class PlayerUtils {
 
     public int dpToPxInt(float dp) {
         return (int) (dpToPx(PlayerUtils.getInstance().getContext(),dp) + 0.5f);
-    }
-
-    public int dpToPxInt(Context context, float dp) {
-        return (int) (dpToPx(context,dp) + 0.5f);
     }
 
     /**
@@ -453,7 +453,7 @@ public class PlayerUtils {
      * @param isFillAfter
      * @param listener
      */
-    public void startAlphaAnimation(View view, int duration,boolean isFillAfter,OnAnimationListener listener) {
+    public void startAlphaAnimatioTo(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
         new AnimationTask().start(view,duration,isFillAfter,listener);
     }
@@ -470,6 +470,53 @@ public class PlayerUtils {
             this.mView=view;
             this.mOnAnimationListener=listener;
             AlphaAnimation alphaAnim = new AlphaAnimation(1f, 0);
+            alphaAnim.setDuration(duration);
+            alphaAnim.setFillAfter(isFillAfter);
+            alphaAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(null!=mOnAnimationListener) mOnAnimationListener.onAnimationEnd(animation);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            mView.startAnimation(alphaAnim);
+        }
+    }
+
+    /**
+     * 播放透明动画
+     * @param view
+     * @param duration
+     * @param isFillAfter
+     * @param listener
+     */
+    public void startAlphaAnimatioFrom(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+        if(null==view) return;
+        new AnimationTaskFrom().start(view,duration,isFillAfter,listener);
+    }
+
+    /**
+     * 动画执行
+     */
+    private class AnimationTaskFrom{
+
+        private View mView;
+        private OnAnimationListener mOnAnimationListener;
+
+        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+            this.mView=view;
+            this.mOnAnimationListener=listener;
+            mView.setVisibility(View.VISIBLE);
+            AlphaAnimation alphaAnim = new AlphaAnimation(0f, 1f);
             alphaAnim.setDuration(duration);
             alphaAnim.setFillAfter(isFillAfter);
             alphaAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -550,6 +597,34 @@ public class PlayerUtils {
         } catch (Throwable ex) {
             ex.printStackTrace();
         }
+        return false;
+    }
+
+    /**
+     * 边缘检测
+     */
+    public boolean isEdge(Context context, MotionEvent e) {
+        float edgeSize = dpToPx(context, 40);
+        return e.getRawX() < edgeSize
+                || e.getRawX() > getScreenWidth(context) - edgeSize
+                || e.getRawY() < edgeSize
+                || e.getRawY() > getScreenHeight(context) - edgeSize;
+    }
+
+    private static long lastClickTime;
+
+    /**
+     * 限定时间内响应点击时间
+     * @param maxDuration 间隔的最大时长
+     * @return
+     */
+    public boolean isFastClick(int maxDuration) {
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        if (currentTime - lastClickTime > maxDuration) {
+            lastClickTime = currentTime;
+            return true;
+        }
+        lastClickTime = currentTime;
         return false;
     }
 }

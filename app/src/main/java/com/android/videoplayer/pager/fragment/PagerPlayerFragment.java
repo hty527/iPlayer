@@ -1,12 +1,12 @@
 package com.android.videoplayer.pager.fragment;
 
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import androidx.recyclerview.widget.RecyclerView;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.model.PlayerState;
@@ -15,16 +15,16 @@ import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.cache.PreloadManager;
-import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.media.JkMediaPlayer;
-import com.android.videoplayer.pager.base.BaseViewPager;
 import com.android.videoplayer.pager.adapter.PagerPlayerAdapter;
-import com.android.videoplayer.ui.widget.PagerVideoPlayer;
+import com.android.videoplayer.pager.base.BaseViewPager;
+import com.android.videoplayer.pager.bean.VideoBean;
+import com.android.videoplayer.pager.interfaces.OnViewPagerListener;
 import com.android.videoplayer.pager.widget.PagerVideoController;
+import com.android.videoplayer.pager.widget.ViewPagerLayoutManager;
+import com.android.videoplayer.ui.widget.PagerVideoPlayer;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
-import com.android.videoplayer.pager.interfaces.OnViewPagerListener;
-import com.android.videoplayer.pager.widget.ViewPagerLayoutManager;
 import com.android.videoplayer.utils.ScreenUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -273,6 +273,8 @@ public class PagerPlayerFragment extends BaseFragment {
      * @param position 从第几个开始播放
      */
     public void navigationPlayer(List<VideoBean> data, int position) {
+        Logger.d(TAG,"onVisible-->");
+//        isVisible=true;
         if(null!=data&&data.size()>0){
             Logger.d(TAG,"navigationPlayer-->data:"+data.size()+",position:"+position);
             resetPlayer(null,mPosition);//这个入口会重复调用,必须先移除上一个播放器

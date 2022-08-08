@@ -1,14 +1,14 @@
 package com.android.videoplayer.controller;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.model.PlayerState;
-import com.android.videoplayer.danmu.DanmuPaserView;
 import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.R;
+import com.android.videoplayer.danmu.DanmuPaserView;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;
 import java.util.List;
@@ -78,7 +78,7 @@ public class DanmuController extends BaseController {
     }
 
     @Override
-    public void progress(long currentDurtion, long totalDurtion, int bufferPercent) {
+    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {
 
     }
 

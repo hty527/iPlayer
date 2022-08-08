@@ -30,10 +30,10 @@ public abstract class OnPlayerEventListener {
     public void onVideoSizeChanged(int width, int height){}
 
     /**
-     * 播放进度实时回调,回调到子线程
+     * 播放进度实时回调,回调到主线程
      * @param currentDurtion 当前播放进度,单位:毫秒时间戳
      * @param totalDurtion 总时长,单位:毫秒时间戳
      * @param bufferPercent 已缓冲进度,单位:百分比
      */
-    public void progress(long currentDurtion, long totalDurtion, int bufferPercent) {}
+    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {}
 }

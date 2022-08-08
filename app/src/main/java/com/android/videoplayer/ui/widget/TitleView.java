@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.videoplayer.R;
 import com.android.videoplayer.utils.ScreenUtils;
@@ -54,7 +54,7 @@ public class TitleView extends FrameLayout {
         if(0==mTitleStyle){
             btnBack.setColorFilter(Color.parseColor("#333333"));
             titleText.setTextColor(Color.parseColor("#333333"));
-            titleBg.setImageResource(R.mipmap.ic_title_bg);
+            titleBg.setImageResource(R.mipmap.ic_dialog_bg);
         }else{
             btnBack.setColorFilter(Color.parseColor("#FFFFFF"));
             titleText.setTextColor(Color.parseColor("#FFFFFF"));

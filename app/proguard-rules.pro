@@ -193,9 +193,9 @@
 -dontwarn tv.danmaku.ijk.**
 
 #其它
--keep class com.android.videoplayer.net.OkHttpUtils**{*;}
+-keep class com.android.videoplayer.net.**{*;}
 #通用适配器
-#-keep class com.android.videoplayer.base.adapter.** {*;}
+-keep class com.android.videoplayer.base.adapter.** {*;}
 -keep public class * extends com.android.videoplayer.base.adapter.widget.BaseViewHolder
 -keepclassmembers  class **$** extends com.android.videoplayer.base.adapter.widget.BaseViewHolder {
      <init>(...);
