@@ -33,7 +33,7 @@
             android:id="@+id/gesture_present_progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2.3dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="10dp"
