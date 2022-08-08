@@ -55,7 +55,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.3'
+        implementation 'com.github.hty527:iPlayer:1.0.3.0'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
