@@ -225,14 +225,14 @@
 ```
 ### SDK及Demo快照：
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/1.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/2.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/1.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/2.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/3.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/4.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/3.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/4.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/5.jpg" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/6.jpg" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/5.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/6.jpg?q=1" width="270",height="585">
 </div>
