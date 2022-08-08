@@ -7,16 +7,18 @@
         </shape>
     </item>
     <item android:id="@android:id/secondaryProgress">
-        <clip>
+        <scale android:scaleWidth="100%">
             <shape>
+                <corners android:radius="2dp"></corners>
                 <solid android:color="#00FFFFFF" />
                 <size android:height="2dp" />
             </shape>
-        </clip>
+        </scale>
     </item>
     <item android:id="@android:id/progress">
         <scale android:scaleWidth="100%">
             <shape android:shape="rectangle" >
+                <corners android:radius="2dp"></corners>
                 <gradient
                     android:startColor="@color/player_progress_start"
                     android:endColor="@color/player_progress_end"

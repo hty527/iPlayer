@@ -6,7 +6,6 @@ import android.view.Surface;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.videoplayer.media.help.ExoMediaSourceHelper;
-import com.android.videoplayer.utils.Logger;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackException;
@@ -122,7 +121,7 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     @Override
     public long getCurrentPosition() {
         if(null!=mMediaPlayer){
-            Logger.d(TAG,"currentPosition:"+mMediaPlayer.getCurrentPosition());
+            if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(this,mMediaPlayer.getBufferedPercentage());
             return mMediaPlayer.getCurrentPosition();
         }
         return 0;
@@ -135,7 +134,6 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     @Override
     public long getDuration() {
         if(null!=mMediaPlayer){
-            Logger.d(TAG,"duration:"+mMediaPlayer.getDuration());
             return mMediaPlayer.getDuration();
         }
         return 0;
@@ -237,28 +235,28 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
 //        Logger.d(TAG,"onPlaybackStateChanged-->playbackState:"+playbackState+",isPlaying:"+isPlaying);
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(null, IMediaPlayer.MEDIA_INFO_BUFFERING_START,0);
+                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, IMediaPlayer.MEDIA_INFO_BUFFERING_START,0);
                 break;
             case Player.STATE_READY:
                 if(null!=mMediaPlayer) mMediaPlayer.setPlayWhenReady(true);
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(null, isPlaying ? IMediaPlayer.MEDIA_INFO_BUFFERING_END : IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
+                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, isPlaying ? IMediaPlayer.MEDIA_INFO_BUFFERING_END : IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
                 isPlaying=true;
                 break;
             case Player.STATE_ENDED:
                 if(null!=mOnCompletionListener) mOnCompletionListener.onCompletion(null);
                 break;
             default:
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(null, playbackState,0);
+                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, playbackState,0);
         }
     }
 
     @Override
     public void onPlayerError(PlaybackException error) {
-        if(null!=mOnErrorListener) mOnErrorListener.onError(null,error.errorCode,0);
+        if(null!=mOnErrorListener) mOnErrorListener.onError(this,error.errorCode,0);
     }
 
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
-        if(null!=mOnVideoSizeChangedListener) mOnVideoSizeChangedListener.onVideoSizeChanged(null, videoSize.width, videoSize.height,0,0);
+        if(null!=mOnVideoSizeChangedListener) mOnVideoSizeChangedListener.onVideoSizeChanged(this, videoSize.width, videoSize.height,0,0);
     }
 }
