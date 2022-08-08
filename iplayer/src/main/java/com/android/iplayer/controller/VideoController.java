@@ -507,9 +507,9 @@ public class VideoController extends GestureController implements IGestureContro
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         if(null!=mControllerController) mControllerController.setVisibility(GONE);
+                        mProgressBar.setVisibility(View.VISIBLE);
                     }
                 });
-                mProgressBar.setVisibility(View.VISIBLE);
             }else{
                 mProgressBar.setVisibility(View.GONE);
                 PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
@@ -559,20 +559,23 @@ public class VideoController extends GestureController implements IGestureContro
      * 手势交互时取消所有控制器
      */
     private void hideController(){
-        removeDelayedRunnable(0);
-        PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if(null!=mControllerController) mControllerController.setVisibility(GONE);
-            }
-        });
-        PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
-            }
-        });
-        mProgressBar.setVisibility(View.VISIBLE);
+        if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
+            removeDelayedRunnable(0);
+            PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(null!=mControllerController) mControllerController.setVisibility(GONE);
+                    if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
+                }
+            });
+            PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
+                }
+            });
+
+        }
     }
 
     /**
