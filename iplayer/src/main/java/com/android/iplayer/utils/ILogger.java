@@ -1,7 +1,6 @@
 package com.android.iplayer.utils;
 
 import android.util.Log;
-
 import com.android.iplayer.BuildConfig;
 
 /**

@@ -28,9 +28,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-
 import com.android.iplayer.widget.LayoutProvider;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Calendar;

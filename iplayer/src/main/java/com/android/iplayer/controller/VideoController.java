@@ -499,7 +499,6 @@ public class VideoController extends GestureController implements IGestureContro
                 mProgressBar.setVisibility(View.GONE);
                 return;
             }
-
             boolean controllerShow=false;
             //控制栏显示中
             if(mControllerController.getVisibility()==View.VISIBLE){
@@ -554,6 +553,26 @@ public class VideoController extends GestureController implements IGestureContro
                 }
             }
         }
+    }
+
+    /**
+     * 手势交互时取消所有控制器
+     */
+    private void hideController(){
+        removeDelayedRunnable(0);
+        PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(null!=mControllerController) mControllerController.setVisibility(GONE);
+            }
+        });
+        PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerTitle, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
+            }
+        });
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -849,7 +868,10 @@ public class VideoController extends GestureController implements IGestureContro
 
     @Override
     public void onStartSlide() {
-        if(null!=mGesturePositionView) mGesturePositionView.onStartSlide();
+        if(null!=mGesturePositionView){
+            hideController();
+            mGesturePositionView.onStartSlide();
+        }
     }
 
     @Override
