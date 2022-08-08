@@ -232,7 +232,6 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
              */
             mVideoPlayer=new VideoPlayer(this);
             mVideoPlayer.setTempContext(this);
-            mVideoPlayer=new VideoPlayer(this);
             mVideoPlayer.initController(false);//绑定默认的控制器
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
@@ -269,6 +268,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 Logger.d(TAG,"addListener-->");
                 controller.showMenus(true,true,true);
                 controller.setListItemPlayerMode(false);//从可能的列表模式转换为正常模式
+                controller.setCanTouchInPortrait(true);//竖屏模式下允许手势交互
                 controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
                     @Override
                     public void onMenu() {

@@ -8,8 +8,8 @@ android {
         applicationId "com.android.iplayer"
         minSdkVersion 16
         targetSdkVersion 0
-        versionCode 10001
-        versionName "1.0.1"
+        versionCode 10002
+        versionName "1.0.2"
         multiDexEnabled true
         ndk {
             //使用abiFilters筛选你需要的so
@@ -87,8 +87,8 @@ dependencies {
     //视频缓存,根据自己需要实现
     implementation project(':videocache')
     //播放器
-//    implementation project(':iplayer')
+    implementation project(':iplayer')
 
     //播放器SDK
-    implementation 'com.github.hty527:iPlayer:1.0.1'
+//    implementation 'com.github.hty527:iPlayer:1.0.1'
 }

@@ -16,7 +16,7 @@
                     android:startColor="@color/player_progress_start"
                     android:endColor="@color/player_progress_end"
                     android:type="linear"
-                    android:angle="360"/>
+                    android:angle="0"/>
                 <size android:height="3dp" />
             </shape>
         </scale>

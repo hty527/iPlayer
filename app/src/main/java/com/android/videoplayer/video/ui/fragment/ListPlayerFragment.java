@@ -346,6 +346,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         VideoController controller = (VideoController) mVideoPlayer.getController();
         if(null!=controller){
             controller.showMenus(false,false,false);
+            controller.setCanTouchInPortrait(false);//竖屏下不允许手势交互
             controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
 
                 @Override
