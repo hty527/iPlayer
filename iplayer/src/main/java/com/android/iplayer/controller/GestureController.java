@@ -10,7 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.interfaces.IGestureControl;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**
@@ -254,7 +253,6 @@ public abstract class GestureController extends BaseController implements View.O
      */
     private void slideToChangeBrightness(float deltaY) {
         Activity activity = getActivity();
-        ILogger.d(TAG,"slideToChangeBrightness");
         if (activity == null) return;
         Window window = activity.getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
