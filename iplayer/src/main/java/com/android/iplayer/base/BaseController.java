@@ -1,5 +1,6 @@
 package com.android.iplayer.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,6 +13,7 @@ import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
 import com.android.iplayer.model.PlayerState;
+import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -337,6 +339,15 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
             return mVideoPlayerControl.isPlaying();
         }
         return false;
+    }
+
+    protected Activity getActivity() {
+        if(null!=mVideoPlayerControl&&null!=mVideoPlayerControl.getTempContext()){
+            ILogger.d(TAG,"getActivity-->1");
+            return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
+        }
+        ILogger.d(TAG,"getActivity-->2");
+        return PlayerUtils.getInstance().getActivity(getContext());
     }
 
     /**

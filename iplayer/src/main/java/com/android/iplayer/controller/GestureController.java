@@ -99,7 +99,7 @@ public abstract class GestureController extends BaseController implements View.O
                     || PlayerUtils.getInstance().isEdge(getContext(), e)) //处于屏幕边沿
                 return true;
             mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-            Activity activity = PlayerUtils.getInstance().getActivity(getContext());
+            Activity activity = getActivity();
             if (activity == null) {
                 mBrightness = 0;
             } else {
@@ -177,7 +177,7 @@ public abstract class GestureController extends BaseController implements View.O
                 }
                 mFirstTouch = false;
             }
-            ILogger.d(TAG,"onScroll-->mChangePosition:"+mChangePosition+",mChangeBrightness:"+mChangeBrightness+",mChangeVolume"+mChangeVolume);
+//            ILogger.d(TAG,"onScroll-->mChangePosition:"+mChangePosition+",mChangeBrightness:"+mChangeBrightness+",mChangeVolume:"+mChangeVolume);
             if (mChangePosition) {//seek播放进度
                 slideToChangePosition(deltaX);
             } else if (mChangeBrightness) {//更改屏幕亮度
@@ -253,7 +253,8 @@ public abstract class GestureController extends BaseController implements View.O
      * @param deltaY
      */
     private void slideToChangeBrightness(float deltaY) {
-        Activity activity = PlayerUtils.getInstance().getActivity(getContext());
+        Activity activity = getActivity();
+        ILogger.d(TAG,"slideToChangeBrightness");
         if (activity == null) return;
         Window window = activity.getWindow();
         WindowManager.LayoutParams attributes = window.getAttributes();
@@ -269,6 +270,7 @@ public abstract class GestureController extends BaseController implements View.O
         window.setAttributes(attributes);
         onBrightnessChange(percent);
     }
+
 
     /**
      * 改变音量

@@ -11,10 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.R;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.utils.PlayerUtils;
@@ -133,7 +131,7 @@ public class GesturePositionView extends FrameLayout implements IGestureControl 
         }
         if(null!=mPresentProgress){
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
-            int toPxInt10 = PlayerUtils.getInstance().dpToPxInt(10f);
+            int toPxInt10 = PlayerUtils.getInstance().dpToPxInt(12f);
             int toPxInt16 = PlayerUtils.getInstance().dpToPxInt(16);
             layoutParams.setMargins(toPxInt10,toPxInt16,toPxInt10,0);
         }
@@ -151,7 +149,7 @@ public class GesturePositionView extends FrameLayout implements IGestureControl 
         }
         if(null!=mPresentProgress){
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
-            int toPxInt12 = PlayerUtils.getInstance().dpToPxInt(12f);
+            int toPxInt12 = PlayerUtils.getInstance().dpToPxInt(16f);
             int toPxInt20 = PlayerUtils.getInstance().dpToPxInt(20);
             layoutParams.setMargins(toPxInt12,toPxInt20,toPxInt12,0);
         }
