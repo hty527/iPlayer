@@ -134,7 +134,7 @@
     mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
     //..更多设置或功能API请参阅IVideoPlayerControl
 
-    //在声明播放器添加了属性app:initController="true 或mVideoPlayer.initController();之后
+    //在声明播放器添加了属性app:initController="true 或mVideoPlayer.initController(); 或mVideoPlayer.setController(controller);之后
     BaseController controller = mVideoPlayer.getController();
     if(null!=controller){
         controller.showBackBtn(false);//竖屏状态下是否显示返回按钮
