@@ -62,9 +62,9 @@ public class DataFactory {
         menus.add(new Menu("项目主页",17,"其它",3));
         Menu menu = new Menu("", 101, "版本预告", 3, 1);
         Version version=new Version();
-        version.setCode("1.0.1");
+        version.setCode("1.0.x");
         version.setTime("待定,请持续关注");
-        version.setDescript("1、新增自定义手势识别控制器示例\n2、exo内核解码器示例");
+        version.setDescript("1、新增投屏功能");
         menu.setVersion(version);
         menus.add(menu);
         return menus;
