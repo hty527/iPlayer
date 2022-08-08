@@ -6,28 +6,8 @@
 ### 项目介绍：
 一个封装基础视频播放器功能交互的SDK。
 
-<<<<<<< HEAD
-### Apk下载：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
-**[Demo apk下载]**
-
-### 功能支持:
-* 基础的网络地址视频播放、本地Raw和Assets资源视频播放</br>
-* 直播拉流</br>
-* 内置基础UI控制器交互、横屏、静音、画面镜像、缩放模式等设置</br>
-* 支持自定义播放器解码器内核</br>
-* 多播放器同时播放</br>
-* 支持完全自定义UI控制器</br>
-* 无权限Activity窗口播放</br>
-* 全局悬浮窗窗口播放,Demo内置悬浮窗和Activity无缝转场示例<br/>
-* 支持列表播放转场到落地页无缝衔接播放</br>
-* Android 8.0画中画</br>
-* Demo内置仿抖音滚动播放示例(支持秒播)</br>
-* Demo内置列表滑动自动播放示例</br>
-* Demo内置自定义弹幕交互控制器示例</br>
-=======
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.0.apk "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.1.apk "Download"
 **[Demo apk下载]**
 
 ### SDK功能支持:
@@ -51,7 +31,6 @@
 * Demo仿抖音播放示例</br>
 * Demo弹幕交互示例</br>
 * Demo Android8.0+画中画示例</br>
->>>>>>> develop
 ***
 ### Android SDK集成：
 ```
@@ -66,18 +45,13 @@
             maven { url 'https://jitpack.io' }
         }
     }
+
     //2.在你的模块build.gradle中添加：   
     dependencies {
-<<<<<<< HEAD
-        implementation 'com.android.support:appcompat-v7:+'
-        //或androidX环境：implementation 'androidx.appcompat:appcompat:1.0.2'
-        implementation 'com.github.hty527:iPlayer:1.0.0'//播放器SDK
-=======
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
         implementation 'com.github.hty527:iPlayer:1.0.1'
->>>>>>> develop
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码</br>
@@ -161,6 +135,7 @@
     if(null!=controller){
         controller.showBackBtn(false);//竖屏状态下是否显示返回按钮
         controller.showMenus(false,true,true);//竖屏状态是否显示控制器右上角的功能菜单按钮,默认是显示的(横屏不显示所有菜单按钮)
+        controller.setCanTouchInPortrait(true);//竖屏状态下启用手势交互
         //监听控制器交互事件(设置开启了返回showBackBtn\菜单栏showMenus等功能后可设置监听,回调方法请参阅：OnControllerEventListener)
         controller.setOnControllerListener(new BaseController.OnControllerEventListener(){
 
