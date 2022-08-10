@@ -164,8 +164,10 @@ public class VideoPlayerActivity extends BaseActivity {
                     if(null!=mVideoPlayer) mVideoPlayer.setMirror(mirror);
                 }
             });
+            View btnCore1 = findViewById(R.id.btn_core_1);
+            btnCore1.setSelected(true);
             //解码器切换监听
-            findViewById(R.id.btn_core_1).setOnClickListener(new View.OnClickListener() {
+            btnCore1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     findViewById(R.id.btn_core_3).setSelected(false);
@@ -175,8 +177,6 @@ public class VideoPlayerActivity extends BaseActivity {
                     rePlay(null);
                 }
             });
-            View btnCore2 = findViewById(R.id.btn_core_2);
-            btnCore2.setSelected(true);
             findViewById(R.id.btn_core_2).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -231,10 +231,6 @@ public class VideoPlayerActivity extends BaseActivity {
                 }
             });
         }
-
-        mediaCore=1;//更换为ijk解码器
-
-
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             /**

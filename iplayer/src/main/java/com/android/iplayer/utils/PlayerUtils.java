@@ -28,10 +28,14 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+
 import com.android.iplayer.widget.LayoutProvider;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +47,7 @@ import java.util.Locale;
  */
 public class PlayerUtils {
 
+    private static final String TAG = "PlayerUtils";
     private static PlayerUtils mInstance;
 
     public static synchronized PlayerUtils getInstance() {
@@ -440,16 +445,26 @@ public class PlayerUtils {
         return true;
     }
 
+    /**
+     * 获取当前系统时间
+     * @return
+     */
+    public String getCurrentTimeStr() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        Date date = new Date();
+        return simpleDateFormat.format(date);
+    }
+
     public interface OnAnimationListener{
         void onAnimationEnd(Animation animation);
     }
 
     /**
      * 播放透明动画
-     * @param view
-     * @param duration
-     * @param isFillAfter
-     * @param listener
+     * @param view 目标View
+     * @param duration 动画时长
+     * @param isFillAfter 是否停留在最后一帧
+     * @param listener 状态监听器
      */
     public void startAlphaAnimatioTo(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
@@ -492,10 +507,10 @@ public class PlayerUtils {
 
     /**
      * 播放透明动画
-     * @param view
-     * @param duration
-     * @param isFillAfter
-     * @param listener
+     * @param view 目标View
+     * @param duration 动画时长
+     * @param isFillAfter 是否停留在最后一帧
+     * @param listener 状态监听器
      */
     public void startAlphaAnimatioFrom(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
@@ -599,10 +614,15 @@ public class PlayerUtils {
     }
 
     /**
-     * 边缘检测
+     * 用户手指在屏幕边缘检测
+     * @param context 上下文
+     * @param e 触摸事件
+     * @param isPortrait 是否是竖屏状态下
+     * @return
      */
-    public boolean isEdge(Context context, MotionEvent e) {
+    public boolean isEdge(Context context, MotionEvent e,boolean isPortrait) {
         float edgeSize = dpToPx(context, 40);
+        ILogger.d(TAG,"isEdge-->isPortrait:"+isPortrait+",eX:"+e.getRawX()+",eY:"+e.getRawY()+",screenWidt:"+getScreenWidth(context));
         return e.getRawX() < edgeSize
                 || e.getRawX() > getScreenWidth(context) - edgeSize
                 || e.getRawY() < edgeSize

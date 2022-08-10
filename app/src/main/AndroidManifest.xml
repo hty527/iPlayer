@@ -36,7 +36,7 @@
         </activity>
         <!--双播放器同时播放示例,注意！！！必须添加：android:configChanges="orientation|screenSize"属性！！！-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.VideoDoublePlayerActivity"
+            android:name="com.android.videoplayer.ui.activity.VideosPlayerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">

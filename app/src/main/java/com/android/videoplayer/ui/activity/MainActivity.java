@@ -70,8 +70,9 @@ public class MainActivity extends BaseActivity {
                             intent.putExtra("islive",true);
                             intent.putExtra("title","直播拉流");
                             break;
-                        case 3://双播放器同时播放
-                            intent=new Intent(MainActivity.this, VideoDoublePlayerActivity.class);
+                        case 3://多播放器同时播放
+                            intent=new Intent(MainActivity.this, VideosPlayerActivity.class);
+                            intent.putExtra("title","多播放器同时播放");
                             break;
                         case 4://全屏播放
                             intent=new Intent(MainActivity.this, FullScreenPlayerActivity.class);

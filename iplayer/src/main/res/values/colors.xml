@@ -8,4 +8,5 @@
     <color name="player_progress_end">@color/player_style</color>
     <color name="player_seek_thumb">#FFFFFF</color>
     <color name="player_gesture_background">#33FFFFFF</color>
+    <color name="player_white">#FFFFFF</color>
 </resources>

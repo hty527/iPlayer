@@ -64,7 +64,7 @@ public class DataFactory {
         Version version=new Version();
         version.setCode("1.0.xx");
         version.setTime("待定,请持续关注");
-        version.setDescript("1、全屏电量实时显示\n2、新增投屏功能");
+        version.setDescript("2、新增投屏TV功能");
         menu.setVersion(version);
         menus.add(menu);
         return menus;
