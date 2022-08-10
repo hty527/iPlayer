@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,6 +18,7 @@ import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.BatteryView;
 import com.android.iplayer.widget.ControllerStatusView;
 import com.android.iplayer.widget.GesturePositionView;
 
@@ -366,6 +368,9 @@ public class VideoController extends GestureController implements IGestureContro
             //竖屏下处理标题栏和控制栏的左右两侧缩放
             titleBar.setPadding(0,0,0,0);
             controllerBar.setPadding(0,0,0,0);
+            //移除系统时间\电池电量组件
+            FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
+            controllerBattery.removeAllViews();
         }else{
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
@@ -378,6 +383,9 @@ public class VideoController extends GestureController implements IGestureContro
             titleBar.setPadding(margin,0,margin,0);
             controllerBar.setPadding(margin,0,margin,0);
             toggleLocker(false);
+            //添加系统时间\电池电量组件
+            FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
+            controllerBattery.addView(new BatteryView(getParentContext()));
         }
         toggleController(true);//控制器不可见
     }

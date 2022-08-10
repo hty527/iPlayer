@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.utils.PlayerUtils;
@@ -21,13 +22,15 @@ public abstract class GestureController extends BaseController implements View.O
 
     private GestureDetector mGestureDetector;
     private AudioManager mAudioManager;
-    private boolean mChangePosition;//是否允许滑动seek播放
-    private boolean mChangeBrightness;//是否允许滑动更改屏幕亮度
-    private boolean mChangeVolume;//是否允许滑动更改系统音量
+    //设置相关
     private boolean mCanTouchPosition = true;//是否可以滑动调节进度，默认可以
     private boolean mCanTouchInPortrait;//是否在竖屏模式下开始手势控制，默认关闭
     private boolean mIsGestureEnabled = true;//是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
     private boolean mIsDoubleTapTogglePlayEnabled;//是否开启双击播放/暂停，默认关闭
+    //逻辑相关
+    private boolean mChangePosition;//是否允许滑动seek播放
+    private boolean mChangeBrightness;//是否允许滑动更改屏幕亮度
+    private boolean mChangeVolume;//是否允许滑动更改系统音量
     private int mStreamVolume;
     private float mBrightness;
     private int mSeekPosition=-1;
@@ -93,9 +96,11 @@ public abstract class GestureController extends BaseController implements View.O
 
         @Override
         public boolean onDown(MotionEvent e) {
+            boolean edge = PlayerUtils.getInstance().isEdge(getParentContext(), e,isOrientationPortrait());
+//            ILogger.d(TAG,"onDown-->isPlayering:"+isPlayering()+",edge:"+edge+",mIsGestureEnabled:"+mIsGestureEnabled+",e:"+e.getAction());
             if (!isPlayering() //不处于播放状态
                     || !mIsGestureEnabled //关闭了手势
-                    || PlayerUtils.getInstance().isEdge(getContext(), e)) //处于屏幕边沿
+                    || edge) //处于屏幕边沿
                 return true;
             mStreamVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             Activity activity = getActivity();
@@ -144,14 +149,14 @@ public abstract class GestureController extends BaseController implements View.O
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//            boolean edge1 = PlayerUtils.getInstance().isEdge(getContext(), e1);
-//            boolean edge2 = PlayerUtils.getInstance().isEdge(getContext(), e2);
+//            boolean edge1 = PlayerUtils.getInstance().isEdge(getParentContext(), e1);
+//            boolean edge2 = PlayerUtils.getInstance().isEdge(getParentContext(), e2);
 //        ILogger.d(TAG,"onScroll-->e1:"+e1.getAction()+",e2:"+e2+",distanceX:"+distanceX+",distanceY:"+distanceY+",mIsGestureEnabled:"+mIsGestureEnabled+",mCanSlide:"+mCanSlide+",edge1:"+edge1+",edge2:"+edge2+",mFirstTouch:"+mFirstTouch);
             if (!isPlayering() //不处于播放状态
                     || !mIsGestureEnabled //关闭了手势
                     || !mCanSlide //关闭了滑动手势
                     || isLocked() //锁住了屏幕
-                    || PlayerUtils.getInstance().isEdge(getContext(), e1)) {// //处于屏幕边沿
+                    || PlayerUtils.getInstance().isEdge(getParentContext(), e1,isOrientationPortrait())) {// //处于屏幕边沿
                 return true;
             }
             float deltaX = e1.getX() - e2.getX();

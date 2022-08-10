@@ -183,6 +183,12 @@
                     android:layout_gravity="center_vertical"
                     android:padding="10dp"
                     android:visibility="gone"/>
+                <FrameLayout
+                    android:id="@+id/controller_battery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"/>
             </LinearLayout>
         </LinearLayout>
         <!--播放完成,重新播放-->

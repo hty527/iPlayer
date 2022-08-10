@@ -8,13 +8,14 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import com.android.iplayer.R;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
 import com.android.iplayer.model.PlayerState;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -346,6 +347,13 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
             return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
         }
         return PlayerUtils.getInstance().getActivity(getContext());
+    }
+
+    protected Context getParentContext() {
+        if(null!=mVideoPlayerControl&&null!=mVideoPlayerControl.getTempContext()){
+            return  mVideoPlayerControl.getTempContext();
+        }
+        return getContext();
     }
 
     /**

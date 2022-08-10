@@ -305,9 +305,9 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             PlayerUtils.getInstance().removeViewFromParent(videoPlayer);
             mVideoPlayer=videoPlayer;
             /**
-             * 重要
+             * 重要,还原到宿主后需要置空临时上下文
              */
-            mVideoPlayer.setTempContext(mPlayerContainer.getContext());
+            mVideoPlayer.setTempContext(null);
             /**
              * 还原到列表模式
              */

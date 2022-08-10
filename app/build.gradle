@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.android.iplayer"
         minSdkVersion 16
-        targetSdkVersion 0
-        versionCode 10003
-        versionName "1.0.3"
+        targetSdkVersion 30
+        versionCode 10004
+        versionName "1.0.4"
         multiDexEnabled true
         ndk {
             //使用abiFilters筛选你需要的so
@@ -89,5 +89,5 @@ dependencies {
     //播放器
     implementation project(':iplayer')
     //播放器SDK
-//    implementation 'com.github.hty527:iPlayer:1.0.3.2'
+//    implementation 'com.github.hty527:iPlayer:1.0.4'
 }

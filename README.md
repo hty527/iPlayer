@@ -7,7 +7,7 @@
 一个封装基础视频播放器功能交互的SDK。
 
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.3.apk?version=1.0.3 "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.4.apk?version=1.0.4 "Download"
 **[Demo apk下载]**
 
 ### 历史版本
@@ -15,14 +15,13 @@
 **[查看历史版本]**
 
 ### SDK功能支持:
-* 支持常规http或https等网络地址播放</br>
-* 支持本地Assets和Raw资源文件播放</br>
-* SDK自带默认解码器+UI控制器交互</br>
-* 支持手势识别交互设置屏幕亮度、音量、快进、快退</br>
+* 支持常规网络地址、本地Assets和Raw资源文件播放</br>
+* 支持手势识别改变屏幕亮度、音量、快进、快退</br>
 * 支持倍速、缩放模式、静音、镜像等调节设置</br>
 * 支持多播放器同时播放</br>
-* 支持解码器动态切换和完全自定义视频解码器</br>
+* 支持自定义视频解码器</br>
 * 支持完全自定义UI控制器、手势识别控制器交互等</br>
+* SDK自带默认解码器+UI控制器交互</br>
 * 支持直播拉流</br>
 * 支持任意界面开启无权限Activity级别可拖拽小窗口播放</br>
 * 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
@@ -55,10 +54,10 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.3.2'
+        implementation 'com.github.hty527:iPlayer:1.0.4'
     }
 ```
-* 2.在需要播放视频的xml中添加如下代码</br>
+* 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
 ```
     <com.android.player.media.VideoPlayer
         android:id="@+id/video_player"
@@ -177,6 +176,13 @@
 
     <!--如您的播放器需要支持全局悬浮窗窗口播放请申明此权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+
+    <!--播放网络视频需要在application节点声明此属性-->
+    <application
+        android:usesCleartextTraffic="true">
+
+    </application>
 ```
 #### 三、高级功能:
 * 1.无权限悬浮窗播放(Activity级别)</br>
