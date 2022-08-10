@@ -35,6 +35,7 @@ public class VideoController extends GestureController implements IGestureContro
     public static final int SCENE_ERROR      =3;//播放失败
     private static final int MESSAGE_HIDE_CONTROLLER      = 100;//隐藏控制器
     private static final int MESSAGE_HIDE_LOCKER          = 101;//隐藏控制锁
+    private static final long DELAYED_INVISIBLE = 5000;//延时隐藏控制器、控制锁时长
     //播放按钮,控制器,标题栏,重新播放
     protected View mControllerPlay,mControllerController,mControllerTitle,mControllerReplay;
     private ImageView mControllerLocker;//控制锁
@@ -270,7 +271,12 @@ public class VideoController extends GestureController implements IGestureContro
                 }else if(itemPlayerMode){//列表播放模式
                     changedUIState(View.GONE, View.GONE, View.VISIBLE,View.GONE,View.GONE,View.GONE,0);
                 }else{
-                    changedUIState(View.GONE, View.GONE, View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,0);
+                    if(isLocked()){//如果控制锁正在被锁定时，恢复播放不显示控制器，只显示底部进度条
+                        changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
+                        if(null!=mProgressBar) mProgressBar.setVisibility(VISIBLE);
+                    }else{
+                        changedUIState(View.GONE, View.GONE, View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,0);
+                    }
                 }
                 break;
             case STATE_PAUSE://人为暂停中
@@ -361,6 +367,8 @@ public class VideoController extends GestureController implements IGestureContro
             //控制锁不可用
             toggleLocker(true);
             setLocker(false);
+            if(null!=mControllerLocker) mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);//每次切换到横屏时重置锁状态
+
             if(null!=mGesturePositionView) mGesturePositionView.enterPortrait();
             //标题栏间距处理
             findViewById(R.id.controller_title_back).setVisibility(showBackBtn?View.VISIBLE:View.GONE);
@@ -382,12 +390,14 @@ public class VideoController extends GestureController implements IGestureContro
             //横屏下处理标题栏和控制栏的左右两侧缩放
             titleBar.setPadding(margin,0,margin,0);
             controllerBar.setPadding(margin,0,margin,0);
-            toggleLocker(false);
             //添加系统时间\电池电量组件
             FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
             controllerBattery.addView(new BatteryView(getParentContext()));
         }
         toggleController(true);//控制器不可见
+        if(!isOrientationPortrait()){
+            resetLockerStatus();//重置控制锁，在toggleController之后
+        }
     }
 
     /**
@@ -626,7 +636,7 @@ public class VideoController extends GestureController implements IGestureContro
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-//            ILogger.d(TAG,"handleMessage-->whit:"+msg.what);
+            ILogger.d(TAG,"handleMessage-->whit:"+msg.what);
             if(null!=msg&&MESSAGE_HIDE_CONTROLLER==msg.what){
                 if(null!=mControllerController&&mControllerController.getVisibility()==View.VISIBLE){
                     PlayerUtils.getInstance().startAlphaAnimatioTo(mControllerController, MATION_DRAUTION, false, new PlayerUtils.OnAnimationListener() {
@@ -663,7 +673,7 @@ public class VideoController extends GestureController implements IGestureContro
      * @param message
      */
     private void removeDelayedRunnable(int message){
-//        ILogger.d(TAG,"removeDelayedRunnable-->message:"+message);
+        ILogger.d(TAG,"removeDelayedRunnable-->message:"+message);
         if(null!=mExHandel){
             if(0==message){
                 mExHandel.removeCallbacksAndMessages(null);
@@ -682,7 +692,7 @@ public class VideoController extends GestureController implements IGestureContro
             if(null!=mControllerController&&null!=mExHandel){
                 Message obtain = Message.obtain();
                 obtain.what=MESSAGE_HIDE_CONTROLLER;
-                mExHandel.sendMessageDelayed(obtain,5000);
+                mExHandel.sendMessageDelayed(obtain,DELAYED_INVISIBLE);
             }
         }catch (Throwable e){
             e.printStackTrace();
@@ -693,16 +703,26 @@ public class VideoController extends GestureController implements IGestureContro
      * 启动延时隐藏控制锁
      */
     private void delayedInvisibleLocker() {
-//        ILogger.d(TAG,"delayedInvisibleLocker-->");
+        ILogger.d(TAG,"delayedInvisibleLocker-->");
         try {
             if(null!=mControllerLocker&&null!=mExHandel){
+                ILogger.d(TAG,"delayedInvisibleLocker-->1");
                 Message obtain = Message.obtain();
                 obtain.what=MESSAGE_HIDE_LOCKER;
-                mExHandel.sendMessageDelayed(obtain,5000);
+                mExHandel.sendMessageDelayed(obtain,DELAYED_INVISIBLE);
             }
         }catch (Throwable e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 重置锁状态
+     */
+    private void resetLockerStatus() {
+        setLocker(false);
+        if(null!=mControllerLocker) mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);//每次切换到横屏时重置锁状态
+        toggleLocker(false);
     }
 
     /**

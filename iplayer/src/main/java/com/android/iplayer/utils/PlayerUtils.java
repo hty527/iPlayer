@@ -28,9 +28,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-
 import com.android.iplayer.widget.LayoutProvider;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -236,6 +234,9 @@ public class PlayerUtils {
             if (resourceId > 0) {
                 result = res.getDimensionPixelSize(resourceId);
             }
+        }
+        if(result<=0){
+            result=dpToPxInt(24f);
         }
         return result;
     }

@@ -216,6 +216,7 @@ public class PagerPlayerFragment extends BaseFragment {
                 VideoBean videoData = playerPager.getVideoData();
                 if(null!=playerContainer&&null!=videoData){
                     initVideoPlayer();
+                    PlayerUtils.getInstance().removeViewFromParent(mVideoPlayer);
                     playerContainer.addView(mVideoPlayer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
                     mVideoPlayer.setTitle(videoData.getTitle());//视频标题(默认视图控制器横屏可见)
                     mVideoPlayer.setDataSource(null!=mPreloadManager?mPreloadManager.getPlayUrl(videoData.getVideoDownloadUrl()):videoData.getVideoDownloadUrl());//播放地址设置
