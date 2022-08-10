@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/white">
     <com.android.videoplayer.ui.widget.TitleView
@@ -30,15 +31,15 @@
                 android:gravity="center"
                 android:layout_margin="16dp"
                 android:background="@drawable/bg_add_player">
-                <TextView
+                <com.android.videoplayer.ui.widget.BoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="创建并添加播放器"
                     android:textSize="15dp"
-                    android:textStyle="bold"
                     android:textColor="@color/colorAccent"
                     android:drawableLeft="@mipmap/ic_add_player"
                     android:drawablePadding="3dp"
+                    app:boldStorkeWidth="1.0"
                     android:gravity="center_vertical"/>
             </LinearLayout>
         </LinearLayout>
