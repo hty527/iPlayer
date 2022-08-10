@@ -426,7 +426,11 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
                     ThreadPool.getInstance().runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
-                            onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration(),0);
+                            try {
+                                onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration(),0);
+                            }catch (Throwable e){
+                                e.printStackTrace();
+                            }
                         }
                     });
                 }
@@ -875,6 +879,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      */
     public void onDestroy() {
         stopTimer();
+        ThreadPool.getInstance().reset();
         releaseTextureView();
         sPlayerState = PlayerState.STATE_DESTROY;
         onPlayerState(sPlayerState,"播放器销毁");

@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity {
                             intent.putExtra("title","多播放器同时播放");
                             break;
                         case 4://全屏播放
-                            intent=new Intent(MainActivity.this, FullScreenPlayerActivity.class);
+                            startFullScreen();
                             break;
                         case 5://raw和assets资源播放
                             intent=new Intent(MainActivity.this, AssetsPlayerActivity.class);
@@ -170,6 +170,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 任意界面开启一个全局悬浮窗窗口播放器
+     * 点击悬浮窗跳转到Activity示例，请参考App中的IWindowManager.getInstance().setOnWindowActionListener(OnWindowActionListener listener);
      */
     private void startGlobalWindowPlayer() {
         VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
@@ -178,43 +179,10 @@ public class MainActivity extends BaseActivity {
         videoPlayer.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
         videoPlayer.setDataSource(URL2);//播放地址设置
         VideoController controller = videoPlayer.initController();//初始化一个默认的控制器
-        controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
-            @Override
-            public void onMenu() {
-
-            }
-        });
         boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
-            IWindowManager.getInstance().setCoustomParams(null);
-            /**
-             * 如需关心点击播放器事件,则需要在自己的Application中注册IWindowManager中的监听器setWindowActionListener
-             * 如果点击悬浮窗口播放器打开自己的Activity时有自定义参数，可调用IWindowManager中的coustomParams传入自定义参数，方便在收到悬浮窗点击事件后的Activity跳转
-             */
-            //示例代码：
-//            IWindowManager.getInstance().setOnWindowActionListener(new OnWindowActionListener() {
-//                @Override
-//                public void onMovie(float x, float y) {
-//
-//                }
-//
-//                @Override
-//                public void onClick(BasePlayer basePlayer, Object coustomParams) {
-//                    Logger.d(TAG,"onClick-->coustomParams:"+coustomParams);
-//                    Intent intent=new Intent(context, WindowGlobalPlayerActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    intent.putExtra("is_global","1");//是否接收并继续播放悬浮窗口的视频
-//                    intent.putExtra("extra", (String) coustomParams);//示例GlobalWindowPlayerActivity中传入的是字符串,所以这里可以强转
-//                    context.startActivity(intent);
-//                }
-//
-//                @Override
-//                public void onClose() {
-//                    Logger.d(TAG,"onClose-->");
-//                    IWindowManager.getInstance().quitGlobaWindow();//关闭悬浮窗播放器窗口
-//                }
-//            });
+            IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
             Logger.d(TAG, "startGoableWindow-->mVideoPlayer:" + videoPlayer);
             videoPlayer.playOrPause();//开始异步准备播放,注意界面关闭不要销毁播放器实例
         }
@@ -253,7 +221,6 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
                     return new JkMediaPlayer(MainActivity.this);
-//                return null;
                 }
 
                 @Override
@@ -279,9 +246,41 @@ public class MainActivity extends BaseActivity {
             float startX=width-PlayerUtils.getInstance().dpToPxInt(15f);
             float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
-
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
+    }
+
+    /**
+     * 任意界面开启一个全屏窗口播放器
+     */
+    private void startFullScreen() {
+        VideoPlayer videoPlayer = new VideoPlayer(this);
+        videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
+        VideoController controller = videoPlayer.initController();//绑定默认的控制器
+        controller.enableFullScreen(false);
+        //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+        videoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+            /**
+             * 创建一个自定义的播放器,返回null,则内部自动创建一个默认的解码器
+             * @return
+             */
+            @Override
+            public AbstractMediaPlayer createMediaPlayer() {
+                return new JkMediaPlayer(MainActivity.this);
+            }
+
+            @Override
+            public void onPlayerState(PlayerState state, String message) {
+                Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
+            }
+        });
+//        videoPlayer.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
+        videoPlayer.setLoop(false);
+        videoPlayer.setProgressCallBackSpaceMilliss(300);
+        videoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        videoPlayer.setDataSource(URL2);//播放地址设置
+        videoPlayer.startFullScreen();//开启全屏播放
+        videoPlayer.playOrPause();//开始异步准备播放
     }
 
     @Override

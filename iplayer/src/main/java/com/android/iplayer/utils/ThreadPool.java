@@ -65,6 +65,9 @@ public class ThreadPool {
 
     public void reset(){
         try {
+            if(null!=mMainHandler){
+                mMainHandler.removeCallbacksAndMessages(null);
+            }
             if(null!=mCachedThreadPool){
                 mCachedThreadPool.shutdown();
                 mCachedThreadPool=null;

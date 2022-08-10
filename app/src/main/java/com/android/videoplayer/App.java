@@ -7,6 +7,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.bean.Params;
 import com.android.videoplayer.ui.activity.WindowGlobalPlayerActivity;
 import com.android.videoplayer.utils.Logger;
@@ -26,7 +27,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance=this;
-
+        ILogger.DEBUG=true;
         //设置播放器是否拦截音频焦点丢失事件,如果设置了检测到音频焦点丢失会自动暂停播放
         IVideoManager.getInstance().setInterceptTAudioFocus(true);
 

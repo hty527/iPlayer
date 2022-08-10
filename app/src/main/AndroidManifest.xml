@@ -21,7 +21,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
-        <activity android:name="com.android.videoplayer.ui.activity.MainActivity">
+        <activity
+            android:name="com.android.videoplayer.ui.activity.MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -67,12 +70,6 @@
         <!--悬浮窗口播放-->
         <activity
             android:name="com.android.videoplayer.ui.activity.WindowGlobalPlayerActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize"/>
-        <!--全屏播放-->
-        <activity
-            android:name="com.android.videoplayer.ui.activity.FullScreenPlayerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>

@@ -46,7 +46,7 @@ public class DataFactory {
         menus.add(new Menu("SDK默认播放器示例",1,"基础",0));
         menus.add(new Menu("直播拉流",2,null,2));
         menus.add(new Menu("多播放器同时播放",3,null,2));
-        menus.add(new Menu("全屏播放",4,null,2));
+        menus.add(new Menu("直接全屏播放",4,null,2));
         menus.add(new Menu("资源Assets和Raw播放",5,null,2));
         menus.add(new Menu("连续播放一个视频列表",6,null,1));
         menus.add(new Menu("列表点击无缝转场",7,"列表",0));
@@ -64,7 +64,7 @@ public class DataFactory {
         Version version=new Version();
         version.setCode("1.0.xx");
         version.setTime("待定,请持续关注");
-        version.setDescript("2、新增投屏TV功能");
+        version.setDescript("1、新增投屏TV功能");
         menu.setVersion(version);
         menus.add(menu);
         return menus;

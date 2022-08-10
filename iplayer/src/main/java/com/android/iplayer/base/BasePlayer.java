@@ -508,8 +508,9 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             //2.改变屏幕方向
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_PORTRAIT);
-            findViewById(R.id.player_surface).setBackgroundColor(Color.parseColor("#00000000"));//设置纯黑背景
+            findViewById(R.id.player_surface).setBackgroundColor(Color.parseColor("#00000000"));//设置纯透明背景
             //3.将自己交给此前的宿主ViewGroup,注意还需要还原播放器原有的宽高属性
+            showSysBar(viewGroup);//重置全屏设置
             if(null!=mParent){
                 if(null!=mPlayerParams&&mPlayerParams.length>0){
                     ILogger.d(TAG,"index:"+mPlayerParams[2]);
@@ -517,12 +518,13 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
                 }else{
                     mParent.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
                 }
-                showSysBar(viewGroup);
 //                ILogger.d(TAG,"quitLandscapeScreen-->已退出全屏");
             }else{
                 //通知宿主监听器触发返回事件
-//                ILogger.d(TAG,"quitLandscapeScreen-->退出全屏无宿主接收,通知控制器返回");
+//                ILogger.d(TAG,"quitLandscapeScreen-->退出全屏无宿主接收,通知控制器返回并销毁播放器");
                 if(null!= mController) mController.onBack();
+                //无宿主接收时直接停止播放并销毁播放器
+                onDestroy();
             }
         }
     }
