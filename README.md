@@ -54,7 +54,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.4.4'
+        implementation 'com.github.hty527:iPlayer:1.0.4.5'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -237,14 +237,14 @@
 ```
 ### SDK及Demo快照：
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/111.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/112.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/01.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/02.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/113.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/114.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/03.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/04.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/115.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/116.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/05.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/06.jpg?q=1" width="270",height="585">
 </div>

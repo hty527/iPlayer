@@ -370,6 +370,7 @@ public class VideoController extends GestureController implements IGestureContro
             //移除系统时间\电池电量组件
             FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
             controllerBattery.removeAllViews();
+            controllerBattery.setVisibility(View.GONE);
         }else{
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
@@ -383,6 +384,7 @@ public class VideoController extends GestureController implements IGestureContro
             controllerBar.setPadding(margin,0,margin,0);
             //添加系统时间\电池电量组件
             FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
+            controllerBattery.setVisibility(View.VISIBLE);
             controllerBattery.addView(new BatteryView(getParentContext()));
         }
         toggleController(true);//控制器不可见
