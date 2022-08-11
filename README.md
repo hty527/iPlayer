@@ -59,7 +59,7 @@
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
 ```
-    <com.android.player.media.VideoPlayer
+    <com.android.iplayer.media.VideoPlayer
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="200dp"
