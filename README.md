@@ -74,7 +74,7 @@
 
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
-            return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer类
+            return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
         }
 
         @Override
