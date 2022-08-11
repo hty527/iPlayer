@@ -31,7 +31,7 @@
 * Demo列表或组件之间无缝转场播放示例</br>
 * Demo悬浮窗窗口播放带参无缝跳转Activity示例</br>
 * Demo支持MediaPlayer、IjkPlayer、ExoPlayer三种解码器切换示例</br>
-* Demo仿抖音播放示例</br>
+* Demo仿抖音播放示例，支持视频缓存、秒播</br>
 * Demo弹幕交互示例</br>
 * Demo Android8.0+画中画示例</br>
 ***
@@ -54,7 +54,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.4.2'
+        implementation 'com.github.hty527:iPlayer:1.0.4.3'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -139,6 +139,7 @@
         controller.showBackBtn(false);//竖屏状态下是否显示返回按钮
         controller.showMenus(false,true,true);//竖屏状态是否显示控制器右上角的功能菜单按钮,默认是显示的(横屏不显示所有菜单按钮)
         controller.setCanTouchInPortrait(true);//竖屏状态下启用手势交互
+        //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法
         //监听控制器交互事件(设置开启了返回showBackBtn\菜单栏showMenus等功能后可设置监听,回调方法请参阅：OnControllerEventListener)
         controller.setOnControllerListener(new BaseController.OnControllerEventListener(){
 
@@ -222,16 +223,16 @@
     IWindowManager.getInstance().setCoustomParams(coustomParams);
 
     //3.如何完美实现悬浮窗到Activity转场播放无感无缝衔接？
-    参考VideoDetailsActivity中的代码示例
+    参考VideoDetailsActivity中的initPlayer方法中的代码示例
 ```
 
 * 4.list列表播放转场无缝衔接播放</br>
 ```
-    参考ListPlayerChangeFragment中的示例代码
+    参考ListPlayerChangeFragment中的onItemClick、onActivityResult方法和VideoDetailsActivity中的initPlayer、onBackPressed、close、onDestroy方法示例代码
 ```
-* 5.类似抖音功能,支持秒播</br>
+* 5.类似抖音功能,支持缓存秒播</br>
 ```
-    参考PagerPlayerFragment中的示例代码
+    参考PagerPlayerFragment中的示例代码，缓存参考PagerPlayerAdapter中的initItemView方法
 ```
 ### SDK及Demo快照：
 <div align="center">
