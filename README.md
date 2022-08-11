@@ -16,7 +16,7 @@
 
 ### SDK功能支持:
 * 支持常规网络地址、本地Assets和Raw资源文件播放</br>
-* 支持手势识别改变屏幕亮度、音量、快进、快退</br>
+* 支持手势识别控制屏幕亮度、音量、快进、快退</br>
 * 支持倍速、缩放模式、静音、镜像等调节设置</br>
 * 支持多播放器同时播放</br>
 * 支持自定义视频解码器</br>
@@ -54,7 +54,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.4.3'
+        implementation 'com.github.hty527:iPlayer:1.0.4.4'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -140,6 +140,7 @@
         controller.showMenus(false,true,true);//竖屏状态是否显示控制器右上角的功能菜单按钮,默认是显示的(横屏不显示所有菜单按钮)
         controller.setCanTouchInPortrait(true);//竖屏状态下启用手势交互
         //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法
+        //mController.showSoundMute(true,false);//启用静音功能交互\默认不静音
         //监听控制器交互事件(设置开启了返回showBackBtn\菜单栏showMenus等功能后可设置监听,回调方法请参阅：OnControllerEventListener)
         controller.setOnControllerListener(new BaseController.OnControllerEventListener(){
 
@@ -236,14 +237,14 @@
 ```
 ### SDK及Demo快照：
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/11.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/12.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/111.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/112.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/13.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/14.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/113.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/114.jpg?q=1" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/15.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/16.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/115.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/116.jpg?q=1" width="270",height="585">
 </div>

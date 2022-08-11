@@ -315,7 +315,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             if(null!=videoController){
                 videoController.setListItemPlayerMode(true);//从列表模式转换为正常模式
             }
-            setListener();//绑定监听器到此界面
+            setListener(false);//绑定监听器到此界面
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(mCurrentPosition),View.INVISIBLE);//隐藏播放按钮的可见状态
             mPlayerContainer.addView(mVideoPlayer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }else{
@@ -337,16 +337,21 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
 //        mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
             mVideoPlayer.initController(false);//绑定默认的控制器
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
-            setListener();
+            setListener(true);
         }
     }
 
-    private void setListener() {
+    /**
+     * 无论初始化、转场接收都重置监听
+     * @param isInit 播放器是否是初始化后调用的
+     */
+    private void setListener(boolean isInit) {
         if(null==mVideoPlayer) return;
         VideoController controller = (VideoController) mVideoPlayer.getController();
         if(null!=controller){
             controller.showMenus(false,false,false);
             controller.setCanTouchInPortrait(false);//竖屏下不允许手势交互
+            if(isInit) controller.showSoundMute(true,true);//显示静音按钮&&初始状态为静音,尽在初始化时调用
             controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
 
                 @Override

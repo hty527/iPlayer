@@ -20,7 +20,8 @@ import com.android.videoplayer.media.JkMediaPlayer;
  */
 public class CorePlayerView extends LinearLayout {
 
-    private static final String URL = "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";
+//    private static final String URL = "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";//惊奇队长
+    private static final String URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     protected VideoPlayer mVideoPlayer;
     private int mCurrentMediaCore;//当前正在使用的解码器类型 0:系统 1:ijk 2:exo
 

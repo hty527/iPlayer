@@ -220,7 +220,7 @@ public abstract class GestureController extends BaseController implements View.O
                     case MotionEvent.ACTION_UP://离开屏幕时跳转播放进度
                         stopSlide();
                         if (mSeekPosition > -1) {
-                            if(null!=mVideoPlayerControl) mVideoPlayerControl.seekTo(mSeekPosition);
+                            if(null!= mVideoPlayerControl) mVideoPlayerControl.seekTo(mSeekPosition);
                             mSeekPosition = -1;
                         }
                         break;
@@ -239,7 +239,7 @@ public abstract class GestureController extends BaseController implements View.O
      * @param deltaX
      */
     private void slideToChangePosition(float deltaX) {
-        if(null!=mVideoPlayerControl){
+        if(null!= mVideoPlayerControl){
             deltaX = -deltaX;
             int width = getMeasuredWidth();
             int duration = (int) mVideoPlayerControl.getDuration();

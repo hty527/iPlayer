@@ -198,6 +198,14 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
     }
 
     /**
+     * 更新静音状态
+     * @param mute true:已静音 false:未静音
+     */
+    public void updateMute(boolean mute) {
+        selectedMuteIndex(mute?0:1);
+    }
+
+    /**
      * 镜像
      * @param index
      */

@@ -55,10 +55,22 @@ public interface IVideoPlayerControl<V extends BaseController> {
     void setSpeed(float speed);
 
     /**
-     * 设置是否静音
      * @param mute 设置是否静音,true:无声 false:跟随系统音量
+     * @return 是否静音,true:无声 false:跟随系统音量
      */
-    void setSoundMute(boolean mute);
+    boolean setSoundMute(boolean mute);
+
+    /**
+     * 是否启用了静音
+     * @return true:启用了静音 false:未启用静音
+     */
+    boolean isSoundMute();
+
+    /**
+     * 开启、关闭静音
+     * @return 是否静音,true:静音 false:跟随系统音量
+     */
+    boolean toggleMute();
 
     /**
      * 设置画面镜像旋转

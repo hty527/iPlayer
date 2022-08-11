@@ -1,0 +1,34 @@
+<resources>
+    <string name="player_tips_mobile">将使用流量播放,是否继续?</string>
+    <string name="player_btn_continue_play">继续播放</string>
+    <string name="player_tips_preview_finish">试看结束</string>
+    <string name="player_btn_yes">知道了</string>
+    <string name="player_tips_play_error">播放失败,点击重试播放</string>
+    <string name="player_btn_try">重试</string>
+    <string name="player_tips_unknown">未知原因</string>
+    <string name="player_btn_unknown">未知</string>
+    <string name="player_window_permission">未申明和获取悬浮窗权限</string>
+    <string name="player_locker_flase">已解锁</string>
+    <string name="player_locker_true">已锁定</string>
+    <string name="player_core_name">解码器内核：</string>
+    <string name="player_media_completion">播放完成</string>
+    <string name="player_media_start">首帧渲染</string>
+    <string name="player_media_buffer_start">缓冲开始</string>
+    <string name="player_media_buffer_end">缓冲结束</string>
+    <string name="player_media_seek">快进快退恢复播放</string>
+    <string name="player_media_error_timeout">播放失败,播放链接超时</string>
+    <string name="player_media_error_file_invalid">播放失败,不支持的视频文件格式</string>
+    <string name="player_media_error_dns">播放失败,链接DNS失败</string>
+    <string name="player_media_error_path_invalid">播放失败,请检查视频文件地址有效性</string>
+    <string name="player_media_error_core">视频解码失败</string>
+    <string name="player_media_error_path_empty">播放地址为空,请检查!</string>
+    <string name="player_media_error_net">网络未连接</string>
+    <string name="player_media_mobile">移动网络播放</string>
+    <string name="player_media_reday">播放准备中</string>
+    <string name="player_media_play_error">播放失败,error:</string>
+    <string name="player_media_resume">恢复播放</string>
+    <string name="player_media_pause">暂停播放</string>
+    <string name="player_media_stop">停止播放</string>
+    <string name="player_media_reset">结束播放并重置</string>
+    <string name="player_media_destroy">播放器销毁</string>
+</resources>

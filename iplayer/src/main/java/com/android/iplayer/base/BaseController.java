@@ -336,21 +336,21 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     protected boolean isPlayering() {
-        if(null!=mVideoPlayerControl){
+        if(null!= mVideoPlayerControl){
             return mVideoPlayerControl.isPlaying();
         }
         return false;
     }
 
     protected Activity getActivity() {
-        if(null!=mVideoPlayerControl&&null!=mVideoPlayerControl.getTempContext()){
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
             return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
         }
         return PlayerUtils.getInstance().getActivity(getContext());
     }
 
     protected Context getParentContext() {
-        if(null!=mVideoPlayerControl&&null!=mVideoPlayerControl.getTempContext()){
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
             return  mVideoPlayerControl.getTempContext();
         }
         return getContext();
@@ -372,6 +372,8 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
         public void onTv() {}
         //开启全局悬浮窗窗口播放模式
         public void onGobalWindow() {}
+        //是否静音了
+        public void onMute(boolean mute){}
     }
 
     protected OnControllerEventListener mControllerListener;

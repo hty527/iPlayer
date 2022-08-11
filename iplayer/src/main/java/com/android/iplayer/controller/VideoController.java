@@ -78,12 +78,14 @@ public class VideoController extends GestureController implements IGestureContro
                         if(null!= mVideoPlayerControl) mVideoPlayerControl.quitFullScreen();//横屏回调给播放器做退出全屏处理
                     }
                 } else if (id == R.id.controller_btn_fullscreen) {
-                    if(null!=mVideoPlayerControl){
+                    if(null!= mVideoPlayerControl){
                         if(isOrientationPortrait()&&!mVideoPlayerControl.isWork()){//当播放器处于待命状态时不处理全屏逻辑
                             return;
                         }
+                        mVideoPlayerControl.toggleFullScreen();//回调给播放器处理横\竖屏逻辑
                     }
-                    mVideoPlayerControl.toggleFullScreen();//回调给播放器处理横\竖屏逻辑
+                } else if (id == R.id.controller_btn_mute) {//静音\取消静音
+                    toggleMute();
                 } else if (id == R.id.controller_play || id == R.id.controller_start || id == R.id.controller_replay) {
                     if (null != mVideoPlayerControl) mVideoPlayerControl.togglePlay();//回调给播放器
                 } else if (id == R.id.controller_root_view) {
@@ -95,20 +97,7 @@ public class VideoController extends GestureController implements IGestureContro
                 }else if (id == R.id.controller_title_window) {//开启全局悬浮窗窗口播放
                     if (null != mControllerListener) mControllerListener.onGobalWindow();//回调给宿主界面
                 }else if (id == R.id.controller_locker) {//屏幕锁
-                    if(isLocked()){
-                        setLocker(false);
-                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);
-                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_flase),Toast.LENGTH_SHORT).show();
-                        //立刻恢复所有控制器
-                        toggleController(false,true);
-                    }else{
-                        setLocker(true);
-                        mControllerLocker.setImageResource(R.mipmap.ic_player_locker_true);
-                        Toast.makeText(getContext(),getResources().getString(R.string.player_locker_true),Toast.LENGTH_SHORT).show();
-                        //立刻屏蔽所有控制器屏蔽
-                        toggleController(true);
-                    }
-                    delayedInvisibleLocker();
+                    toggleLocker();
                 }
             }
         };
@@ -131,6 +120,7 @@ public class VideoController extends GestureController implements IGestureContro
         findViewById(R.id.controller_title_tv).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_window).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_menu).setOnClickListener(onClickListener);
+        findViewById(R.id.controller_btn_mute).setOnClickListener(onClickListener);
         //各种状态交互
         mControllerStatus = findViewById(R.id.controller_status);
         mControllerStatus.setOnStatusListener(new ControllerStatusView.OnStatusListener() {
@@ -184,7 +174,7 @@ public class VideoController extends GestureController implements IGestureContro
                 delayedInvisibleController();//开启定时隐藏任务
                 //当controller_deblocking设置了点击时间，试看结束的拦截都无效
 //                ILogger.d(TAG,"onStopTrackingTouch-->,isCompletion:"+isCompletion+",preViewTotalTime:"+mPreViewTotalTime);
-                if(null!=mVideoPlayerControl){
+                if(null!= mVideoPlayerControl){
                     if(isCompletion&& mPreViewTotalTime >0){//拦截是看结束,让用户解锁
                         if(null!= mVideoPlayerControl) mVideoPlayerControl.onCompletion();
                         return;
@@ -239,6 +229,7 @@ public class VideoController extends GestureController implements IGestureContro
                 }
                 break;
             case STATE_START://首次播放
+                updateMute();
                 if(itemPlayerMode){//列表播放模式
                     changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
                     if(null!=mProgressBar) mProgressBar.setVisibility(VISIBLE);
@@ -337,7 +328,7 @@ public class VideoController extends GestureController implements IGestureContro
     @Override
     public void onBuffer(int bufferPercent) {
 //        ILogger.d(TAG,"onBuffer-->"+bufferPercent);
-        if(null!=mVideoPlayerControl){
+        if(null!= mVideoPlayerControl){
             int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDuration());
             if(null!= mSeekBar&&mSeekBar.getSecondaryProgress()!=percent) {
                 mSeekBar.setSecondaryProgress(percent);
@@ -597,6 +588,26 @@ public class VideoController extends GestureController implements IGestureContro
     }
 
     /**
+     * 屏幕锁
+     */
+    private void toggleLocker() {
+        if(isLocked()){
+            setLocker(false);
+            mControllerLocker.setImageResource(R.mipmap.ic_player_locker_false);
+            Toast.makeText(getContext(),getResources().getString(R.string.player_locker_flase),Toast.LENGTH_SHORT).show();
+            //立刻恢复所有控制器
+            toggleController(false,true);
+        }else{
+            setLocker(true);
+            mControllerLocker.setImageResource(R.mipmap.ic_player_locker_true);
+            Toast.makeText(getContext(),getResources().getString(R.string.player_locker_true),Toast.LENGTH_SHORT).show();
+            //立刻屏蔽所有控制器屏蔽
+            toggleController(true);
+        }
+        delayedInvisibleLocker();
+    }
+
+    /**
      显示\隐藏控制锁
      * @param isHide 标题栏和菜单控制器是否强制隐藏
      */
@@ -726,6 +737,29 @@ public class VideoController extends GestureController implements IGestureContro
     }
 
     /**
+     * 静音、取消静音
+     */
+    private void toggleMute() {
+        if(null!= mVideoPlayerControl){
+            boolean soundMute = mVideoPlayerControl.toggleMute();
+            if(null!=mControllerListener) mControllerListener.onMute(soundMute);
+            ImageView muteImge = (ImageView) findViewById(R.id.controller_btn_mute);
+            muteImge.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+        }
+    }
+
+    /**
+     * 更新静音状态
+     */
+    public void updateMute(){
+        if(null!= mVideoPlayerControl){
+            boolean soundMute = mVideoPlayerControl.isSoundMute();
+            ImageView muteImge = (ImageView) findViewById(R.id.controller_btn_mute);
+            muteImge.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+        }
+    }
+
+    /**
      * 重置内部状态
      */
     private void reset(){
@@ -804,7 +838,7 @@ public class VideoController extends GestureController implements IGestureContro
     }
 
     /**
-     * 使得否显示返回按钮(竖屏),横屏模式下都一定会显示
+     * 是否显示返回按钮(竖屏),横屏模式下都一定会显示
      * @param showBackBtn true:显示返回按钮 false:隐藏返回按钮
      */
     public void showBackBtn(boolean showBackBtn){
@@ -828,6 +862,21 @@ public class VideoController extends GestureController implements IGestureContro
             findViewById(R.id.controller_title_tv).setVisibility(tv?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(window?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(menu?View.VISIBLE:View.GONE);
+        }
+    }
+
+    /**
+     * 是否显示静音按钮
+     * @param showSound 是否显示静音按钮,true:显示 false:隐藏
+     * @param soundMute 是否静音,true:静音 false:系统原声
+     */
+    public void showSoundMute(boolean showSound,boolean soundMute){
+        ImageView muteImage = (ImageView) findViewById(R.id.controller_btn_mute);
+        findViewById(R.id.controller_btn_mute).setVisibility(showSound?View.VISIBLE:View.GONE);
+        if(null!=mVideoPlayerControl){
+            boolean result = mVideoPlayerControl.setSoundMute(soundMute);
+            muteImage.setImageResource(result?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            if(null!=mControllerListener) mControllerListener.onMute(result);
         }
     }
 

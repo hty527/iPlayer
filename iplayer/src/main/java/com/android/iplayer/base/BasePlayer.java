@@ -322,10 +322,34 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     /**
      * 设置是否静音
      * @param mute 设置是否静音,true:无声 false:跟随系统音量
+     * @return 是否静音,true:无声 false:跟随系统音量
      */
     @Override
-    public void setSoundMute(boolean mute) {
-        if(null!=mIVideoPlayer) mIVideoPlayer.setSoundMute(mute);
+    public boolean setSoundMute(boolean mute) {
+        if(null!=mIVideoPlayer){
+            return mIVideoPlayer.setSoundMute(mute);
+        }
+        return false;
+    }
+
+    /**
+     * 是否启用了静音
+     * @return true:启用了静音 false:未启用静音
+     */
+    @Override
+    public boolean isSoundMute() {
+        if(null!=mIVideoPlayer) return mIVideoPlayer.isSoundMute();
+        return false;
+    }
+
+    /**
+     * 开启、关闭静音
+     * @return 是否静音,true:静音 false:跟随系统音量
+     */
+    @Override
+    public boolean toggleMute() {
+        if(null!=mIVideoPlayer) return mIVideoPlayer.toggleMute();
+        return false;
     }
 
     /**

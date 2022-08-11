@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity {
         TitleView titleView = (TitleView) findViewById(R.id.title_view);
         titleView.setTitle(getResources().getString(R.string.app_name));
         titleView.enableTitleBack(false);
-        ((TextView) findViewById(R.id.tv_sdk_version)).setText(String.format("SDK版本号：%s", ILogger.getVersion()));
+        ((TextView) findViewById(R.id.tv_sdk_version)).setText(String.format(DataFactory.getInstance().getString(R.string.text_version_format,"SDK版本号：%s"), ILogger.getVersion()));
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),LinearLayoutManager.VERTICAL,false));
         MainMenuAdapter adapter=new MainMenuAdapter(DataFactory.getInstance().getMenus());
@@ -63,16 +63,16 @@ public class MainActivity extends BaseActivity {
                     switch (menu.getId()) {
                         case 1://SDK默认播放器
                             intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                            intent.putExtra("title","SDK默认播放器");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_default,"SDK默认播放器"));
                             break;
                         case 2://直播拉流
                             intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
                             intent.putExtra("islive",true);
-                            intent.putExtra("title","直播拉流");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_live,"直播拉流"));
                             break;
                         case 3://多播放器同时播放
                             intent=new Intent(MainActivity.this, VideosPlayerActivity.class);
-                            intent.putExtra("title","多播放器同时播放");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_videos,"多播放器同时播放"));
                             break;
                         case 4://全屏播放
                             startFullScreen();
@@ -82,30 +82,30 @@ public class MainActivity extends BaseActivity {
                             break;
                         case 6://连续播放一个列表示例
                             intent=new Intent(MainActivity.this, VideoListPlayerActivity.class);
-                            intent.putExtra("title","连续播放一个列表示例");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_list,"连续播放一个列表示例"));
                             break;
                         case 7://点击列表无缝转场播放
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
-                            intent.putExtra("title","点击列表转场播放");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_next,"点击列表转场播放"));
                             intent.putExtra("type","3");
                             break;
                         case 8://列表自动播放
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
-                            intent.putExtra("title","列表自动播放");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_auto,"列表自动播放"));
                             intent.putExtra("type","2");
                             break;
                         case 9://列表点击播放
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
-                            intent.putExtra("title","列表点击播放");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_click,"列表点击播放"));
                             intent.putExtra("type","1");
                             break;
                         case 10://Activity小窗口
                             intent = new Intent(MainActivity.this, WindowPlayerActivity.class);
-                            intent.putExtra("title","Activity局部悬浮窗");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_window,"Activity局部悬浮窗"));
                             break;
                         case 11://全局悬浮窗
                             intent = new Intent(MainActivity.this, WindowGlobalPlayerActivity.class);
-                            intent.putExtra("title","全局悬浮窗");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_goable_window,"全局悬浮窗"));
                             break;
                         case 12://任意界面开启窗口播放器
                             startMiniWindowPlayer();
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity {
                         case 14://画中画
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 intent=new Intent(MainActivity.this, PiPPlayerActivity.class);
-                                intent.putExtra("title","画中画");
+                                intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_dip,"画中画"));
                             }
                             break;
                         case 15://类抖音垂直滚动播放
@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity {
                         case 16://自定义弹幕控制器功能示例
                             intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
                             intent.putExtra("danmu",true);
-                            intent.putExtra("title","自定义弹幕控制器");
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_danmu,"自定义弹幕控制器"));
                             break;
                         case 17://项目主页 https://gitee.com/hty_Yuye/iPlayer
                             intent = new Intent(Intent.ACTION_VIEW);
@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity {
                         startGlobalWindowPlayer();
                         return;
                     }
-                    Toast.makeText(getApplicationContext(),"开启失败,需要悬浮窗权限!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),DataFactory.getInstance().getString(R.string.text_permission_window,"开启失败,需要悬浮窗权限!"),Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -154,7 +154,7 @@ public class FullScreenController extends BaseController {
     @Override
     public void onBuffer(int bufferPercent) {
         Logger.d(TAG,"onBuffer-->bufferPercent:"+bufferPercent);
-        if(null!=mVideoPlayerControl){
+        if(null!= mVideoPlayerControl){
             int percent = PlayerUtils.getInstance().formatBufferPercent(bufferPercent, mVideoPlayerControl.getDuration());
             if(null!= mSeekBar&&mSeekBar.getSecondaryProgress()!=percent) {
                 mSeekBar.setSecondaryProgress(percent);

@@ -99,6 +99,14 @@
                 android:shadowRadius="1"
                 android:textColor="#FFFFFF"/>
             <ImageView
+                android:id="@+id/controller_btn_mute"
+                android:layout_width="@dimen/player_btn_width"
+                android:layout_height="@dimen/player_btn_width"
+                android:scaleType="center"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_player_mute_false"
+                android:visibility="gone"/>
+            <ImageView
                 android:id="@+id/controller_btn_fullscreen"
                 android:layout_width="@dimen/player_btn_width"
                 android:layout_height="@dimen/player_btn_width"

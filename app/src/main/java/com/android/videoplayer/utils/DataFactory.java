@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import com.android.iplayer.utils.PlayerUtils;
 import com.android.videoplayer.App;
+import com.android.videoplayer.R;
 import com.android.videoplayer.bean.Menu;
 import com.android.videoplayer.bean.Version;
 import com.android.videoplayer.pager.bean.VideoBean;
@@ -26,7 +28,7 @@ import java.util.List;
  */
 public class DataFactory {
 
-    public static final String TAG="DataFactory";
+    private static final String TAG="DataFactory";
     private volatile static DataFactory mInstance;
     private Handler mHandler=new Handler(Looper.getMainLooper());
 
@@ -41,30 +43,44 @@ public class DataFactory {
         return mInstance;
     }
 
+    /**
+     * 从资源string中获取文字返回
+     * @param id 源字符串ID
+     * @param defaultStr 源字符串
+     * @return
+     */
+    public String getString(int id,String defaultStr){
+        Context context = PlayerUtils.getInstance().getContext();
+        if(null!=context){
+            return context.getResources().getString(id);
+        }
+        return defaultStr;
+    }
+
     public List<Menu> getMenus() {
         List<Menu> menus=new ArrayList<>();
-        menus.add(new Menu("SDK默认播放器示例",1,"基础",0));
-        menus.add(new Menu("直播拉流",2,null,2));
-        menus.add(new Menu("多播放器同时播放",3,null,2));
-        menus.add(new Menu("直接全屏播放",4,null,2));
-        menus.add(new Menu("资源Assets和Raw播放",5,null,2));
-        menus.add(new Menu("连续播放一个视频列表",6,null,1));
-        menus.add(new Menu("列表点击无缝转场",7,"列表",0));
-        menus.add(new Menu("列表自动播放",8,null,2));
-        menus.add(new Menu("列表点击播放",9,null,1));
-        menus.add(new Menu("Activity悬浮窗",10,"窗口",0));
-        menus.add(new Menu("全局悬浮窗",11,null,2));
-        menus.add(new Menu("任意界面开启窗口播放器",12,null,2));
-        menus.add(new Menu("任意界面开启全局悬浮窗播放器",13,null,2));
-        menus.add(new Menu("画中画(Android8.0+)",14,null,1));
-        menus.add(new Menu("仿抖音(扩展示例)",15,"扩展",0));
-        menus.add(new Menu("自定义弹幕控制器(扩展示例)",16,null,1));
-        menus.add(new Menu("项目主页",17,"其它",3));
-        Menu menu = new Menu("", 101, "版本预告", 3, 1);
+        menus.add(new Menu(getString(R.string.text_item_sdk,"SDK默认播放器示例"),1,getString(R.string.text_item_sub_noimal,"基础"),0));
+        menus.add(new Menu(getString(R.string.text_item_live,"直播拉流"),2,null,2));
+        menus.add(new Menu(getString(R.string.text_item_videos,"多播放器同时播放"),3,null,2));
+        menus.add(new Menu(getString(R.string.text_item_full,"直接全屏播放"),4,null,2));
+        menus.add(new Menu(getString(R.string.text_item_resouce,"资源Assets和Raw播放"),5,null,2));
+        menus.add(new Menu(getString(R.string.text_item_continuity,"连续播放一个视频列表"),6,null,1));
+        menus.add(new Menu(getString(R.string.text_item_next,"列表点击无缝转场"),7,getString(R.string.text_item_sub_list,"列表"),0));
+        menus.add(new Menu(getString(R.string.text_item_auto,"列表自动播放"),8,null,2));
+        menus.add(new Menu(getString(R.string.text_item_click,"列表点击播放"),9,null,1));
+        menus.add(new Menu(getString(R.string.text_item_window,"Activity悬浮窗"),10,getString(R.string.text_item_sub_window,"窗口"),0));
+        menus.add(new Menu(getString(R.string.text_item_goable_window,"全局悬浮窗"),11,null,2));
+        menus.add(new Menu(getString(R.string.text_item_window_open,"任意界面开启窗口播放器"),12,null,2));
+        menus.add(new Menu(getString(R.string.text_item_window_goable_open,"任意界面开启全局悬浮窗播放器"),13,null,2));
+        menus.add(new Menu(getString(R.string.text_item_dip,"画中画(Android8.0+)"),14,null,1));
+        menus.add(new Menu(getString(R.string.text_item_dy,"仿抖音(扩展示例)"),15,getString(R.string.text_item_sub_expand,"扩展"),0));
+        menus.add(new Menu(getString(R.string.text_item_danmu,"自定义弹幕控制器(扩展示例)"),16,null,1));
+        menus.add(new Menu(getString(R.string.text_item_home,"项目主页"),17,getString(R.string.text_item_sub_other,"其它"),3));
+        Menu menu = new Menu("", 101, getString(R.string.text_item_version,"版本预告"), 3, 1);
         Version version=new Version();
         version.setCode("1.0.xx");
-        version.setTime("待定,请持续关注");
-        version.setDescript("1、新增投屏TV功能");
+        version.setTime(getString(R.string.text_item_time,"待定,请持续关注"));
+        version.setDescript(getString(R.string.text_item_desc,"1、新增投屏TV功能"));
         menu.setVersion(version);
         menus.add(menu);
         return menus;

@@ -14,7 +14,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
         versionCode 10004
-        versionName "1.0.4.3"
+        versionName "1.0.4.4"
     }
     lintOptions {
         abortOnError false

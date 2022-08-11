@@ -67,13 +67,13 @@ public class VideoPlayerActivity extends BaseActivity {
      * 播放器初始化及调用示例
      */
     private void initPlayer() {
-
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
         //绑定控制器
         mController = new VideoController(mVideoPlayer.getContext());
         mController.showBackBtn(false);//竖屏下是否显示返回按钮
         mController.showMenus(true,true,true);//是否显示右上角菜单栏功能按钮
+        mController.showSoundMute(true,false);//启用静音功能交互\默认不静音
         //设置交互监听
         mController.setOnControllerListener(new BaseController.OnControllerEventListener() {
 
@@ -99,6 +99,12 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public void onCompletion() {//试播结束或播放完成
                 Logger.d(TAG,"onCompletion");
+            }
+
+            //播放器是否被静音了
+            @Override
+            public void onMute(boolean mute) {
+                if(null!=mMenuView) mMenuView.updateMute(mute);
             }
         });
         //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
@@ -157,6 +163,7 @@ public class VideoPlayerActivity extends BaseActivity {
                 @Override
                 public void onMute(boolean mute) {
                     if(null!=mVideoPlayer) mVideoPlayer.setSoundMute(mute);
+                    if(null!=mController) mController.updateMute();
                 }
 
                 @Override
@@ -260,7 +267,7 @@ public class VideoPlayerActivity extends BaseActivity {
         mVideoPlayer.setLoop(mDanmu);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
         mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-        mVideoPlayer.setDataSource(mIslive?M3U8:URL4);//播放地址设置
+        mVideoPlayer.setDataSource(mIslive?M3U8:URL1);//播放地址设置
         mVideoPlayer.playOrPause();//开始异步准备播放
     }
 
@@ -274,7 +281,7 @@ public class VideoPlayerActivity extends BaseActivity {
             mVideoPlayer.setLoop(mDanmu);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(!TextUtils.isEmpty(url)?url:mIslive?M3U8:URL4);//播放地址设置
+            mVideoPlayer.setDataSource(!TextUtils.isEmpty(url)?url:mIslive?M3U8:URL1);//播放地址设置 URL4惊奇队长
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }

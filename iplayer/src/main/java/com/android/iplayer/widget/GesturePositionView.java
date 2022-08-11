@@ -89,7 +89,7 @@ public class GesturePositionView extends FrameLayout implements IGestureControl 
         if(null!=mPresentProgress) mPresentProgress.setVisibility(View.GONE);
         if(null!=mPresentText) mPresentText.setVisibility(View.VISIBLE);
         if(null!=mPresentIcon) mPresentIcon.setImageResource(slidePosition>currentPosition?R.mipmap.ic_player_gesture_next:R.mipmap.ic_player_gesture_last);
-        if(null!=mPresentText) mPresentText.setText(String.format("%s/%s", PlayerUtils.getInstance().stringForAudioTime(slidePosition),PlayerUtils.getInstance().stringForAudioTime(currentPosition)));
+        if(null!=mPresentText) mPresentText.setText(String.format("%s/%s", PlayerUtils.getInstance().stringForAudioTime(slidePosition),PlayerUtils.getInstance().stringForAudioTime(duration)));
     }
 
     /**

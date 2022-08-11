@@ -8,6 +8,7 @@ import com.android.videoplayer.base.adapter.BaseMultiItemAdapter;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;
 import com.android.videoplayer.bean.Menu;
 import com.android.videoplayer.bean.Version;
+import com.android.videoplayer.utils.DataFactory;
 import java.util.List;
 
 /**
@@ -69,6 +70,9 @@ public class MainMenuAdapter  extends BaseMultiItemAdapter<Menu, BaseViewHolder>
             TextView subTitle = (TextView) viewHolder.itemView.findViewById(R.id.item_sub_title);
             subTitle.setText(data.getSub_title());
             item_sub.setVisibility(TextUtils.isEmpty(data.getSub_title())? View.GONE:View.VISIBLE);
+            ((TextView) viewHolder.getView(R.id.item_version_title)).setText(DataFactory.getInstance().getString(R.string.item_version_title,"预更新版本："));
+            ((TextView) viewHolder.getView(R.id.item_desc_title)).setText(DataFactory.getInstance().getString(R.string.item_desc_title,"预更新内容："));
+            ((TextView) viewHolder.getView(R.id.item_time_title)).setText(DataFactory.getInstance().getString(R.string.item_time_title,"预更新时间："));
             Version version = data.getVersion();
             if(null!=version){
                 ((TextView) viewHolder.getView(R.id.item_version)).setText(version.getCode());

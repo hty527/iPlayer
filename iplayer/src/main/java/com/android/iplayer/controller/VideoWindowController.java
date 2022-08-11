@@ -144,7 +144,7 @@ public class VideoWindowController extends BaseController {
     @Override
     public void setWindowProperty(boolean isWindowProperty, boolean isGlobalWindow) {
         findViewById(R.id.window_fullscreen).setVisibility(isGlobalWindow?View.VISIBLE:View.GONE);
-        if(null!=mVideoPlayerControl&&null!=mPlayIcon){
+        if(null!= mVideoPlayerControl &&null!=mPlayIcon){
             mPlayIcon.setImageResource(mVideoPlayerControl.isPlaying()?R.mipmap.ic_player_window_pause:R.mipmap.ic_player_window_play);
         }
     }
