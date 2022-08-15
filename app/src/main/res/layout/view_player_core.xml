@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_player_cover"/>
-        <com.android.iplayer.media.VideoPlayer
+        <com.android.iplayer.widget.VideoPlayer
             android:id="@+id/view_video_player"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

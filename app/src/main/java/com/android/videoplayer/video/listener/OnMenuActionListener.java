@@ -1,4 +1,4 @@
-package com.android.iplayer.listener;
+package com.android.videoplayer.video.listener;
 
 /**
  * created by hty

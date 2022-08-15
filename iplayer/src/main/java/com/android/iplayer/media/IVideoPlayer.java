@@ -14,6 +14,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayerControl;
 import com.android.iplayer.manager.IVideoManager;
+import com.android.iplayer.media.core.MediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AudioFocus;
 import com.android.iplayer.utils.PlayerUtils;

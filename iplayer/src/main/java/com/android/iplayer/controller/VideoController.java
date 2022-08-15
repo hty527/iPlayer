@@ -26,7 +26,9 @@ import com.android.iplayer.widget.GesturePositionView;
  * created by hty
  * 2022/6/28
  * Desc:默认的视频控制器弹窗
- * 功能菜单：控制栏和底部进度条二选一显示,播放中时允许点击显示\隐藏,列表模式下播放视频首帧渲染不显示控制器和标题栏,只显示底部播放进度条
+ * 功能支持包括但不限于：
+ * 1、控制栏和底部进度条二选一显示,播放中时允许点击显示\隐藏,列表模式下播放视频首帧渲染不显示控制器和标题栏,只显示底部播放进度条。
+ * 2、手势识别交互更改播放进度、屏幕亮度、音量等，竖屏可支持设置是否启用手势功能。
  */
 public class VideoController extends GestureController implements IGestureControl {
 

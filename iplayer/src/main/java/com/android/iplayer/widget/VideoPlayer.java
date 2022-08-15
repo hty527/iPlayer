@@ -1,4 +1,4 @@
-package com.android.iplayer.media;
+package com.android.iplayer.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

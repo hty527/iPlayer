@@ -1,6 +1,6 @@
 package com.android.videoplayer.manager;
 
-import com.android.iplayer.media.VideoPlayer;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.bean.VideoParams;
 

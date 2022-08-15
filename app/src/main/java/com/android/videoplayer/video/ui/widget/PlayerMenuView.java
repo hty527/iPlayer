@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
-import com.android.iplayer.listener.OnMenuActionListener;
+import com.android.videoplayer.video.listener.OnMenuActionListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.videoplayer.R;
 import java.util.ArrayList;
