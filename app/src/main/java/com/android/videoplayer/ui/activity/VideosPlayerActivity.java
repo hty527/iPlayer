@@ -57,7 +57,7 @@ public class VideosPlayerActivity extends BaseActivity {
         CorePlayerView corePlayerView=new CorePlayerView(mPlayerContainer.getContext());
         mCorePlayerViews.add(corePlayerView);
         mPlayerContainer.addView(corePlayerView);
-        corePlayerView.start();
+        corePlayerView.start(null);
 
         findViewById(R.id.add_player).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +77,7 @@ public class VideosPlayerActivity extends BaseActivity {
                 });
                 mCorePlayerViews.add(corePlayerView);
                 mPlayerContainer.addView(corePlayerView);
-                corePlayerView.start();
+                corePlayerView.start("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
             }
         });
     }

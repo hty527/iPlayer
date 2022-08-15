@@ -1,6 +1,7 @@
 package com.android.videoplayer.ui.widget;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -21,9 +22,10 @@ import com.android.videoplayer.media.JkMediaPlayer;
 public class CorePlayerView extends LinearLayout {
 
 //    private static final String URL = "http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";//惊奇队长
-    private static final String URL = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
+    private static final String PATH = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     protected VideoPlayer mVideoPlayer;
     private int mCurrentMediaCore;//当前正在使用的解码器类型 0:系统 1:ijk 2:exo
+    private String mUrl;
 
     public CorePlayerView(Context context) {
         this(context, null);
@@ -105,7 +107,7 @@ public class CorePlayerView extends LinearLayout {
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(URL);//播放地址设置
+            mVideoPlayer.setDataSource(TextUtils.isEmpty(mUrl)? PATH :mUrl);//播放地址设置
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }
@@ -132,12 +134,13 @@ public class CorePlayerView extends LinearLayout {
         if (null != mVideoPlayer) mVideoPlayer.onDestroy();
     }
 
-    public void start() {
+    public void start(String url) {
         if (null != mVideoPlayer) {
+            this.mUrl=url;
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(URL);//播放地址设置
+            mVideoPlayer.setDataSource(TextUtils.isEmpty(url)? PATH :url);//播放地址设置
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }
