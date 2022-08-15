@@ -11,7 +11,7 @@ import com.android.iplayer.base.BaseController;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.media.VideoPlayer;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;

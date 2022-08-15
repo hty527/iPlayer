@@ -54,12 +54,12 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.4.5'
+        implementation 'com.github.hty527:iPlayer:1.0.4.6'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
 ```
-    <com.android.iplayer.media.VideoPlayer
+    <com.android.iplayer.widget.VideoPlayer
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="200dp"

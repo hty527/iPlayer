@@ -1,4 +1,4 @@
-package com.android.iplayer.media;
+package com.android.iplayer.media.core;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

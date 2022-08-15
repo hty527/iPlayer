@@ -1,5 +1,11 @@
 SDK版本更新记录由近及远展示
 
+###  1.0.4.6
+**更新日期：** 2022-8-15<br/>
+**更新内容：**<br/>
+>1. 电量、时间UI微调<br/>
+>2. 原com.android.iplayer.media.VideoPlayer更改为：com.android.iplayer.widget.VideoPlayer<br/>
+___
 ###  1.0.4.5
 **更新日期：** 2022-8-11<br/>
 **更新内容：**<br/>
