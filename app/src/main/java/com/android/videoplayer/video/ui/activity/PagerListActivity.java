@@ -2,14 +2,12 @@ package com.android.videoplayer.video.ui.activity;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.widget.Toast;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.video.ui.fragment.ListAutoPlayerFragment;
-import com.android.videoplayer.video.ui.fragment.ListPlayerChangeFragment;
-import com.android.videoplayer.video.ui.fragment.ListPlayerFragment;
 import com.android.videoplayer.ui.widget.TitleView;
+import com.android.videoplayer.video.ui.fragment.ListAutoPlayerChangeFragment;
+import com.android.videoplayer.video.ui.fragment.ListPlayerChangedFragment;
 
 /**
  * created by hty
@@ -18,9 +16,8 @@ import com.android.videoplayer.ui.widget.TitleView;
  */
 public class PagerListActivity extends BaseActivity {
 
-    private ListPlayerFragment mPlayerFragment;//列表播放
-    private ListAutoPlayerFragment mPlayerAutoFragment;//列表自动播放
-    private ListPlayerChangeFragment mPlayerChangeFragment;//列表自动播放+点击跳转无缝播放
+    private ListPlayerChangedFragment mPlayerAutoFragment;//列表自动播放
+    private ListAutoPlayerChangeFragment mPlayerChangeFragment;//列表自动播放+点击跳转无缝播放
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +31,13 @@ public class PagerListActivity extends BaseActivity {
                 finish();
             }
         });
-        String type = getIntent().getStringExtra("type");
-        if("1".equals(type)){
-            mPlayerFragment =new ListPlayerFragment();//列表滚动停止后点击播放
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mPlayerFragment).commitAllowingStateLoss();
-        }else if("2".equals(type)){
-            mPlayerAutoFragment = new ListAutoPlayerFragment();//列表滚动停止后自动播放
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mPlayerAutoFragment).commitAllowingStateLoss();
-        }else if("3".equals(type)){
-            mPlayerChangeFragment =new ListPlayerChangeFragment();//列表滚动停止后自动播放+点击item转场无缝播放
+        String autoPlay = getIntent().getStringExtra("auto_play");
+        if("1".equals(autoPlay)){
+            mPlayerChangeFragment =new ListAutoPlayerChangeFragment();//列表滚动停止后 自动播放+点击item转场无缝播放
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mPlayerChangeFragment).commitAllowingStateLoss();
         }else{
-            Toast.makeText(getApplicationContext(),"位置的事件",Toast.LENGTH_SHORT).show();
-            finish();
+            mPlayerAutoFragment = new ListPlayerChangedFragment();//列表滚动停止后 点击播放+点击item转场无缝播放
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mPlayerAutoFragment).commitAllowingStateLoss();
         }
     }
 
@@ -66,12 +57,6 @@ public class PagerListActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(null!=mPlayerFragment){
-            if(mPlayerFragment.isBackPressed()){
-                super.onBackPressed();
-            }
-            return;
-        }
         if(null!=mPlayerAutoFragment){
             if(mPlayerAutoFragment.isBackPressed()){
                 super.onBackPressed();

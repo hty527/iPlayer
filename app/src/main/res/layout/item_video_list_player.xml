@@ -83,7 +83,6 @@
             android:id="@+id/item_player"
             android:layout_width="@dimen/player_play_width"
             android:layout_height="@dimen/player_play_width"
-            android:src="@mipmap/ic_player_start"
             android:layout_gravity="center"/>
         <RelativeLayout
             android:layout_width="match_parent"

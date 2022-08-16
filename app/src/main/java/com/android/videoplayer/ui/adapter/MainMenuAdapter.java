@@ -3,6 +3,7 @@ package com.android.videoplayer.ui.adapter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.BaseMultiItemAdapter;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;
@@ -69,10 +70,14 @@ public class MainMenuAdapter  extends BaseMultiItemAdapter<Menu, BaseViewHolder>
             View item_sub = viewHolder.findViewById(R.id.item_sub);
             TextView subTitle = (TextView) viewHolder.itemView.findViewById(R.id.item_sub_title);
             subTitle.setText(data.getSub_title());
+            ((TextView) viewHolder.itemView.findViewById(R.id.item_sdk_version)).setText(String.format(DataFactory.getInstance().getString(R.string.text_version_format,"SDK版本号：%s"), ILogger.getVersion()));
             item_sub.setVisibility(TextUtils.isEmpty(data.getSub_title())? View.GONE:View.VISIBLE);
             ((TextView) viewHolder.getView(R.id.item_version_title)).setText(DataFactory.getInstance().getString(R.string.item_version_title,"预更新版本："));
             ((TextView) viewHolder.getView(R.id.item_desc_title)).setText(DataFactory.getInstance().getString(R.string.item_desc_title,"预更新内容："));
             ((TextView) viewHolder.getView(R.id.item_time_title)).setText(DataFactory.getInstance().getString(R.string.item_time_title,"预更新时间："));
+            ((TextView) viewHolder.getView(R.id.item_sdk_anchor)).setText(DataFactory.getInstance().getString(R.string.item_time_anchor,"联系作者："));
+            TextView itemAnchor = (TextView) viewHolder.getView(R.id.item_anchor);
+            itemAnchor.setText("584312311@qq.com");
             Version version = data.getVersion();
             if(null!=version){
                 ((TextView) viewHolder.getView(R.id.item_version)).setText(version.getCode());

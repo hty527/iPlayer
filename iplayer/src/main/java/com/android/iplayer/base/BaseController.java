@@ -31,8 +31,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected IVideoPlayerControl mVideoPlayerControl;//播放器代理人
     protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT;//当前控制器方向
     protected List<BaseController> mControllers;//用户自定义的各控制器
-    protected boolean itemPlayerMode, isWindowProperty,isGlobalWindow;//交互控制器是否处于列表播放模式\是否是窗口模式\是否处于全局悬浮窗或画中画模式
-
+    protected boolean itemPlayerMode,isWindowProperty,isGlobalWindow;//交互控制器是否处于列表播放模式\控制器是否处于窗口模式\是否处于全局悬浮窗或画中画模式
     protected class ExHandel extends Handler{
         public ExHandel(Looper looper){
             super(looper);
@@ -62,6 +61,87 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     public abstract void initViews();
 
+    protected int getOrientation() {
+        return mScreenOrientation;
+    }
+
+    /**
+     * 返回窗口模式
+     * @return true:当前正处于窗口模式 false:当前不处于窗口模式
+     */
+    public boolean isWindowProperty() {
+        return isWindowProperty;
+    }
+
+    /**
+     * 返回窗口类型
+     * @return true:全局悬浮窗|画中画 false:Activity window窗口模式
+     */
+    public boolean isGlobalWindow() {
+        return isGlobalWindow;
+    }
+
+    /**
+     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
+     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     */
+    public void setListPlayerMode(boolean itemPlayerMode) {
+        this.itemPlayerMode =itemPlayerMode;
+    }
+
+    /**
+     * 是否处于列表模式下播放
+     * @return true:是 false:否
+     */
+    public boolean isListPlayerMode() {
+        return itemPlayerMode;
+    }
+
+    //返回是否是竖屏状态
+    public boolean isOrientationPortrait() {
+        return mScreenOrientation==IMediaPlayer.ORIENTATION_PORTRAIT;
+    }
+
+    protected String getOrientationStr(){
+        return ",Orientation:"+getOrientation();
+    }
+
+    /**
+     * 返回播放器内部是否正在播放
+     * @return 是否正处于播放中(准备\开始播放\播放中\缓冲\) true:播放中 false:不处于播放中状态
+     */
+    protected boolean isPlayering() {
+        if(null!= mVideoPlayerControl){
+            return mVideoPlayerControl.isPlaying();
+        }
+        return false;
+    }
+
+    /**
+     * 播放器是否正处于工作状态(准备\开始播放\缓冲\手动暂停\生命周期暂停) true:工作中 false:空闲状态
+     * @return 是否正处于播放中(准备\开始播放\播放中\缓冲\) true:播放中 false:不处于播放中状态
+     */
+    protected boolean isWorking() {
+        if(null!= mVideoPlayerControl){
+            return mVideoPlayerControl.isWorking();
+        }
+        return false;
+    }
+
+    protected Activity getActivity() {
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
+            return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
+        }
+        return PlayerUtils.getInstance().getActivity(getContext());
+    }
+
+    protected Context getParentContext() {
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
+            return  mVideoPlayerControl.getTempContext();
+        }
+        return getContext();
+    }
+
     /**
      * 提供给播放器解码器来绑定播放器代理人
      * @param playerControl
@@ -69,6 +149,12 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected void attachedVideoPlayerControl(IVideoPlayerControl playerControl) {
         this.mVideoPlayerControl =playerControl;
     }
+
+    /**
+     * 设置视频标题内容
+     * @param videoTitle
+     */
+    public void setVideoTitle(String videoTitle){}
 
     /**
      * 播放状态
@@ -201,10 +287,6 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      */
     protected void quitPipWindow(){}
 
-    public void onBack() {
-        if(null!=mControllerListener) mControllerListener.onBack();
-    }
-
     /**
      * 提供给自定义视频控制器来添加自己的其它功能控制器(如手势控制\弹幕控制器\其它)
      * 调用这个方法添加的控制器位于视频控制器的上层,添加多个就是逐层往上层添加
@@ -277,108 +359,5 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
             }
             mControllers.clear();
         }
-    }
-
-    //非必须的，根据自身业务逻辑覆盖下列方法
-
-    /**
-     * 设置视频标题内容
-     * @param videoTitle
-     */
-    public void setVideoTitle(String videoTitle){}
-
-    /**
-     * 设置给用户看的虚拟的视频总时长
-     * @param totalDuration 单位：秒
-     */
-    public void setPreViewTotalDuration(String totalDuration){}
-
-    /**
-     * 设置标题栏距离顶部偏移距离
-     * @param topOffset
-     */
-    public void setTitleTopOffset(int topOffset){}
-
-    /**
-     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
-     */
-    public void setListItemPlayerMode(boolean itemPlayerMode){
-        this.itemPlayerMode =itemPlayerMode;
-    }
-
-    protected int getOrientation() {
-        return mScreenOrientation;
-    }
-
-    /**
-     * 返回窗口模式
-     * @return true:当前正处于窗口模式 false:当前不处于窗口模式
-     */
-    public boolean isWindowProperty() {
-        return isWindowProperty;
-    }
-
-    /**
-     * 返回窗口类型
-     * @return true:全局悬浮窗|画中画 false:Activity window窗口模式
-     */
-    public boolean isGlobalWindow() {
-        return isGlobalWindow;
-    }
-
-    //返回是否是竖屏状态
-    public boolean isOrientationPortrait() {
-        return mScreenOrientation==IMediaPlayer.ORIENTATION_PORTRAIT;
-    }
-
-    protected String getOrientationStr(){
-        return ",Orientation:"+getOrientation();
-    }
-
-    protected boolean isPlayering() {
-        if(null!= mVideoPlayerControl){
-            return mVideoPlayerControl.isPlaying();
-        }
-        return false;
-    }
-
-    protected Activity getActivity() {
-        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
-            return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getTempContext());
-        }
-        return PlayerUtils.getInstance().getActivity(getContext());
-    }
-
-    protected Context getParentContext() {
-        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getTempContext()){
-            return  mVideoPlayerControl.getTempContext();
-        }
-        return getContext();
-    }
-
-    /**
-     * 给宿主监听的回调器
-     */
-    public abstract static class OnControllerEventListener {
-        //开始播放
-        public void onStart(){}
-        //触发返回事件
-        public void onBack(){}
-        //播放结束
-        public void onCompletion(){}
-        //菜单按钮事件监听,返回true标识处理了menu事件,返回false表示不处理menu事件,由SDK内部处理
-        public void onMenu(){}
-        //投屏
-        public void onTv() {}
-        //开启全局悬浮窗窗口播放模式
-        public void onGobalWindow() {}
-        //是否静音了
-        public void onMute(boolean mute){}
-    }
-
-    protected OnControllerEventListener mControllerListener;
-
-    public void setOnControllerListener(OnControllerEventListener listener) {
-        mControllerListener = listener;
     }
 }

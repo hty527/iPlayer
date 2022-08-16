@@ -7,7 +7,7 @@
 一个封装基础视频播放器功能交互的SDK。
 
 ### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.4.apk?version=1.0.4 "Download"
+[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-1.0.5.apk?version=1.0.5 "Download"
 **[Demo apk下载]**
 
 ### 历史版本
@@ -54,7 +54,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:1.0.4.6'
+        implementation 'com.github.hty527:iPlayer:1.0.5'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -142,7 +142,7 @@
         //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法
         //mController.showSoundMute(true,false);//启用静音功能交互\默认不静音
         //监听控制器交互事件(设置开启了返回showBackBtn\菜单栏showMenus等功能后可设置监听,回调方法请参阅：OnControllerEventListener)
-        controller.setOnControllerListener(new BaseController.OnControllerEventListener(){
+        controller.setOnControllerListener(new VideoController.OnControllerEventListener(){
 
             @Override
             public void onMenu() {
@@ -237,14 +237,14 @@
 ```
 ### SDK及Demo快照：
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/01.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/02.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/01.jpg?q=11" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/02.jpg?q=12" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/03.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/04.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/03.jpg?q=13" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/04.jpg?q=14" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/05.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/06.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/05.jpg?q=15" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/06.jpg?q=16" width="270",height="585">
 </div>

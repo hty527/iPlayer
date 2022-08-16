@@ -12,19 +12,19 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.base.BaseController;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
-import com.android.videoplayer.video.listener.OnMenuActionListener;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Params;
@@ -37,10 +37,12 @@ import com.android.videoplayer.video.adapter.ListDetailsAdapter;
 import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.bean.VideoParams;
 import com.android.videoplayer.video.contract.VideoListContract;
+import com.android.videoplayer.video.listener.OnMenuActionListener;
 import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerMenuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.util.List;
 
 /**
@@ -267,9 +269,9 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             if(null!=controller){
                 Logger.d(TAG,"addListener-->");
                 controller.showMenus(true,true,true);
-                controller.setListItemPlayerMode(false);//从可能的列表模式转换为正常模式
+                controller.setListPlayerMode(false);//从可能的列表模式转换为正常模式
                 controller.setCanTouchInPortrait(true);//竖屏模式下允许手势交互
-                controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+                controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
                     @Override
                     public void onMenu() {
                         showMenuDialog();

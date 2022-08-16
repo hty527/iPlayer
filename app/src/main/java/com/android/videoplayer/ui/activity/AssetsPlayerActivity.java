@@ -6,11 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -54,7 +53,7 @@ public class AssetsPlayerActivity extends BaseActivity {
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
         VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
         controller.setTitleTopOffset(ScreenUtils.getInstance().getStatusBarHeight(getApplicationContext()));
-        controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+        controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
 
             @Override
             public void onBack() {//竖屏的返回事件

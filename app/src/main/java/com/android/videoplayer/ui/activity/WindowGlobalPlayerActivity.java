@@ -7,12 +7,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.base.BaseController;
 import com.android.iplayer.base.BasePlayer;
+import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -85,7 +85,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
         //设置交互监听
-        mVideoPlayer.getController().setOnControllerListener(new BaseController.OnControllerEventListener() {
+        ((VideoController) mVideoPlayer.getController()).setOnControllerListener(new VideoController.OnControllerEventListener() {
 
             @Override
             public void onBack() {//竖屏的返回事件

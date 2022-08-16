@@ -1,5 +1,12 @@
 SDK版本更新记录由近及远展示
 
+###  1.0.5
+**更新日期：** 2022-8-16<br/>
+**更新内容：**<br/>
+>1. 默认控制器新增列表播放器交互场景，setListPlayerMode(boolean itemPlayerMode,boolean defaultSoundMute);<br/>
+>1. 去除BaseController的setOnControllerListener方法，由子controller自行实现<br/>
+>2. BasePlayer的isWork更名为isWorking<br/>
+___
 ###  1.0.4.6
 **更新日期：** 2022-8-15<br/>
 **更新内容：**<br/>
