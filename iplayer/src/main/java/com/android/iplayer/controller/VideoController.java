@@ -26,36 +26,45 @@ import com.android.iplayer.widget.GesturePositionView;
  * created by hty
  * 2022/6/28
  * Desc:默认的视频控制器弹窗
+ * 结合Demo的适用场景：
+ * 1、横竖屏切换
+ * setScreenOrientation(int orientation);
+ * 2、window窗口
+ * setWindowProperty(boolean isWindowProperty,boolean isGlobalWindow);
+ * 3、列表播放器场景
+ * setListPlayerMode(boolean itemPlayerMode,boolean defaultSoundMute);
+ * 4、画中画
+ * enterPipWindow();quitPipWindow();
  * 功能支持包括但不限于：
- * 1、控制栏和底部进度条二选一显示,播放中时允许点击显示\隐藏,列表模式下播放视频首帧渲染不显示控制器和标题栏,只显示底部播放进度条。
+ * 1、基础的控制器交互(包括但不限于：播放时间\总时长\seek\暂停\开始)
  * 2、手势识别交互更改播放进度、屏幕亮度、音量等，竖屏可支持设置是否启用手势功能。
  */
 public class VideoController extends GestureController implements IGestureControl {
 
-    public static final int SCENE_MOBILE     =1;//移动网络播放提示
-    public static final int SCENE_COMPLETION =2;//试看结束
-    public static final int SCENE_ERROR      =3;//播放失败
-    private static final int MESSAGE_HIDE_CONTROLLER      = 100;//隐藏控制器
-    private static final int MESSAGE_HIDE_LOCKER          = 101;//隐藏控制锁
-    private static final long DELAYED_INVISIBLE = 5000;//延时隐藏控制器、控制锁时长
-    //播放按钮,控制器,标题栏,重新播放
-    protected View mControllerPlay,mControllerController,mControllerTitle,mControllerReplay;
-    private ImageView mControllerLocker;//控制锁
-    private ControllerStatusView mControllerStatus;
-    protected ProgressBar mControllerLoading;
-    protected TextView mCurrentDuration,mTotalDuration;
-    protected SeekBar mSeekBar;
-    protected ProgressBar mProgressBar;//底部进度条
-    //用户手指是否持续拖动中\是否播放(试看)完成\是否显示返回按钮(竖屏生效,默认不显示,横屏强制显示)\是否显示投屏按钮\是否显示悬浮窗按钮\是否显示菜单按钮
-    protected boolean isTouchSeekBar,isCompletion,showBackBtn,showTv=false,showWindow=false,showMenu=false;
-    protected long mPreViewTotalTime;//给用户看的预览总时长
+    public static final int SCENE_MOBILE                = 1;//移动网络播放提示
+    public static final int SCENE_COMPLETION            = 2;//试看结束
+    public static final int SCENE_ERROR                 = 3;//播放失败
+    private static final int MESSAGE_HIDE_CONTROLLER    = 100;//隐藏控制器
+    private static final int MESSAGE_HIDE_LOCKER        = 101;//隐藏控制锁
+    private static final long DELAYED_INVISIBLE         = 5000;//延时隐藏控制器、控制锁时长
+    private static final int MATION_DRAUTION            = 300;//控制器、控制锁等显示\隐藏过渡动画时长(毫秒)
+    //播放按钮,控制器,标题栏,重新播放,列表模式专用控制器
+    protected View mControllerPlay,mControllerController,mControllerTitle,mControllerReplay,mControllerListController;
+    protected ProgressBar mControllerLoading;//加载中
+    protected SeekBar mSeekBar;//seek调节控制器
     protected ImageView mPlayIcon;//左下角的迷你播放状态按钮
-    private int mTitleOffset=0;//标题栏距离顶部偏移量
-    private int MATION_DRAUTION=300;
+    private ControllerStatusView mControllerStatus;//失败、移动网络播放等UI交互
+    protected TextView mCurrentDuration,mTotalDuration,mSurplusDuration;//当前播放位置时间\总时间\剩余时间
+    protected ProgressBar mProgressBar;//底部进度条
+    private ImageView mControllerLocker;//横屏模式下的控制锁
     //小窗口模式交互控制器
     private VideoWindowController mWindowController;
     //手势UI交互
     private GesturePositionView mGesturePositionView;
+    //用户手指是否持续拖动中\是否播放(试看)完成\是否显示返回按钮(竖屏生效,默认不显示,横屏强制显示)\是否显示投屏按钮\是否显示悬浮窗按钮\是否显示菜单按钮\记录用户设置的是否处于列表模式
+    protected boolean isTouchSeekBar,isCompletion,showBackBtn,showTv=false,showWindow=false,showMenu=false,itemUserPlayerMode;
+    protected long mPreViewTotalTime;//试看模式下总时长
+    private int mTitleOffset=0;//用户设置的标题栏距离顶部偏移量
 
     public VideoController(Context context) {
         super(context);
@@ -79,16 +88,16 @@ public class VideoController extends GestureController implements IGestureContro
                     } else {
                         if(null!= mVideoPlayerControl) mVideoPlayerControl.quitFullScreen();//横屏回调给播放器做退出全屏处理
                     }
-                } else if (id == R.id.controller_btn_fullscreen) {
+                } else if (id == R.id.controller_btn_fullscreen||id == R.id.controller_btn_fullscreen_list) {
                     if(null!= mVideoPlayerControl){
-                        if(isOrientationPortrait()&&!mVideoPlayerControl.isWork()){//当播放器处于待命状态时不处理全屏逻辑
+                        if(isOrientationPortrait()&&!mVideoPlayerControl.isWorking()){//当播放器处于待命状态时不处理全屏逻辑
                             return;
                         }
                         mVideoPlayerControl.toggleFullScreen();//回调给播放器处理横\竖屏逻辑
                     }
-                } else if (id == R.id.controller_btn_mute) {//静音\取消静音
+                } else if (id == R.id.controller_btn_mute || id == R.id.controller_btn_mute_list) {//静音\取消静音
                     toggleMute();
-                } else if (id == R.id.controller_play || id == R.id.controller_start || id == R.id.controller_replay) {
+                }else if (id == R.id.controller_play || id == R.id.controller_start || id == R.id.controller_replay) {
                     if (null != mVideoPlayerControl) mVideoPlayerControl.togglePlay();//回调给播放器
                 } else if (id == R.id.controller_root_view) {
                     toggleController(false);
@@ -105,16 +114,18 @@ public class VideoController extends GestureController implements IGestureContro
         };
         findViewById(R.id.controller_title_back).setOnClickListener(onClickListener);
         findViewById(R.id.controller_btn_fullscreen).setOnClickListener(onClickListener);
-//        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);//启用手势识别器后不能消费点击事件了
+//        findViewById(R.id.controller_root_view).setOnClickListener(onClickListener);//启用手势识别器后不能消费点击事件了,单击事件在onSingleTap中处理
         mControllerPlay = findViewById(R.id.controller_play);
         mControllerPlay.setOnClickListener(onClickListener);
         mControllerReplay = findViewById(R.id.controller_replay);
         mControllerReplay.setOnClickListener(onClickListener);
         mControllerLoading = findViewById(R.id.controller_loading);
         mControllerController = findViewById(R.id.controller_controller);
+        mControllerListController = findViewById(R.id.controller_list_controller);
         mControllerTitle = findViewById(R.id.controller_title_view);
         mCurrentDuration = findViewById(R.id.controller_current_duration);
         mTotalDuration = findViewById(R.id.controller_total_duration);
+        mSurplusDuration = findViewById(R.id.controller_surplus_duration);
         mPlayIcon = findViewById(R.id.controller_start);
         mControllerLocker = findViewById(R.id.controller_locker);
         mPlayIcon.setOnClickListener(onClickListener);
@@ -123,6 +134,8 @@ public class VideoController extends GestureController implements IGestureContro
         findViewById(R.id.controller_title_window).setOnClickListener(onClickListener);
         findViewById(R.id.controller_title_menu).setOnClickListener(onClickListener);
         findViewById(R.id.controller_btn_mute).setOnClickListener(onClickListener);
+        findViewById(R.id.controller_btn_mute_list).setOnClickListener(onClickListener);
+        findViewById(R.id.controller_btn_fullscreen_list).setOnClickListener(onClickListener);
         //各种状态交互
         mControllerStatus = findViewById(R.id.controller_status);
         mControllerStatus.setOnStatusListener(new ControllerStatusView.OnStatusListener() {
@@ -154,6 +167,11 @@ public class VideoController extends GestureController implements IGestureContro
                 //视频虚拟总长度
                 if(null!=mCurrentDuration) mCurrentDuration.setText(PlayerUtils.getInstance().stringForAudioTime(progress));
                 if(null!=mProgressBar) mProgressBar.setProgress(progress);
+                try {
+                    if(null!=mSurplusDuration&&null!=mVideoPlayerControl) mSurplusDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mVideoPlayerControl.getDuration()-progress));
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
             }
 
             /**
@@ -232,13 +250,16 @@ public class VideoController extends GestureController implements IGestureContro
                 break;
             case STATE_START://首次播放
                 updateMute();
-                if(itemPlayerMode){//列表播放模式
+                if(isListPlayerMode()){//列表播放模式
+                    if(null!=mControllerListController) mControllerListController.setVisibility(View.VISIBLE);
                     changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
-                    if(null!=mProgressBar) mProgressBar.setVisibility(VISIBLE);
+                    if(null!=mProgressBar) mProgressBar.setVisibility(GONE);
                 }else if(isWindowProperty){//窗口播放模式（这里可以不改变,窗口整体控制器是不可见的）
+                    if(null!=mControllerListController) mControllerListController.setVisibility(View.GONE);
                     changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
                     if(null!=mProgressBar) mProgressBar.setVisibility(VISIBLE);//悬浮窗口的底部进度条必须显示
                 }else{//正常模式
+                    if(null!=mControllerListController) mControllerListController.setVisibility(View.GONE);
                     changedUIState(View.GONE, View.GONE, View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,0);
                 }
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);
@@ -261,8 +282,8 @@ public class VideoController extends GestureController implements IGestureContro
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);
                 if(isWindowProperty){//窗口模式控制器操作栏是不可见的
                     changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
-                }else if(itemPlayerMode){//列表播放模式
-                    changedUIState(View.GONE, View.GONE, View.VISIBLE,View.GONE,View.GONE,View.GONE,0);
+                }else if(isListPlayerMode()){//列表播放模式
+                    changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
                 }else{
                     if(isLocked()){//如果控制锁正在被锁定时，恢复播放不显示控制器，只显示底部进度条
                         changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
@@ -275,8 +296,8 @@ public class VideoController extends GestureController implements IGestureContro
             case STATE_PAUSE://人为暂停中
             case STATE_ON_PAUSE://生命周期暂停中
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
-                if(itemPlayerMode){
-                    changedUIState(View.GONE, View.VISIBLE, View.VISIBLE,View.GONE,View.GONE,View.GONE,0);
+                if(isListPlayerMode()){
+                    changedUIState(View.GONE, View.VISIBLE, View.GONE,View.GONE,View.GONE,View.GONE,0);
                 }else{
                     changedUIState(View.GONE, View.VISIBLE, View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,0);
                 }
@@ -348,12 +369,16 @@ public class VideoController extends GestureController implements IGestureContro
     @Override
     public void setScreenOrientation(int orientation) {
         super.setScreenOrientation(orientation);
-        ILogger.d(TAG,"setScreenOrientation-->"+getOrientationStr());
+        ILogger.d(TAG,"setScreenOrientation-->"+getOrientationStr()+",itemPlayerMode:"+itemPlayerMode);
         findViewById(R.id.controller_title).setVisibility(isOrientationPortrait()?View.GONE:View.VISIBLE);
         LinearLayout titleBar = (LinearLayout) findViewById(R.id.controller_title_bar);
         LinearLayout controllerBar = (LinearLayout) findViewById(R.id.controller_controller);
         int margin = PlayerUtils.getInstance().dpToPxInt(22f);
         if(isOrientationPortrait()){
+            super.itemPlayerMode=itemUserPlayerMode;
+            if(isWorking()&&null!=mControllerListController){
+                mControllerListController.setVisibility(isListPlayerMode()?View.VISIBLE:View.GONE);
+            }
             findViewById(R.id.controller_title_tv).setVisibility(showTv?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(showWindow?View.VISIBLE:View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(showMenu?View.VISIBLE:View.GONE);
@@ -374,6 +399,10 @@ public class VideoController extends GestureController implements IGestureContro
             controllerBattery.removeAllViews();
             controllerBattery.setVisibility(View.GONE);
         }else{
+            //标记为非列表模式
+            super.itemPlayerMode=false;
+            if(null!=mControllerListController) mControllerListController.setVisibility(GONE);
+
             findViewById(R.id.controller_title_tv).setVisibility(View.GONE);
             findViewById(R.id.controller_title_window).setVisibility(View.GONE);
             findViewById(R.id.controller_title_menu).setVisibility(View.GONE);
@@ -390,6 +419,10 @@ public class VideoController extends GestureController implements IGestureContro
             controllerBattery.addView(new BatteryView(getParentContext()));
         }
         toggleController(true);//控制器不可见
+        //如果是正在播放中&&是列表模式&&是竖屏 底部进度条不可见
+        if(isOrientationPortrait()&& isListPlayerMode()&&isWorking()&&null!=mProgressBar){
+            mProgressBar.setVisibility(View.GONE);
+        }
         if(!isOrientationPortrait()){
             resetLockerStatus();//重置控制锁，在toggleController之后
         }
@@ -505,7 +538,7 @@ public class VideoController extends GestureController implements IGestureContro
             //强制显示全部控制器
             if(isShow){
                 PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerController, MATION_DRAUTION, false, null);
-                if(!itemPlayerMode){//列表模式下menu栏不可用
+                if(!isListPlayerMode()){//列表模式下menu栏不可用
                     PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
                 }
                 delayedInvisibleController();
@@ -536,7 +569,7 @@ public class VideoController extends GestureController implements IGestureContro
                 });
             }else{
                 if(isOrientationPortrait()){
-                    if(!itemPlayerMode){//列表模式下menu栏不可用
+                    if(!isListPlayerMode()){//列表模式下menu栏不可用
                         PlayerUtils.getInstance().startAlphaAnimatioFrom(mControllerTitle, MATION_DRAUTION, false, null);
                     }
                 }else{
@@ -587,7 +620,6 @@ public class VideoController extends GestureController implements IGestureContro
                     if(null!=mControllerTitle) mControllerTitle.setVisibility(GONE);
                 }
             });
-
         }
     }
 
@@ -744,11 +776,26 @@ public class VideoController extends GestureController implements IGestureContro
      * 静音、取消静音
      */
     private void toggleMute() {
+        toggleMute(false);
+    }
+
+    /**
+     * 静音、取消静音
+     * @param isMute 是否强制静音 true:强制静音 false:toggleMute逻辑
+     */
+    private void toggleMute(boolean isMute) {
         if(null!= mVideoPlayerControl){
+            if(isMute){
+                mVideoPlayerControl.setSoundMute(true);
+                updateMute();
+                return;
+            }
             boolean soundMute = mVideoPlayerControl.toggleMute();
             if(null!=mControllerListener) mControllerListener.onMute(soundMute);
             ImageView muteImge = (ImageView) findViewById(R.id.controller_btn_mute);
+            ImageView muteImge2 = (ImageView) findViewById(R.id.controller_btn_mute_list);
             muteImge.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            muteImge2.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
         }
     }
 
@@ -759,7 +806,9 @@ public class VideoController extends GestureController implements IGestureContro
         if(null!= mVideoPlayerControl){
             boolean soundMute = mVideoPlayerControl.isSoundMute();
             ImageView muteImge = (ImageView) findViewById(R.id.controller_btn_mute);
+            ImageView muteImge2 = (ImageView) findViewById(R.id.controller_btn_mute_list);
             muteImge.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            muteImge2.setImageResource(soundMute?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
         }
     }
 
@@ -780,7 +829,10 @@ public class VideoController extends GestureController implements IGestureContro
             mProgressBar.setMax(0);
         }
         if(null!=mExHandel) mExHandel.removeCallbacksAndMessages(null);
+        if(null!=mControllerListController) mControllerListController.setVisibility(GONE);
         if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(0));
+        if(null!=mCurrentDuration) mCurrentDuration.setText(PlayerUtils.getInstance().stringForAudioTime(0));
+        if(null!=mSurplusDuration) mSurplusDuration.setText(PlayerUtils.getInstance().stringForAudioTime(0));
         if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
     }
 
@@ -793,18 +845,9 @@ public class VideoController extends GestureController implements IGestureContro
      * 设置给用户看的虚拟的视频总时长
      * @param totalDuration 单位：秒
      */
-    @Override
     public void setPreViewTotalDuration(String totalDuration) {
         int duration = PlayerUtils.getInstance().parseInt(totalDuration);
         if(duration>0) setPreViewTotalDuration(duration*1000);
-    }
-
-    /**
-     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
-     */
-    @Override
-    public void setListItemPlayerMode(boolean itemPlayerMode) {
-        super.setListItemPlayerMode(itemPlayerMode);
     }
 
     /**
@@ -823,12 +866,55 @@ public class VideoController extends GestureController implements IGestureContro
         }
     }
 
-    @Override
+    /**
+     * 设置标题栏距离屏幕顶部的偏移距离
+     * @param topOffset 偏移距离，单位：像素
+     */
     public void setTitleTopOffset(int topOffset) {
         if(isOrientationPortrait()){
             this.mTitleOffset=topOffset;//只记录用户设置的偏移量,竖屏的不记录,竖屏交给宿主设置
         }
         findViewById(R.id.controller_title_margin).getLayoutParams().height=mTitleOffset;
+    }
+
+    /**
+     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
+     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     */
+    @Override
+    public void setListPlayerMode(boolean itemPlayerMode) {
+        setListPlayerMode(itemPlayerMode,false);
+    }
+
+    /**
+     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
+     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     * @param defaultSoundMute 默认是否静音 true:静音 flase:跟随系统原声
+     */
+    public void setListPlayerMode(boolean itemPlayerMode,boolean defaultSoundMute) {
+        super.setListPlayerMode(itemPlayerMode);
+        this.itemUserPlayerMode=itemPlayerMode;
+        if(defaultSoundMute){
+            toggleMute(true);
+        }
+        //如果是启动了列表播放模式,则立即让所有其它控制器处于不可见状态
+        if(isListPlayerMode()){
+            if(isWorking()){
+                removeDelayedRunnable(0);
+                changedUIState(View.GONE, View.GONE, View.GONE,View.GONE,View.GONE,View.GONE,0);
+                if(null!=mProgressBar) mProgressBar.setVisibility(GONE);
+            }
+        }else{
+            if(isPlayering()){
+                toggleController(false,true);//显示所有控制器
+            }else if(isWorking()){
+                toggleController(true);//隐藏所有控制器
+            }
+        }
+        //工作中状态时，列表控制器可见
+        if(isWorking()&&null!=mControllerListController){
+            mControllerListController.setVisibility(itemPlayerMode?View.VISIBLE:View.GONE);
+        }
     }
 
     @Override
@@ -872,14 +958,32 @@ public class VideoController extends GestureController implements IGestureContro
     /**
      * 是否显示静音按钮
      * @param showSound 是否显示静音按钮,true:显示 false:隐藏
+     */
+    public void showSoundMute(boolean showSound){
+        ImageView muteImage = (ImageView) findViewById(R.id.controller_btn_mute);
+        ImageView muteImage2 = (ImageView) findViewById(R.id.controller_btn_mute_list);
+        findViewById(R.id.controller_btn_mute).setVisibility(showSound?View.VISIBLE:View.GONE);
+        if(null!=mVideoPlayerControl){
+            boolean result = mVideoPlayerControl.isSoundMute();
+            muteImage.setImageResource(result?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            muteImage2.setImageResource(result?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            if(null!=mControllerListener) mControllerListener.onMute(result);
+        }
+    }
+
+    /**
+     * 是否显示静音按钮
+     * @param showSound 是否显示静音按钮,true:显示 false:隐藏
      * @param soundMute 是否静音,true:静音 false:系统原声
      */
     public void showSoundMute(boolean showSound,boolean soundMute){
         ImageView muteImage = (ImageView) findViewById(R.id.controller_btn_mute);
+        ImageView muteImage2 = (ImageView) findViewById(R.id.controller_btn_mute_list);
         findViewById(R.id.controller_btn_mute).setVisibility(showSound?View.VISIBLE:View.GONE);
         if(null!=mVideoPlayerControl){
             boolean result = mVideoPlayerControl.setSoundMute(soundMute);
             muteImage.setImageResource(result?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
+            muteImage2.setImageResource(result?R.mipmap.ic_player_mute_true:R.mipmap.ic_player_mute_false);
             if(null!=mControllerListener) mControllerListener.onMute(result);
         }
     }
@@ -926,7 +1030,7 @@ public class VideoController extends GestureController implements IGestureContro
 //        ILogger.d(TAG,"onDestroy-->"+getOrientationStr());
         removeAllController();
         reset();
-        itemPlayerMode =false;showBackBtn=false;showTv=false;showWindow=false;showMenu=false;
+        itemPlayerMode =false;itemUserPlayerMode=false;showBackBtn=false;showTv=false;showWindow=false;showMenu=false;
         changedUIState(View.GONE,View.VISIBLE,View.GONE,View.GONE,View.GONE,View.GONE,0);
     }
 
@@ -934,6 +1038,11 @@ public class VideoController extends GestureController implements IGestureContro
 
     @Override
     public void onSingleTap() {
+        //列表模式响应单击事件直接处理为开始\暂停播放事件
+        if(isListPlayerMode()){
+            if (null != mVideoPlayerControl) mVideoPlayerControl.togglePlay();//回调给播放器
+            return;
+        }
         if(PlayerUtils.getInstance().isFastClick(500)){
             if(isLocked()){
                 toggleLocker(false);
@@ -976,5 +1085,31 @@ public class VideoController extends GestureController implements IGestureContro
     @Override
     public void onVolumeChange(int percent) {
         if(null!=mGesturePositionView) mGesturePositionView.onVolumeChange(percent);
+    }
+
+    /**
+     * 给宿主监听的回调器
+     */
+    public abstract static class OnControllerEventListener {
+        //触发返回事件
+        public void onBack(){}
+        //播放开始
+        public void onStart(){}
+        //播放结束
+        public void onCompletion(){}
+        //菜单按钮事件监听,返回true标识处理了menu事件,返回false表示不处理menu事件,由SDK内部处理
+        public void onMenu(){}
+        //投屏
+        public void onTv() {}
+        //开启全局悬浮窗窗口播放模式
+        public void onGobalWindow() {}
+        //是否静音了
+        public void onMute(boolean mute){}
+    }
+
+    protected OnControllerEventListener mControllerListener;
+
+    public void setOnControllerListener(OnControllerEventListener listener) {
+        mControllerListener = listener;
     }
 }

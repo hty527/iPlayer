@@ -29,8 +29,8 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     protected static final String URL1="http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";
     protected static final String URL2="https://upload.dongfeng-nissan.com.cn/nissan/video/202204/4cfde6f0-bf80-11ec-95c3-214c38efbbc8.mp4";
     protected static final String URL3="http://cdnxdc.tanzi88.com/XDC/dvideo/2017/11/29/15f22f48466180232ca50ec25b0711a7.mp4";
-//    protected static final String URL4="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_30mb.mp4";
     protected static final String URL4="http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";
+    protected static final String URL5="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_30mb.mp4";
     protected static final String M3U8="http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear2/prog_index.m3u8";//直播测试流
     protected PlayerMenuDialog mMenuDialog;//功能交互菜单
     private boolean isFullScreen=false,isForbidCycle=false;//是否开启全屏模式,是否禁止生命周期(悬浮窗必须设置)

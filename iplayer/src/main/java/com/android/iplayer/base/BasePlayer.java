@@ -545,8 +545,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
 //                ILogger.d(TAG,"quitLandscapeScreen-->已退出全屏");
             }else{
                 //通知宿主监听器触发返回事件
-//                ILogger.d(TAG,"quitLandscapeScreen-->退出全屏无宿主接收,通知控制器返回并销毁播放器");
-                if(null!= mController) mController.onBack();
+//                ILogger.d(TAG,"quitLandscapeScreen-->退出全屏无宿主接收,销毁播放器");
                 //无宿主接收时直接停止播放并销毁播放器
                 onDestroy();
             }
@@ -738,7 +737,8 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             }else{
                 //通知宿主监听器触发返回事件
 //                ILogger.d(TAG,"quitWindow-->退出窗口无宿主接收,通知控制器返回");
-                if(null!= mController) mController.onBack();
+                //无宿主接收时直接停止播放并销毁播放器
+                onDestroy();
             }
         }
     }
@@ -1065,7 +1065,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @return 非失败、初始、完成状态的其它状态均为播放中
      */
     @Override
-    public boolean isWork() {
+    public boolean isWorking() {
         if(null!=mIVideoPlayer) {
             return mIVideoPlayer.isWork();
         }

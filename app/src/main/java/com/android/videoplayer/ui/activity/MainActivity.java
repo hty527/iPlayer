@@ -7,19 +7,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.model.PlayerState;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -49,7 +46,6 @@ public class MainActivity extends BaseActivity {
         TitleView titleView = (TitleView) findViewById(R.id.title_view);
         titleView.setTitle(getResources().getString(R.string.app_name));
         titleView.enableTitleBack(false);
-        ((TextView) findViewById(R.id.tv_sdk_version)).setText(String.format(DataFactory.getInstance().getString(R.string.text_version_format,"SDK版本号：%s"), ILogger.getVersion()));
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(),LinearLayoutManager.VERTICAL,false));
         MainMenuAdapter adapter=new MainMenuAdapter(DataFactory.getInstance().getMenus());
@@ -84,50 +80,45 @@ public class MainActivity extends BaseActivity {
                             intent=new Intent(MainActivity.this, VideoListPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_list,"连续播放一个列表示例"));
                             break;
-                        case 7://点击列表无缝转场播放
-                            intent = new Intent(MainActivity.this, PagerListActivity.class);
-                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_next,"点击列表转场播放"));
-                            intent.putExtra("type","3");
-                            break;
-                        case 8://列表自动播放
+                        case 7://列表自动播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_auto,"列表自动播放"));
-                            intent.putExtra("type","2");
+                            intent.putExtra("auto_play","1");
                             break;
-                        case 9://列表点击播放
+                        case 8://列表点击播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_click,"列表点击播放"));
-                            intent.putExtra("type","1");
+                            intent.putExtra("auto_play","0");
                             break;
-                        case 10://Activity小窗口
+                        case 9://Activity小窗口
                             intent = new Intent(MainActivity.this, WindowPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_window,"Activity局部悬浮窗"));
                             break;
-                        case 11://全局悬浮窗
+                        case 10://全局悬浮窗
                             intent = new Intent(MainActivity.this, WindowGlobalPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_goable_window,"全局悬浮窗"));
                             break;
-                        case 12://任意界面开启窗口播放器
+                        case 11://任意界面开启窗口播放器
                             startMiniWindowPlayer();
                             break;
-                        case 13://任意界面开启全局悬浮窗播放器
+                        case 12://任意界面开启全局悬浮窗播放器
                             checkedPermission();
                             break;
-                        case 14://画中画
+                        case 13://画中画
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 intent=new Intent(MainActivity.this, PiPPlayerActivity.class);
                                 intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_dip,"画中画"));
                             }
                             break;
-                        case 15://类抖音垂直滚动播放
+                        case 14://类抖音垂直滚动播放
                             intent=new Intent(MainActivity.this, PagerPlayerActivity.class);
                             break;
-                        case 16://自定义弹幕控制器功能示例
+                        case 15://自定义弹幕控制器功能示例
                             intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
                             intent.putExtra("danmu",true);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_danmu,"自定义弹幕控制器"));
                             break;
-                        case 17://项目主页 https://gitee.com/hty_Yuye/iPlayer
+                        case 16://项目主页 https://gitee.com/hty_Yuye/iPlayer
                             intent = new Intent(Intent.ACTION_VIEW);
                             intent.addCategory(Intent.CATEGORY_BROWSABLE);
                             intent.setData(Uri.parse("https://github.com/hty527/iPlayer"));
@@ -195,7 +186,7 @@ public class MainActivity extends BaseActivity {
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(this);
             VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-            controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+            controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
                 @Override
                 public void onMenu() {
                 }

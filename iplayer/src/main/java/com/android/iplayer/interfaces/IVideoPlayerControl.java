@@ -341,7 +341,7 @@ public interface IVideoPlayerControl<V extends BaseController> {
     int getVideoHeight();
 
     /**
-     * @return 返回播放时长
+     * @return 返回视频文件总时长
      */
 
     long getDuration();
@@ -372,7 +372,7 @@ public interface IVideoPlayerControl<V extends BaseController> {
     /**
      * @return 播放器是否正处于工作状态(准备\开始播放\缓冲\手动暂停\生命周期暂停) true:工作中 false:空闲状态
      */
-    boolean isWork();
+    boolean isWorking();
 
     /**
      * @return 是否正处于播放中(准备\开始播放\播放中\缓冲\) true:播放中 false:不处于播放中状态

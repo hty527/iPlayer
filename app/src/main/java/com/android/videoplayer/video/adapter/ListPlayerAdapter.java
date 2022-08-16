@@ -21,8 +21,13 @@ import java.util.List;
 public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBean,ListPlayerHolder> {
 
     private final int mVideoHeight;
+    private boolean mAutoPlay;//是否自动播放，自动播放模式下不显示item的播放按钮
 
     public ListPlayerAdapter(List<OpenEyesIndexItemBean> data) {
+        this(data,false);
+    }
+
+    public ListPlayerAdapter(List<OpenEyesIndexItemBean> data,boolean autoPlay) {
         super(data);
         addItemType(OpenEyesIndexItemBean.ITEM_UNKNOWN,R.layout.item_unkonwn);
         addItemType(OpenEyesIndexItemBean.ITEM_TITLE,R.layout.item_unkonwn);//标题//R.layout.item_video_list_title
@@ -31,6 +36,7 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
         addItemType(OpenEyesIndexItemBean.ITEM_CARD_VIDEO,R.layout.item_video_list_player);//card视频
         addItemType(OpenEyesIndexItemBean.ITEM_NOIMAL,R.layout.item_video_list_player);//普通视频
         mVideoHeight = (ScreenUtils.getInstance().getScreenWidth() - ScreenUtils.getInstance().dpToPxInt(32f)) * 9 /16;
+        this.mAutoPlay=autoPlay;
     }
 
     @Override
@@ -81,7 +87,7 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
                     }
                 }
             });
-            PlayerUtils.getInstance().setOutlineProvider(itemContainer,ScreenUtils.getInstance().dpToPxInt(5f));
+            PlayerUtils.getInstance().setOutlineProvider(itemContainer,ScreenUtils.getInstance().dpToPxInt(3f));
             TextView anchorName = ((TextView) viewHolder.getView(R.id.item_title));
             anchorName.setText(null!=data.getAuthor()?data.getAuthor().getName():data.getTitle());
             ((TextView) viewHolder.getView(R.id.item_sub_title)).setText(DateParseUtil.getNow(data.getDate()));//最后更新时间
@@ -110,6 +116,8 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
             //封面+用户头像
             ImageView imageCover = (ImageView) viewHolder.getView(R.id.item_cover);
             ImageView itemUserAvatar = (ImageView) viewHolder.getView(R.id.item_user_avatar);
+            ImageView itemPlayer = (ImageView) viewHolder.getView(R.id.item_player);
+            itemPlayer.setImageResource(mAutoPlay?0:R.mipmap.ic_player_start);
             if(null!=data.getAuthor()){
                 GlideModel.getInstance().loadCirImage(itemUserAvatar,data.getAuthor().getIcon());
             }else{

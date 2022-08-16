@@ -9,24 +9,9 @@
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"/>
-        <TextView
-            android:id="@+id/tv_sdk_version"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_weight="0"
-            android:lineSpacingExtra="3dp"
-            android:textColor="#CECECE"
-            android:textSize="12dp"
-            android:gravity="center"/>
-    </LinearLayout>
+        android:clipToPadding="false"/>
 </LinearLayout>

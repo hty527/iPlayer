@@ -15,8 +15,8 @@ import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.adapter.interfaces.OnItemChildClickListener;
@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * created by hty
  * 2022/7/1
- * Desc:列表点击播放示例\列表自动播放\列表转场播放逻辑和功能实现
+ * Desc:处理列表视频播放、转场播放后接收播放器等示例
  */
 public class ListPlayerFragment extends BaseFragment<VideoListPersenter> implements VideoListContract.View {
 
@@ -67,7 +67,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         //列表适配器初始化
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ListPlayerAdapter(null);//DataFactory.getInstance().getVideoList()
+        mAdapter = new ListPlayerAdapter(null,autoPlayer());//DataFactory.getInstance().getVideoList()
         //点击播放器区域
         mAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
@@ -249,8 +249,6 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             String[] videoPath = PlayerManager.getInstance().getVideoPath(itemData);
             mVideoPlayer.setTitle(videoPath[1]);//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(videoPath[0]);//播放地址设置
-//            mVideoPlayer.setDanmuData(DataFactory.getInstance().getDanmus());//设置弹幕数据
-            mVideoPlayer.getController().setListItemPlayerMode(true);//列表播放模式
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }
@@ -312,8 +310,8 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
              * 还原到列表模式
              */
             BaseController videoController = mVideoPlayer.getController();
-            if(null!=videoController){
-                videoController.setListItemPlayerMode(true);//从列表模式转换为正常模式
+            if(null!=videoController&&autoPlayer()){
+                videoController.setListPlayerMode(true);//从列表模式转换为正常模式
             }
             setListener(false);//绑定监听器到此界面
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(mCurrentPosition),View.INVISIBLE);//隐藏播放按钮的可见状态
@@ -350,9 +348,16 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         VideoController controller = (VideoController) mVideoPlayer.getController();
         if(null!=controller){
             controller.showMenus(false,false,false);
-            controller.setCanTouchInPortrait(false);//竖屏下不允许手势交互
-            if(isInit) controller.showSoundMute(true,true);//显示静音按钮&&初始状态为静音,尽在初始化时调用
-            controller.setOnControllerListener(new BaseController.OnControllerEventListener() {
+            controller.setCanTouchInPortrait(true);//竖屏下允许手势交互(列表下只有横向滑动滚动生效)
+            if(autoPlayer()){//自动播放场景启用列表模式,点击播放使用常规播放模式
+                if(isInit){
+                    controller.setListPlayerMode(true,true);//列表播放模式,默认静音
+                    controller.showSoundMute(true);//显示静音按钮，这个按钮给无缝转场的播放器使用设置
+                }else{
+                    controller.setListPlayerMode(true);//列表播放模式
+                }
+            }
+            controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
 
                 @Override
                 public void onBack() {//竖屏的返回事件

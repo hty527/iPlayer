@@ -90,4 +90,39 @@
                 app:boldStorkeWidth="0.5"/>
         </LinearLayout>
     </LinearLayout>
+    <TextView
+        android:id="@+id/item_sdk_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="3dp"
+        android:layout_marginTop="22dp"
+        android:textColor="#AFAFAF"
+        android:textSize="12dp"
+        android:gravity="center"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="22dp"
+        android:layout_marginTop="6dp">
+        <TextView
+            android:id="@+id/item_sdk_anchor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="3dp"
+            android:layout_gravity="center_vertical"
+            android:textColor="#AFAFAF"
+            android:textSize="12dp"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/item_anchor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:lineSpacingExtra="3dp"
+            android:textSize="12dp"
+            android:autoLink="email"
+            android:gravity="center"/>
+    </LinearLayout>
 </LinearLayout>

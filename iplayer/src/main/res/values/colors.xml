@@ -9,4 +9,5 @@
     <color name="player_seek_thumb">#FFFFFF</color>
     <color name="player_gesture_background">#33FFFFFF</color>
     <color name="player_white">#FFFFFF</color>
+    <color name="player_surplus">#66000000</color>
 </resources>
