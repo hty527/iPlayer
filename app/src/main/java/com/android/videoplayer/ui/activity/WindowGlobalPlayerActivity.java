@@ -70,7 +70,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             /**
              * 重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
              */
-            mVideoPlayer.setTempContext(this);
+            mVideoPlayer.setParentContext(this);
             //2.将播放器添加到你自己的ViewGroup中
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }else{
@@ -136,6 +136,6 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
         //重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
-        if(null!=mVideoPlayer) mVideoPlayer.setTempContext(null);
+        if(null!=mVideoPlayer) mVideoPlayer.setParentContext(null);
     }
 }

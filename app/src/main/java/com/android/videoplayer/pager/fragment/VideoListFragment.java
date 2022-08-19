@@ -34,7 +34,7 @@ public class VideoListFragment extends BaseFragment {
     protected void initViews() {
         ImageView status_bar = (ImageView) findViewById(R.id.status_bar);
         status_bar.getLayoutParams().height= ScreenUtils.getInstance().getStatusBarHeight(getContext())+ScreenUtils.getInstance().dpToPxInt(49f);
-        status_bar.setImageResource(R.mipmap.ic_dialog_bg);
+        status_bar.setImageResource(R.mipmap.ic_title_bg);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         //列表适配器初始化

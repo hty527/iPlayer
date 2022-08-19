@@ -1,5 +1,11 @@
 SDK版本更新记录由近及远展示
 
+###  1.0.5.1
+**更新日期：** 2022-8-19<br/>
+**更新内容：**<br/>
+>1. BasePlayer中的setTempContext(Context context)更名为setParentContext(Context context),getTempContext()更名为getParentContext()<br/>
+>2. 优化内部交互<br/>
+___
 ###  1.0.5
 **更新日期：** 2022-8-16<br/>
 **更新内容：**<br/>

@@ -122,7 +122,7 @@
             android:layout_gravity="center_vertical"
             android:lineSpacingExtra="3dp"
             android:textSize="12dp"
-            android:autoLink="email"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:textColor="@color/player_style"/>
     </LinearLayout>
 </LinearLayout>

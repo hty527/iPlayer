@@ -22,6 +22,7 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
 
     private final int mVideoHeight;
     private boolean mAutoPlay;//是否自动播放，自动播放模式下不显示item的播放按钮
+    private View mFirstItemView;
 
     public ListPlayerAdapter(List<OpenEyesIndexItemBean> data) {
         this(data,false);
@@ -76,6 +77,9 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
      */
     private void setItemVideo(final ListPlayerHolder viewHolder, OpenEyesIndexItemBean data, int position) {
         if(null!=data){
+            if(null==mFirstItemView){
+                mFirstItemView=viewHolder.itemView.findViewById(R.id.item_container);
+            }
             View itemContainer = viewHolder.getView(R.id.item_container);
             itemContainer.getLayoutParams().height=mVideoHeight;
             itemContainer.setOnClickListener(new View.OnClickListener() {
@@ -156,5 +160,9 @@ public class ListPlayerAdapter extends BaseMultiItemAdapter<OpenEyesIndexItemBea
 //        }else{
 //            textView.setText("");
 //        }
+    }
+
+    public View getFirstItemView() {
+        return mFirstItemView;
     }
 }

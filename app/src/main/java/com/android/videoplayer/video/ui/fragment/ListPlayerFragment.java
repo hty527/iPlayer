@@ -6,15 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
@@ -26,11 +29,14 @@ import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.net.BaseEngin;
 import com.android.videoplayer.ui.widget.ListPlayerHolder;
 import com.android.videoplayer.utils.Logger;
+import com.android.videoplayer.utils.SharedPreferencesUtil;
 import com.android.videoplayer.video.adapter.ListPlayerAdapter;
 import com.android.videoplayer.video.bean.OpenEyesAuthor;
 import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.contract.VideoListContract;
 import com.android.videoplayer.video.presenter.VideoListPersenter;
+import com.android.videoplayer.video.ui.widget.PlayerNewbieView;
+
 import java.util.List;
 
 /**
@@ -47,6 +53,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
     protected int mCurrentPosition=-1;
     private ViewGroup mPlayerContainer;
     private SwipeRefreshLayout mRefreshLayout;
+    private boolean mNewbie;
 
     @Override
     protected int getLayoutID() {
@@ -113,6 +120,8 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
         mPresenter.getIndexVideos(true);
+
+        mNewbie = SharedPreferencesUtil.getInstance().getBoolean("newbie", false);
     }
 
     @Override
@@ -142,6 +151,17 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 mAdapter.addData(data);
             }
             mAdapter.onLoadComplete();
+        }
+    }
+
+    @Override
+    public void showError(int code, String errorMsg) {
+        if(null!=mRefreshLayout) mRefreshLayout.setRefreshing(false);
+        Toast.makeText(getContext(),errorMsg,Toast.LENGTH_SHORT).show();
+        if(code== BaseEngin.API_RESULT_EMPTY){
+            mAdapter.onLoadEnd();
+        }else{
+            mAdapter.onLoadError();
         }
     }
 
@@ -305,7 +325,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             /**
              * 重要,还原到宿主后需要置空临时上下文
              */
-            mVideoPlayer.setTempContext(null);
+            mVideoPlayer.setParentContext(null);
             /**
              * 还原到列表模式
              */
@@ -379,6 +399,14 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 public AbstractMediaPlayer createMediaPlayer() {
                     return new JkMediaPlayer(getContext());
                 }
+
+                @Override
+                public void onPlayerState(PlayerState state, String message) {
+                    //首针渲染开始新手引导
+                    if(state==PlayerState.STATE_START){
+                        showNewbie();
+                    }
+                }
             });
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
@@ -402,6 +430,41 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         //将播放器添加到ITEM中
         PlayerUtils.getInstance().removeViewFromParent(mVideoPlayer);
         if(null!=mPlayerContainer) mPlayerContainer.removeAllViews();
+    }
+
+    /**
+     * 新手引导开始
+     */
+    private void showNewbie() {
+        if(!mNewbie&&autoPlayer()){
+            ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView();
+            if (null != viewGroup.findViewById(R.id.window_newbie)) {
+                return;
+            }
+            PlayerNewbieView newbieWindow = new PlayerNewbieView(viewGroup.getContext());
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT);
+            newbieWindow.setId(R.id.window_newbie);
+            viewGroup.addView(newbieWindow,layoutParams);
+            newbieWindow.setOnDismissListener(new PlayerNewbieView.OnDismissListener(){
+
+                @Override
+                public void onDismiss() {
+                    mNewbie=true;
+                    SharedPreferencesUtil.getInstance().putBoolean("newbie", true);
+                    removeNewbie();
+                }
+            });
+            newbieWindow.updateWindow(mAdapter.getFirstItemView());
+        }
+    }
+
+    private void removeNewbie() {
+        ViewGroup viewGroup = (ViewGroup)getActivity().getWindow().getDecorView();
+        View oldTinyVideo = viewGroup.findViewById(R.id.window_newbie);
+        //移除新人窗口
+        if (null != oldTinyVideo) {
+            viewGroup.removeView(oldTinyVideo);
+        }
     }
 
     @Override
@@ -440,20 +503,10 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         super.onDestroy();
         Logger.d(TAG,"onDestroy");
         resetPlayer();
+        removeNewbie();
         if(null!=mVideoPlayer){
             mVideoPlayer.onDestroy();
             mVideoPlayer=null;
-        }
-    }
-
-    @Override
-    public void showError(int code, String errorMsg) {
-        if(null!=mRefreshLayout) mRefreshLayout.setRefreshing(false);
-        Toast.makeText(getContext(),errorMsg,Toast.LENGTH_SHORT).show();
-        if(code== BaseEngin.API_RESULT_EMPTY){
-            mAdapter.onLoadEnd();
-        }else{
-            mAdapter.onLoadError();
         }
     }
 }

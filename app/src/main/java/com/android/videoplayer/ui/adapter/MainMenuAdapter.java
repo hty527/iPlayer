@@ -1,8 +1,11 @@
 package com.android.videoplayer.ui.adapter;
 
+import android.content.Intent;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.BaseMultiItemAdapter;
@@ -18,6 +21,8 @@ import java.util.List;
  * Desc:首页Menu
  */
 public class MainMenuAdapter  extends BaseMultiItemAdapter<Menu, BaseViewHolder> {
+
+    public static final String EMAIL_ADDRES="584312311@qq.com";
 
     public MainMenuAdapter(List<Menu> data) {
         super(data);
@@ -77,7 +82,23 @@ public class MainMenuAdapter  extends BaseMultiItemAdapter<Menu, BaseViewHolder>
             ((TextView) viewHolder.getView(R.id.item_time_title)).setText(DataFactory.getInstance().getString(R.string.item_time_title,"预更新时间："));
             ((TextView) viewHolder.getView(R.id.item_sdk_anchor)).setText(DataFactory.getInstance().getString(R.string.item_time_anchor,"联系作者："));
             TextView itemAnchor = (TextView) viewHolder.getView(R.id.item_anchor);
-            itemAnchor.setText("584312311@qq.com");
+            itemAnchor.setText(EMAIL_ADDRES);
+            itemAnchor.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+            itemAnchor.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DataFactory.getInstance().copyString(viewHolder.getContext(), EMAIL_ADDRES);
+                    Toast.makeText(viewHolder.getContext(),"已复制到粘贴板",Toast.LENGTH_SHORT).show();
+                    Intent email = new Intent(Intent.ACTION_SEND);
+                    email.putExtra(Intent.EXTRA_EMAIL, new String[]{ EMAIL_ADDRES});
+//                    email.putExtra(Intent.EXTRA_SUBJECT, subject);
+                    email.putExtra(Intent.EXTRA_TEXT, "你好,我是来自iPlayer开源项目的电子邮件。");
+                    email.setType("message/rfc822");
+                    Intent chooser = Intent.createChooser(email, "请选择邮箱客户端:");
+                    chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    viewHolder.getContext().startActivity(chooser);
+                }
+            });
             Version version = data.getVersion();
             if(null!=version){
                 ((TextView) viewHolder.getView(R.id.item_version)).setText(version.getCode());

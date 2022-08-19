@@ -31,6 +31,8 @@
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
         android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
         android:background="@drawable/player_bg_btn_continue_play"
         android:textColor="#FFFFFF"
         android:textSize="15dp" />
