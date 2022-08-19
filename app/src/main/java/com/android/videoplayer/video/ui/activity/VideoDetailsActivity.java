@@ -233,7 +233,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
              * 重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
              */
             mVideoPlayer=new VideoPlayer(this);
-            mVideoPlayer.setTempContext(this);
+            mVideoPlayer.setParentContext(this);
             mVideoPlayer.initController(false);//绑定默认的控制器
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
@@ -246,7 +246,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
      */
     private void addListener(){
         if(null!=mVideoPlayer){
-            mVideoPlayer.setTempContext(this);
+            mVideoPlayer.setParentContext(this);
             //无论是新创建的播放器还是转场过来的播放器,监听事件都必须在当前界面设置
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**
@@ -467,7 +467,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
     @Override
     public void onBackPressed() {
         if(null!=mVideoPlayer){
-            mVideoPlayer.setTempContext(null);
+            mVideoPlayer.setParentContext(null);
             if(mVideoPlayer.isBackPressed()){
                 isFinish=true;
                 close(true);
@@ -508,7 +508,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
         }
         //重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
         if(null!=mVideoPlayer){
-            mVideoPlayer.setTempContext(null);
+            mVideoPlayer.setParentContext(null);
             if(isForbidCycle){
 
             }else{

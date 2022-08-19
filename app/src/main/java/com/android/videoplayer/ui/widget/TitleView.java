@@ -54,7 +54,7 @@ public class TitleView extends FrameLayout {
         if(0==mTitleStyle){
             btnBack.setColorFilter(Color.parseColor("#333333"));
             titleText.setTextColor(Color.parseColor("#333333"));
-            titleBg.setImageResource(R.mipmap.ic_dialog_bg);
+            titleBg.setImageResource(R.mipmap.ic_title_bg);
         }else{
             btnBack.setColorFilter(Color.parseColor("#FFFFFF"));
             titleText.setTextColor(Color.parseColor("#FFFFFF"));

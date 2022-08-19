@@ -75,6 +75,7 @@ public class MainActivity extends BaseActivity {
                             break;
                         case 5://raw和assets资源播放
                             intent=new Intent(MainActivity.this, AssetsPlayerActivity.class);
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_resouce,"Raw和Assets资源播放"));
                             break;
                         case 6://连续播放一个列表示例
                             intent=new Intent(MainActivity.this, VideoListPlayerActivity.class);
@@ -160,7 +161,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 任意界面开启一个全局悬浮窗窗口播放器
+     * 任意界面创建一个全局悬浮窗窗口播放器并开始播放
      * 点击悬浮窗跳转到Activity示例，请参考App中的IWindowManager.getInstance().setOnWindowActionListener(OnWindowActionListener listener);
      */
     private void startGlobalWindowPlayer() {
@@ -169,7 +170,7 @@ public class MainActivity extends BaseActivity {
         videoPlayer.setProgressCallBackSpaceMilliss(300);
         videoPlayer.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
         videoPlayer.setDataSource(URL2);//播放地址设置
-        VideoController controller = videoPlayer.initController();//初始化一个默认的控制器
+        videoPlayer.initController();//初始化一个默认的控制器
         boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
@@ -180,29 +181,12 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 任意界面开启一个Activity Window级别的悬浮窗口播放器
+     * 任意界面创建一个Activity Window级别窗口播放器并开始播放
      */
     private void startMiniWindowPlayer() {
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(this);
-            VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-            controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
-                @Override
-                public void onMenu() {
-                }
-
-                @Override
-                public void onBack() {//竖屏的返回事件
-                    Logger.d(TAG,"onBack");
-                    //这里当悬浮窗口无法返回上一层时,会之直接关闭播放器并通知宿主处理返回事件
-                    destroyPlayer();
-                }
-
-                @Override
-                public void onCompletion() {//试播结束或播放完成,交给开发者手动销毁播放器
-                    Logger.d(TAG,"onCompletion");
-                }
-            });
+            mVideoPlayer.initController();//初始化一个默认的控制器
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**
@@ -217,9 +201,8 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onPlayerState(PlayerState state, String message) {
                     Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
-                    if(state==PlayerState.STATE_ERROR){//监听到失败取消播放,因为悬浮窗播放器没有重新播放交互
-                        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
-                        if(null!=mVideoPlayer) mVideoPlayer.quitWindow();
+                    if(PlayerState.STATE_DESTROY==state){
+                        mVideoPlayer=null;
                     }
                 }
             });
@@ -236,13 +219,14 @@ public class MainActivity extends BaseActivity {
             int height = width*9/16;
             float startX=width-PlayerUtils.getInstance().dpToPxInt(15f);
             float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
+            //启动窗口播放
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }
 
     /**
-     * 任意界面开启一个全屏窗口播放器
+     * 任意界面创建一个全屏窗口播放器并开始播放
      */
     private void startFullScreen() {
         VideoPlayer videoPlayer = new VideoPlayer(this);
@@ -285,7 +269,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Logger.d(TAG,"onBackPressed-->");
         if(null!=mVideoPlayer){
             if(mVideoPlayer.isBackPressed()){
                 super.onBackPressed();

@@ -11,6 +11,7 @@ import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.bean.Params;
 import com.android.videoplayer.ui.activity.WindowGlobalPlayerActivity;
 import com.android.videoplayer.utils.Logger;
+import com.android.videoplayer.utils.SharedPreferencesUtil;
 import com.android.videoplayer.video.ui.activity.VideoDetailsActivity;
 
 /**
@@ -27,6 +28,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance=this;
+        SharedPreferencesUtil.init(this, getPackageName() + ".sp", Context.MODE_MULTI_PROCESS);
         ILogger.DEBUG=true;
         //设置播放器是否拦截音频焦点丢失事件,如果设置了检测到音频焦点丢失会自动暂停播放
         IVideoManager.getInstance().setInterceptTAudioFocus(true);

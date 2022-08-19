@@ -380,14 +380,14 @@ public interface IVideoPlayerControl<V extends BaseController> {
     boolean isPlaying();
 
     /**
-     * @param context 当播放器开启转场、全局悬浮窗功能时,在业务层面设置一个当前的上下文,方便内部处理Window逻辑
+     * @param context 当播放器开启转场、全局悬浮窗功能时,在业务层面设置一个当前的上下文,方便内部处理全屏、屏幕亮度调节逻辑
      */
-    void setTempContext(Context context);
+    void setParentContext(Context context);
 
     /**
      * @return 返回临时的上下文
      */
-    Context getTempContext();
+    Context getParentContext();
 
     /**
      * @param videoController 设置视图控制器 继承VideoBaseController的控制器

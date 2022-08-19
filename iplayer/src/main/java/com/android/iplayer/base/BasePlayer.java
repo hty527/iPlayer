@@ -56,7 +56,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private int[] mPlayerParams;//自己的宽高属性和位于父容器的层级位置
     private IVideoPlayer mIVideoPlayer;
     private boolean mIsWindowProperty,mContinuityPlay,mIsGlobalWindow;//是否开启了窗口播放模式/是否开启了连续播放模式/是否处于全局悬浮窗|画中画模式
-    private Context mTempContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
+    private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
 
     public BasePlayer(Context context) {
         this(context,null);
@@ -117,7 +117,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @param decorView
      */
     private void hideSystemBar(ViewGroup decorView) {
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=activity&&!activity.isFinishing()){
             int uiOptions = decorView.getSystemUiVisibility();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -138,7 +138,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @param decorView
      */
     private void showSysBar(ViewGroup decorView) {
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=activity&&!activity.isFinishing()){
             int uiOptions = decorView.getSystemUiVisibility();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -153,7 +153,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     private ViewGroup getDecorView(){
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=activity&&!activity.isFinishing()){
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             return viewGroup;
@@ -161,9 +161,9 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         return null;
     }
 
-    private Context getViewContext(){
-        if(null!=mTempContext){
-            return mTempContext;
+    private Context getTargetContext(){
+        if(null!= mParentContext){
+            return mParentContext;
         }
         return getContext();
     }
@@ -476,7 +476,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     public void startFullScreen(int bgColor) {
 //        ILogger.d(TAG,"startFullScreen");
         if(mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
 //        ILogger.d(TAG,"startFullScreen-->activity:"+activity);
         if (null != activity&& !activity.isFinishing()) {
 //            ILogger.d(TAG,"startFullScreen-->1");
@@ -517,7 +517,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void quitFullScreen() {
 //        ILogger.d(TAG,"quitLandscapeScreen");
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=activity&&!activity.isFinishing()){
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             if(null==viewGroup){
@@ -640,7 +640,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     public void startWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
         ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+mIsWindowProperty+",screenOrientation:"+mScreenOrientation);
         if(mIsWindowProperty||mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;//已开启窗口模式或者横屏情况下不允许开启小窗口
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if (null != activity&& !activity.isFinishing()) {
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             if(null==viewGroup){
@@ -712,7 +712,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void quitWindow() {
 //        ILogger.d(TAG,"quitWindow");
-        Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=activity&&!activity.isFinishing()){
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             if(null==viewGroup){
@@ -859,7 +859,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         }
         //已申明,判断是否获取悬浮窗权限
         if(hasPermission){
-            Activity activity = PlayerUtils.getInstance().getActivity(getViewContext());
+            Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
 //            ILogger.d(TAG,"startGlobalWindow-->1,activity:"+activity+",isFinishing:"+(null!=activity?activity.isFinishing():true));
             if (null != activity&&!activity.isFinishing()) {//将this添加到悬浮窗,然后从悬浮窗移除之后又将this添加到Activity中。此时Activity的isFinishing()状态为:true。所有这里干脆不判断isFinishing()了
                 try {
@@ -1088,12 +1088,12 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @param context 当播放器开启转场、全局悬浮窗功能时,在业务层面设置一个当前的上下文,方便内部处理Window逻辑
      */
     @Override
-    public void setTempContext(Context context) {
-        this.mTempContext=context;
+    public void setParentContext(Context context) {
+        this.mParentContext =context;
     }
 
-    public Context getTempContext() {
-        return mTempContext;
+    public Context getParentContext() {
+        return mParentContext;
     }
 
     //=================================提供给控制器或外界调用的公开方法=================================
