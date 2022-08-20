@@ -6,12 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -36,7 +34,6 @@ import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.contract.VideoListContract;
 import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerNewbieView;
-
 import java.util.List;
 
 /**
@@ -436,7 +433,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
      * 新手引导开始
      */
     private void showNewbie() {
-        if(!mNewbie&&autoPlayer()){
+        if(!mNewbie&&autoPlayer()&&null!=mPlayerContainer){
             ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView();
             if (null != viewGroup.findViewById(R.id.window_newbie)) {
                 return;
@@ -454,7 +451,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                     removeNewbie();
                 }
             });
-            newbieWindow.updateWindow(mAdapter.getFirstItemView());
+            newbieWindow.updateWindow(mPlayerContainer);
         }
     }
 

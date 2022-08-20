@@ -7,11 +7,14 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.BounceInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.LayoutProvider;
 import com.android.videoplayer.R;
 import com.android.videoplayer.utils.Logger;
@@ -41,10 +44,7 @@ public class PlayerNewbieView extends FrameLayout {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                reset();
-                if(null!=mOnDismissListener){
-                    mOnDismissListener.onDismiss();
-                }
+                dismiss();
             }
         });
     }
@@ -69,20 +69,17 @@ public class PlayerNewbieView extends FrameLayout {
                 handle.setOutlineProvider(new LayoutProvider(ScreenUtils.getInstance().dpToPxInt(3f)));
             }
             //滑动提示动画
-            mAnimator = ObjectAnimator.ofFloat(findViewById(R.id.ic_handel), "translationX", 0.0f , 35f, 0f , 0f);
+            mAnimator = ObjectAnimator.ofFloat(findViewById(R.id.ic_handel), "translationX", 0.0f , 50f, 0f , 0f);
             mAnimator.setDuration(1600);//动画时间
             mAnimator.setInterpolator(new BounceInterpolator());//实现反复移动的效果
-            mAnimator.setRepeatCount(4);//设置动画重复次数
-            mAnimator.setStartDelay(1000);//设置动画延时执行
+            mAnimator.setRepeatCount(4);//设置动画重复次数n+1
+            mAnimator.setStartDelay(600);//设置动画延时执行
             mAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     Logger.d(TAG,"onAnimationEnd");
-                    reset();
-                    if(null!=mOnDismissListener){
-                        mOnDismissListener.onDismiss();
-                    }
+                    dismiss();
                 }
             });
             mAnimator.start();//启动动画
@@ -104,5 +101,18 @@ public class PlayerNewbieView extends FrameLayout {
             mAnimator.cancel();
             mAnimator=null;
         }
+    }
+
+
+    private void dismiss() {
+        reset();
+        PlayerUtils.getInstance().startAlphaAnimatioTo(findViewById(R.id.ll_handel), 300, false, new PlayerUtils.OnAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(null!=mOnDismissListener){
+                    mOnDismissListener.onDismiss();
+                }
+            }
+        });
     }
 }

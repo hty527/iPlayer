@@ -115,20 +115,20 @@ public class ControllerStatusView extends LinearLayout {
      * @param sceneType 0:默认的视频控制器场景 1:窗口模式场景
      */
     public void setSceneType(int sceneType) {
-        int textSize12 = PlayerUtils.getInstance().dpToPxInt(12f);
+        int textSize14 = PlayerUtils.getInstance().dpToPxInt(14f);
         int textSize13 = PlayerUtils.getInstance().dpToPxInt(13f);
-        int textSize15 = PlayerUtils.getInstance().dpToPxInt(15f);
+        int textSize16 = PlayerUtils.getInstance().dpToPxInt(16f);
         TextView tips = (TextView) findViewById(R.id.player_status_tips);
-        tips.setTextSize(TypedValue.COMPLEX_UNIT_PX,1==sceneType?textSize13:textSize15);
+        tips.setTextSize(TypedValue.COMPLEX_UNIT_PX,1==sceneType?textSize14:textSize16);
 
-        int paddingLeft12 = PlayerUtils.getInstance().dpToPxInt(10f);
+        int paddingLeft12 = PlayerUtils.getInstance().dpToPxInt(12f);
         int paddingLeft22 = PlayerUtils.getInstance().dpToPxInt(22f);
         TextView btn = (TextView) findViewById(R.id.player_status_btn);
-        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX,1==sceneType?textSize12:textSize15);
+        btn.setTextSize(TypedValue.COMPLEX_UNIT_PX,1==sceneType?textSize13:textSize16);
         btn.setPadding(1==sceneType?paddingLeft12:paddingLeft22,0,1==sceneType?paddingLeft12:paddingLeft22,0);
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btn.getLayoutParams();
-        layoutParams.height=PlayerUtils.getInstance().dpToPxInt(1==sceneType?23f:36f);
-        layoutParams.setMargins(0,PlayerUtils.getInstance().dpToPxInt(1==sceneType?12f:18f),0,0);
+        layoutParams.height=PlayerUtils.getInstance().dpToPxInt(1==sceneType?26f:36f);
+        layoutParams.setMargins(0,PlayerUtils.getInstance().dpToPxInt(1==sceneType?15f:20f),0,0);
         btn.setLayoutParams(layoutParams);
         PlayerUtils.getInstance().setOutlineProvider(btn,PlayerUtils.getInstance().dpToPxInt(1==sceneType?13f:18f));
     }
