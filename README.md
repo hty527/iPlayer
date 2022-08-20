@@ -83,9 +83,9 @@
 * 4.交互控制器</br>
 ```
     //SDK内部提供了一套默认的交互控制器，功能支持包括但不限于：开始播放、暂停播放、全屏播放、seek调节播放位置、手势交互控制屏幕亮度、系统音量、快进、快退、window模式、列表模式、试看等。
-    //给播放器初始化并绑定一个默认的控制器
-    VideoController controller = mVideoPlayer.initController();
-    //也可以mVideoPlayer.setController(new VideoController(mVideoPlayer.getContext()));
+    //给播放器设置一个继承自BaseController的控制器，VideoPlayer也封装了initController();方法方便快捷绑定控制器
+    VideoController controller = new VideoController(mVideoPlayer.getContext());
+    mVideoPlayer.setController(controller);
     controller.showBackBtn(true);//竖屏状态下是否显示返回按钮
     controller.showMenus(true,true,true);//参数1：投屏按钮，参数2：悬浮窗按钮，参数3：菜单按钮，竖屏状态是否显示控制器右上角的功能菜单按钮,默认是不显示的(横屏模式下不显示所有菜单按钮)
     controller.setCanTouchInPortrait(true);//竖屏状态下是否启用手势交互,默认不启用
