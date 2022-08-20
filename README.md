@@ -11,7 +11,7 @@
 **[Demo apk下载]**
 
 ### 历史版本
-[查看历史版本]: https://github.com/hty527/iPlayer/wiki/HistoryVersion "历史版本"
+[查看历史版本]: https://github.com/hty527/iPlayer/wiki/Version "历史版本"
 **[查看历史版本]**
 
 ### SDK功能支持:
