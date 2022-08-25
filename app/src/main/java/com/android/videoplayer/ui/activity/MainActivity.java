@@ -17,6 +17,12 @@ import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControlCompletionView;
+import com.android.iplayer.widget.controls.ControlFunctionBarView;
+import com.android.iplayer.widget.controls.ControlGestureView;
+import com.android.iplayer.widget.controls.ControlLoadingView;
+import com.android.iplayer.widget.controls.ControlStatusView;
+import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -62,7 +68,7 @@ public class MainActivity extends BaseActivity {
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_default,"SDK默认播放器"));
                             break;
                         case 2://直播拉流
-                            intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
+                            intent = new Intent(MainActivity.this, LivePlayerActivity.class);
                             intent.putExtra("islive",true);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_live,"直播拉流"));
                             break;
@@ -73,53 +79,56 @@ public class MainActivity extends BaseActivity {
                         case 4://全屏播放
                             startFullScreen();
                             break;
-                        case 5://raw和assets资源播放
+                        case 5://收费试看模式
+                            intent=new Intent(MainActivity.this, PerviewPlayerActivity.class);
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_perview,"收费试看模式"));
+                            break;
+                        case 6://raw和assets资源播放
                             intent=new Intent(MainActivity.this, AssetsPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_resouce,"Raw和Assets资源播放"));
                             break;
-                        case 6://连续播放一个列表示例
+                        case 7://连续播放一个列表示例
                             intent=new Intent(MainActivity.this, VideoListPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_list,"连续播放一个列表示例"));
                             break;
-                        case 7://列表自动播放(无缝转场)
+                        case 8://列表自动播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_auto,"列表自动播放"));
                             intent.putExtra("auto_play","1");
                             break;
-                        case 8://列表点击播放(无缝转场)
+                        case 9://列表点击播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_click,"列表点击播放"));
                             intent.putExtra("auto_play","0");
                             break;
-                        case 9://Activity小窗口
+                        case 10://Activity小窗口
                             intent = new Intent(MainActivity.this, WindowPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_window,"Activity局部悬浮窗"));
                             break;
-                        case 10://全局悬浮窗
+                        case 11://全局悬浮窗
                             intent = new Intent(MainActivity.this, WindowGlobalPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_goable_window,"全局悬浮窗"));
                             break;
-                        case 11://任意界面开启窗口播放器
+                        case 12://任意界面开启窗口播放器
                             startMiniWindowPlayer();
                             break;
-                        case 12://任意界面开启全局悬浮窗播放器
+                        case 13://任意界面开启全局悬浮窗播放器
                             checkedPermission();
                             break;
-                        case 13://画中画
+                        case 14://画中画
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 intent=new Intent(MainActivity.this, PiPPlayerActivity.class);
                                 intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_dip,"画中画"));
                             }
                             break;
-                        case 14://类抖音垂直滚动播放
+                        case 15://类抖音垂直滚动播放
                             intent=new Intent(MainActivity.this, PagerPlayerActivity.class);
                             break;
-                        case 15://自定义弹幕控制器功能示例
-                            intent = new Intent(MainActivity.this, VideoPlayerActivity.class);
-                            intent.putExtra("danmu",true);
+                        case 16://自定义弹幕控制器功能示例
+                            intent = new Intent(MainActivity.this, DanmuPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_danmu,"自定义弹幕控制器"));
                             break;
-                        case 16://项目主页 https://gitee.com/hty_Yuye/iPlayer
+                        case 17://项目主页 https://gitee.com/hty_Yuye/iPlayer
                             intent = new Intent(Intent.ACTION_VIEW);
                             intent.addCategory(Intent.CATEGORY_BROWSABLE);
                             intent.setData(Uri.parse("https://github.com/hty527/iPlayer"));
@@ -168,9 +177,9 @@ public class MainActivity extends BaseActivity {
         VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
         videoPlayer.setLoop(false);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
-        videoPlayer.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
-        videoPlayer.setDataSource(URL2);//播放地址设置
-        videoPlayer.initController();//初始化一个默认的控制器
+        videoPlayer.setDataSource(MP4_URL2);//播放地址设置
+        VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+        controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
         boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
@@ -208,8 +217,8 @@ public class MainActivity extends BaseActivity {
             });
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-            mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(URL2);//播放地址设置
+            mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
             //自定义窗口播放的宽,高,起始X轴,起始Y轴属性,这里示例将播放器添加到标题栏下方右侧
 //            mVideoPlayer.startWindow();
             int[] screenLocation=new int[2];
@@ -232,8 +241,20 @@ public class MainActivity extends BaseActivity {
     private void startFullScreen() {
         VideoPlayer videoPlayer = new VideoPlayer(this);
         videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
-        VideoController controller = videoPlayer.initController();//绑定默认的控制器
-        controller.enableFullScreen(false);
+        VideoController controller=new VideoController(videoPlayer.getContext());
+        videoPlayer.setController(controller);
+        /**
+         * 给播放器控制器绑定需要的自定义UI交互组件
+         */
+        ControlToolBarView toolBarView=new ControlToolBarView(this);//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+        ControlFunctionBarView functionBarView=new ControlFunctionBarView(this);//底部时间、seek、静音、全屏功能栏
+        functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音
+        ControlStatusView statusView=new ControlStatusView(this);//移动网络播放提示、播放失败、试看完成
+        ControlGestureView gestureView=new ControlGestureView(this);//手势控制屏幕亮度、系统音量、快进、快退UI交互
+        ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
+        ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
+        controller.addControllerWidget(toolBarView,functionBarView,statusView,gestureView,completionView,loadingView);
+
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         videoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             /**
@@ -253,8 +274,8 @@ public class MainActivity extends BaseActivity {
 //        videoPlayer.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
         videoPlayer.setLoop(false);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
-        videoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-        videoPlayer.setDataSource(URL2);//播放地址设置
+        videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        videoPlayer.setDataSource(MP4_URL2);//播放地址设置
         videoPlayer.startFullScreen();//开启全屏播放
         videoPlayer.playOrPause();//开始异步准备播放
     }

@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import com.android.iplayer.utils.ILogger;
 import com.android.videoplayer.R;
 import com.android.videoplayer.utils.GlideModel;
+import com.android.videoplayer.utils.Logger;
 
 /**
  * created by hty
@@ -173,27 +173,27 @@ public class MusicDiscView extends RelativeLayout {
     }
 
     public void onResume(){
-        ILogger.d(TAG,"onResume");
+        Logger.d(TAG,"onResume");
         startAnimator();
     }
 
     public void onPause(){
-        ILogger.d(TAG,"onPause");
+        Logger.d(TAG,"onPause");
         pausAnimator();
     }
 
     public void onStop(){
-        ILogger.d(TAG,"onStop");
+        Logger.d(TAG,"onStop");
         stopAnimator(true);
     }
 
     public void onRelease() {
-        ILogger.d(TAG,"onRelease");
+        Logger.d(TAG,"onRelease");
         stopAnimator(true);
     }
 
     public void onDestroy(){
-        ILogger.d(TAG,"onDestroy");
+        Logger.d(TAG,"onDestroy");
         stopAnimator(true);
     }
 }

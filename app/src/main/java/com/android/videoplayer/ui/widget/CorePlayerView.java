@@ -40,10 +40,7 @@ public class CorePlayerView extends LinearLayout {
         View.inflate(context, R.layout.view_player_core, this);
         mVideoPlayer = findViewById(R.id.view_video_player);
         findViewById(R.id.view_player_container).getLayoutParams().height = getResources().getDisplayMetrics().widthPixels * 9 / 16;//给播放器固定一个高度
-        VideoController controller = mVideoPlayer.initController();
-        controller.showBackBtn(false);//竖屏下是否显示返回按钮
-        controller.showMenus(false, false, false);//是否显示右上角菜单栏功能按钮
-        controller.setCanTouchInPortrait(true);
+        VideoController controller = mVideoPlayer.initController(false,false);//不显示返回按钮\不添加悬浮窗窗口交互UI组件
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
@@ -106,7 +103,7 @@ public class CorePlayerView extends LinearLayout {
             mVideoPlayer.onReset();
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-            mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(mUrl)? PATH :mUrl);//播放地址设置
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
@@ -139,7 +136,7 @@ public class CorePlayerView extends LinearLayout {
             this.mUrl=url;
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-            mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(url)? PATH :url);//播放地址设置
             mVideoPlayer.playOrPause();//开始异步准备播放
         }

@@ -12,19 +12,27 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IControllerView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControWindowView;
+import com.android.iplayer.widget.controls.ControlCompletionView;
+import com.android.iplayer.widget.controls.ControlFunctionBarView;
+import com.android.iplayer.widget.controls.ControlGestureView;
+import com.android.iplayer.widget.controls.ControlListView;
+import com.android.iplayer.widget.controls.ControlLoadingView;
+import com.android.iplayer.widget.controls.ControlStatusView;
+import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Params;
@@ -42,7 +50,6 @@ import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerMenuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 
 /**
@@ -183,7 +190,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
                 addListener();
             }else{
-                defaultPlay(playerParent);
+                defaultPlay(playerParent,true);
             }
         }else if(mIsGlobalWindow){//接收全局悬浮窗窗口播放任务
             BasePlayer basePlayer = IWindowManager.getInstance().getBasePlayer();
@@ -194,22 +201,23 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
                 addListener();
             }else{
-                defaultPlay(playerParent);
+                defaultPlay(playerParent,false);
             }
         }else{//根据播放地址播放新的视频
-            defaultPlay(playerParent);
+            defaultPlay(playerParent,false);
         }
     }
 
     /**
      * 默认的初始播放
      * @param playerParent
+     * @param addListController 是否添加列表专用交互组件
      */
-    private void defaultPlay(FrameLayout playerParent) {
+    private void defaultPlay(FrameLayout playerParent,boolean addListController) {
         mIsGlobalWindow=false;
         if(null!=mParams){
-            createPlayer();
-            mVideoPlayer.setTitle(mParams.getTitle());
+            createPlayer(addListController);
+            mVideoPlayer.getController().setTitle(mParams.getTitle());
             mVideoPlayer.setDataSource(mParams.getPlayUrl());
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
             /**
@@ -226,17 +234,33 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
 
     /**
      * 创建播放器
+     * @param addListController 是否添加列表专用交互组件
      */
-    private void createPlayer() {
+    private void createPlayer(boolean addListController) {
         if(null==mVideoPlayer){
-            /**
-             * 重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
-             */
             mVideoPlayer=new VideoPlayer(this);
-            mVideoPlayer.setParentContext(this);
-            mVideoPlayer.initController(false);//绑定默认的控制器
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
+
+            //为播放器添加控制器
+            VideoController controller=new VideoController(mVideoPlayer.getContext());
+            mVideoPlayer.setController(controller);
+            //为控制器添加UI交互组件
+            ControlToolBarView toolBarView=new ControlToolBarView(controller.getContext());//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+            toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+            ControlFunctionBarView functionBarView=new ControlFunctionBarView(controller.getContext());//底部时间、seek、静音、全屏功能栏
+            functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音
+            ControlGestureView gestureView=new ControlGestureView(controller.getContext());//手势控制屏幕亮度、系统音量、快进、快退UI交互
+            ControlCompletionView completionView=new ControlCompletionView(controller.getContext());//播放完成、重试
+            ControlStatusView statusView=new ControlStatusView(controller.getContext());//移动网络播放提示、播放失败、试看完成
+            ControlLoadingView loadingView=new ControlLoadingView(controller.getContext());//加载中、开始播放
+            ControWindowView windowView=new ControWindowView(controller.getContext());//悬浮窗窗口UI交互
+            if(addListController){
+                ControlListView controlListView=new ControlListView(controller.getContext());//列表播放器场景专用交互组件
+                controller.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView,controlListView);
+            }else{
+                controller.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
+            }
         }
         addListener();
     }
@@ -246,6 +270,9 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
      */
     private void addListener(){
         if(null!=mVideoPlayer){
+            /**
+             * 重要！！！这里存在一种情况，假设用户在列表界面开始播放视频，点击列表后跳转到详情继续播放视频，这时候全屏功能是无效的。所以要更重置上下文为自己
+             */
             mVideoPlayer.setParentContext(this);
             //无论是新创建的播放器还是转场过来的播放器,监听事件都必须在当前界面设置
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
@@ -267,33 +294,24 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             });
             VideoController controller = (VideoController) mVideoPlayer.getController();
             if(null!=controller){
-                Logger.d(TAG,"addListener-->");
-                controller.showMenus(true,true,true);
-                controller.setListPlayerMode(false);//从可能的列表模式转换为正常模式
-                controller.setCanTouchInPortrait(true);//竖屏模式下允许手势交互
-                controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
-                    @Override
-                    public void onMenu() {
-                        showMenuDialog();
-                    }
+                controller.setListPlayerScene(false);//从可能的列表模式转换为正常模式
+                //启用多功能和设置菜单功能监听器
+                IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
+                if(null!=controllerView&&controllerView instanceof ControlToolBarView){
+                    ControlToolBarView controlToolBarView= (ControlToolBarView) controllerView;
+                    controlToolBarView.showMenus(true,true,true);
+                    controlToolBarView.setOnToolBarActionListener(new ControlToolBarView.OnToolBarActionListener() {
+                        @Override
+                        public void onWindow() {
+                            startGoableWindow();
+                        }
 
-                    @Override
-                    public void onBack() {//竖屏的返回事件
-                        Logger.d(TAG,"onBack");
-                        onBackPressed();
-                    }
-
-                    @Override
-                    public void onCompletion() {//试播结束或播放完成
-                        Logger.d(TAG,"onCompletion");
-                    }
-
-                    @Override
-                    public void onGobalWindow() {//开启全局悬浮窗窗口播放
-                        Logger.d(TAG,"onGobalWindow-->");
-                        startGoableWindow();
-                    }
-                });
+                        @Override
+                        public void onMenu() {
+                            showMenuDialog();
+                        }
+                    });
+                }
             }
         }
     }
@@ -312,7 +330,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
         if(null!=data.getCover()){
             GlideModel.getInstance().loadImage((ImageView) findViewById(R.id.video_cover),data.getCover().getFeed());
         }
-        createPlayer();
+        createPlayer(false);
         mVideoPlayer.onReset();
         //更新正在播放的视频头部,保存临时参数
         mParams = PlayerManager.getInstance().parseParams(data);
@@ -321,7 +339,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             mAdapter.notifyDataSetChanged();
         }
         //开始播放
-        mVideoPlayer.setTitle(data.getTitle());
+        mVideoPlayer.getController().setTitle(data.getTitle());
         mVideoPlayer.setDataSource(data.getPlayUrl());
         mVideoPlayer.playOrPause();
         //获取最新的推荐数据
@@ -508,7 +526,6 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
         }
         //重要:悬浮窗接收的Activity或其它组件中设置临时的Context为自己，在界面关闭时调用setTempContext(null)置空Context
         if(null!=mVideoPlayer){
-            mVideoPlayer.setParentContext(null);
             if(isForbidCycle){
 
             }else{

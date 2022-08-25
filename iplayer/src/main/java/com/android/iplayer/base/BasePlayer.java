@@ -32,17 +32,19 @@ import com.android.iplayer.media.IVideoPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ILogger;
-import com.android.iplayer.widget.WindowPlayerFloatView;
+import com.android.iplayer.widget.view.WindowPlayerFloatView;
 
 /**
  * Created by hty
  * 2022/6/28
- * 1、如需播放器支持全屏、小窗口、全局悬浮窗口播放功能，则VideoPlayerView需要一个ViewGroup容器来包裹。
- * 2、如播放视频场景是打开一个Activity直接全屏\直接小窗口模式播放(按返回键直接关闭Activity),则只能new 一个播放器对象来使用。
- * Desc:通用视频播放容器基类,交互控制内部只实现了：点击 暂停、开始播放
- * 自定义属性：initController:true:内部初始化一个默认的控制器交互组件 flase:不初始化默认的控制器组件
- * 自定义多媒体解码器的适用：
- * 注册setOnPlayerActionListener监听器，实现createMediaPlayer方法来创建一个解码器。每个视频播放任务都将实例化一个createMediaPlayer解码器
+ * Desc:一个默认没有UI交互的播放器基类
+ * 1、自定义属性：initController:true:内部初始化一个默认的控制器交互组件 flase:不初始化默认的控制器组件
+ * 2、可调用{@link #setController(BaseController)}来绑定一个UI视图交互控制器
+ * 3、如需实现自定义视频解码器，则需注册{@link #setOnPlayerActionListener(OnPlayerEventListener)}监听器，实现createMediaPlayer方法来创建一个解码器。每个视频播放任务都将实例化一个createMediaPlayer解码器
+ * 4、播放器支持在任意界面和位置直接开启全屏、Activity级别悬浮窗、全局悬浮窗 播放，请阅读IVideoPlayerControl接口内的方法实现
+ * 5、如需支持多播放器同时播放，则需要在开始播放前调用IVideoManager.getInstance().setInterceptTAudioFocus(true);
+ * 6、特别注意：mParentContext：为什么会有这个变量？当播放从一个Activity跳转到另一个Activity转场衔接播放、从全局悬浮窗到Activity转场衔接播放时，播放器的宿主Activity发生了变化。此时播放器内部的startFullScreen和手势缩放控制屏幕亮度等或其它和Activity相关功能都将会失效。
+ *    所以需要在转场后调用{@link #setParentContext(Context)}(context传入当前Activity的上下文)、恢复转场时来调用setParentContext(null)置空临时上下文。
  */
 public abstract class BasePlayer extends FrameLayout implements IVideoPlayerControl, IMediaPlayerControl {
 
@@ -55,7 +57,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private ViewGroup mParent;//自己的宿主
     private int[] mPlayerParams;//自己的宽高属性和位于父容器的层级位置
     private IVideoPlayer mIVideoPlayer;
-    private boolean mIsWindowProperty,mContinuityPlay,mIsGlobalWindow;//是否开启了窗口播放模式/是否开启了连续播放模式/是否处于全局悬浮窗|画中画模式
+    private boolean mIsWindowProperty,mContinuityPlay,mIsGlobalWindow,mRestoreDirection=true;//是否开启了窗口播放模式/是否开启了连续播放模式/是否处于全局悬浮窗|画中画模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
 
     public BasePlayer(Context context) {
@@ -78,12 +80,6 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             }
             typedArray.recycle();
         }
-        this.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                togglePlay();
-            }
-        });
         //将自己与播放器解码绑定
         mIVideoPlayer = new IVideoPlayer();
         mIVideoPlayer.setIMediaPlayerControl(this);
@@ -98,7 +94,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     private void setScreenOrientation(int orientation) {
         this.mScreenOrientation=orientation;
-        if(null!= mController) mController.setScreenOrientationPlayer(orientation);
+        if(null!= mController) mController.onScreenOrientation(orientation);
     }
 
     /**
@@ -109,7 +105,15 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private void setWindowPropertyPlayer(boolean isWindowProperty,boolean isGlobalWindow) {
         this.mIsWindowProperty=isWindowProperty;
         this.mIsGlobalWindow=isGlobalWindow;
-        if(null!= mController) mController.setWindowPropertyPlayer(isWindowProperty,isGlobalWindow);
+        if(null!= mController) mController.onWindowProperty(isWindowProperty,isGlobalWindow);
+    }
+
+    public boolean isWindowProperty() {
+        return mIsWindowProperty;
+    }
+
+    public boolean isGlobalWindow() {
+        return mIsGlobalWindow;
     }
 
     /**
@@ -162,8 +166,8 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     private Context getTargetContext(){
-        if(null!= mParentContext){
-            return mParentContext;
+        if(null!= getParentContext()){
+            return getParentContext();
         }
         return getContext();
     }
@@ -215,20 +219,20 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         ILogger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
         if(null!=mIVideoPlayer) this.setKeepScreenOn(mIVideoPlayer.isPlaying());//播放视频过程中请求屏幕常亮
         if(state==PlayerState.STATE_COMPLETION){//正常的播放器结束
-            if(!mContinuityPlay&&mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){//未开启连续播放模式下,先退出可能存在的全屏播放状态
+            if(mRestoreDirection&&!mContinuityPlay&&mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){//未开启连续播放模式下,先退出可能存在的全屏播放状态
                 quitFullScreen();
             }
         }
         PlayerState tempState=state;
         String tempMessage=message;
-        if(null!= mController) mController.onStatePlayer(tempState,tempMessage);//回调状态至控制器
+        if(null!= mController) mController.onPlayerState(tempState,tempMessage);//回调状态至控制器
         if(null!= mOnPlayerActionListener) mOnPlayerActionListener.onPlayerState(tempState,tempMessage);//回调状态至持有播放器的宿主
     }
 
     @Override
     public void onBuffer(int percent) {
         if(null!= mController){
-            mController.onBufferPlayer(percent);
+            mController.onBuffer(percent);
         }
     }
 
@@ -238,10 +242,10 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     @Override
-    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {
-//        ILogger.d(TAG,"progress-->currentDurtion:"+currentDurtion+",totalDurtion:"+totalDurtion+",bufferPercent:"+bufferPercent);
-        if(null!= mController) mController.onProgressPlayer(currentDurtion,totalDurtion,bufferPercent);
-        if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onProgress(currentDurtion,totalDurtion,bufferPercent);
+    public void onProgress(long currentDurtion, long totalDurtion) {
+//        ILogger.d(TAG,"progress-->currentDurtion:"+currentDurtion+",totalDurtion:"+totalDurtion);
+        if(null!= mController) mController.onProgress(currentDurtion,totalDurtion);
+        if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onProgress(currentDurtion,totalDurtion);
     }
 
     //=========================来自控制器的回调事件,也提供给外界调用的公开方法============================
@@ -299,15 +303,17 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
 
     /**
      * 设置缩放模式
-     * @param scaleModel 设置缩放模式 请适用IMediaPlayer类中定义的常量值
+     * @param scaleModel 设置缩放模式 请参阅IMediaPlayer类中定义的常量值
      */
     @Override
     public void setZoomModel(int scaleModel) {
         if(null!=mIVideoPlayer){
             mIVideoPlayer.setZoomModel(scaleModel);
+            if(null!=mController) mController.onZoomModel(scaleModel);
         }else{
             IVideoManager.getInstance().setZoomModel(scaleModel);
         }
+        if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onZoomModel(scaleModel);
     }
 
     /**
@@ -327,7 +333,10 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public boolean setSoundMute(boolean mute) {
         if(null!=mIVideoPlayer){
-            return mIVideoPlayer.setSoundMute(mute);
+            boolean soundMute = mIVideoPlayer.setSoundMute(mute);
+            if(null!=mController) mController.onMute(soundMute);
+            if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onMute(soundMute);
+            return soundMute;
         }
         return false;
     }
@@ -348,7 +357,12 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public boolean toggleMute() {
-        if(null!=mIVideoPlayer) return mIVideoPlayer.toggleMute();
+        if(null!=mIVideoPlayer){
+            boolean mute = mIVideoPlayer.toggleMute();
+            if(null!=mController) mController.onMute(mute);
+            if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onMute(mute);
+            return mute;
+        }
         return false;
     }
 
@@ -357,8 +371,37 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      * @param mirror 设置画面镜像旋转 true:画面翻转 false:正常
      */
     @Override
-    public void setMirror(boolean mirror) {
-        if(null!=mIVideoPlayer) mIVideoPlayer.setMirror(mirror);
+    public boolean setMirror(boolean mirror) {
+        if(null!=mIVideoPlayer){
+            boolean isMirror = mIVideoPlayer.setMirror(mirror);
+            if(null!=mController) mController.onMirror(isMirror);
+            if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onMirror(isMirror);
+            return isMirror;
+        }
+        return false;
+    }
+
+    /**
+     * 画面奖项
+     * @return true:镜像 false:正常
+     */
+    @Override
+    public boolean toggleMirror() {
+        if(null!=mIVideoPlayer){
+            boolean isMirror = mIVideoPlayer.toggleMirror();
+            if(null!=mController) mController.onMirror(isMirror);
+            if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onMirror(isMirror);
+            return isMirror;
+        }
+        return false;
+    }
+
+    /**
+     * @param restoreDirection 设置当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态,true:自动还原到竖屏 false:保留当前屏幕方向状态
+     */
+    @Override
+    public void setPlayCompletionRestoreDirection(boolean restoreDirection) {
+        this.mRestoreDirection=restoreDirection;
     }
 
     /**
@@ -381,15 +424,6 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         }else{
             IVideoManager.getInstance().setInterceptTAudioFocus(interceptTAudioFocus);
         }
-    }
-
-    /**
-     * 设置标题
-     * @param title 设置标题,也可以调用控制器的setTitle方法
-     */
-    @Override
-    public void setTitle(String title) {
-        if(null!= mController) mController.setVideoTitle(title);
     }
 
     /**
@@ -477,36 +511,27 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
 //        ILogger.d(TAG,"startFullScreen");
         if(mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
-//        ILogger.d(TAG,"startFullScreen-->activity:"+activity);
         if (null != activity&& !activity.isFinishing()) {
-//            ILogger.d(TAG,"startFullScreen-->1");
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             if(null==viewGroup){
                 return;
             }
-            //1.保存父布局,如果存在的话
-            //保存播放器本身的宽高和位于父容器的索引位置,恢复正常模式时需准确的还原到父容器index
+            //1.保存播放器在父布局中的宽、高、index层级等属性(如果存在的话)
             mPlayerParams = new int[3];
             mPlayerParams[0]=this.getMeasuredWidth();
             mPlayerParams[1]=this.getMeasuredHeight();
             if(null!=getParent()&& getParent() instanceof ViewGroup){
-//                ILogger.d(TAG,"startFullScreen-->移除自己的parent");
                 mParent = (ViewGroup) getParent();
-                mPlayerParams[2]=mParent.indexOfChild(this);
+                mPlayerParams[2]=mParent.indexOfChild(this);//保存播放器本身的宽高和位于父容器的索引位置,恢复正常模式时需准确的还原到父容器index
             }
             PlayerUtils.getInstance().removeViewFromParent(this);//从原宿主中移除自己
-            //2.改变屏幕方向
+            //2.改变屏幕方向为横屏状态,播放器所在的Activity需要添加属性：android:configChanges="orientation|screenSize"
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_LANDSCAPE);//更新控制器方向状态
             findViewById(R.id.player_surface).setBackgroundColor(bgColor!=0?bgColor:Color.parseColor("#000000"));//设置一个背景颜色
             //3.隐藏NavigationBar和StatusBar
             hideSystemBar(viewGroup);
-            //4.转场到横屏的window中
-//            ILogger.d(TAG,"startFullScreen-->getId():"+getId());
-//            if(getId()<=0){
-//                this.setId(R.id.player_window);//宿主没有设置ID情况下设置一个ID
-//            }
-//            ILogger.d(TAG,"startFullScreen-->addView");
+            //4.添加到此播放器宿主context的window中
             viewGroup.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }
     }
@@ -524,23 +549,20 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
                 return;
             }
             //1:从Window窗口中移除自己
-//            @SuppressLint("ResourceType")
-//            View playerView = viewGroup.findViewById(getId() <= 0 ? R.id.player_window : getId());
-//            ILogger.d(TAG,"quitLandscapeScreen-->getId():"+getId());
-//            PlayerUtils.getInstance().removeViewFromParent(playerView);
             PlayerUtils.getInstance().removeViewFromParent(this);
-            //2.改变屏幕方向
+            //2.改变屏幕方向为竖屏
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_PORTRAIT);
             findViewById(R.id.player_surface).setBackgroundColor(Color.parseColor("#00000000"));//设置纯透明背景
-            //3.将自己交给此前的宿主ViewGroup,注意还需要还原播放器原有的宽高属性
-            showSysBar(viewGroup);//重置全屏设置
+            //3.还原全屏设置为正常设置
+            showSysBar(viewGroup);
+            //3.将自己交给此前的宿主ViewGroup,并还原播放器在原宿主的宽、高、index位置
             if(null!=mParent){
                 if(null!=mPlayerParams&&mPlayerParams.length>0){
-                    ILogger.d(TAG,"index:"+mPlayerParams[2]);
-                    mParent.addView(this, mPlayerParams[2],new LayoutParams(mPlayerParams[0], mPlayerParams[1], Gravity.CENTER));//将自己还原到父容器的index位置
+//                    ILogger.d(TAG,"index:"+mPlayerParams[2]);
+                    mParent.addView(this, mPlayerParams[2],new LayoutParams(mPlayerParams[0], mPlayerParams[1]));//将自己还原到父容器的index位置,取消了Gravity.CENTER属性
                 }else{
-                    mParent.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+                    mParent.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 }
 //                ILogger.d(TAG,"quitLandscapeScreen-->已退出全屏");
             }else{
@@ -680,7 +702,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
                 startY=PlayerUtils.getInstance().dpToPxInt(60f);
 //                ILogger.d(TAG,"startWindow-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
             }
-            ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
+            ILogger.d(TAG,"startWindow-->final:width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
             //4.转场到window中,并指定宽高和x,y轴
             WindowPlayerFloatView container=new WindowPlayerFloatView(viewGroup.getContext());
             container.setOnWindowActionListener(new OnWindowActionListener() {
@@ -729,9 +751,9 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             //3.将自己交给此前的宿主ViewGroup
             if(null!=mParent){
                 if(null!=mPlayerParams&&mPlayerParams.length>0){
-                    mParent.addView(this, mPlayerParams[2],new LayoutParams(mPlayerParams[0], mPlayerParams[1], Gravity.CENTER));//将自己还原到父容器的index位置
+                    mParent.addView(this, mPlayerParams[2],new LayoutParams(mPlayerParams[0], mPlayerParams[1]));//将自己还原到父容器的index位置，取消了Gravity.CENTER属性
                 }else{
-                    mParent.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+                    mParent.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 }
 //                ILogger.d(TAG,"quitWindow-->已退出窗口");
             }else{
@@ -891,7 +913,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
                         startY=PlayerUtils.getInstance().dpToPxInt(60f);
 //                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
                     }
-                    ILogger.d(TAG,"startGlobalWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
+                    ILogger.d(TAG,"startGlobalWindow-->final:width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
                     //3.转场到window中,并指定宽高和x,y轴
                     boolean success= IWindowManager.getInstance().addGolbalWindow(getContext(), this, width, height, startX, startY,radius,bgColor);
 //                    ILogger.d(TAG,"startGlobalWindow--悬浮窗创建结果："+success);
@@ -1032,6 +1054,18 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     /**
+     * 返回缓冲进度
+     * @return 单位：百分比
+     */
+    @Override
+    public int getBuffer() {
+        if(null!=mIVideoPlayer) {
+            return mIVideoPlayer.getBuffer();
+        }
+        return 0;
+    }
+
+    /**
      * 设置缓冲和读取视频流超时时长
      * @param prepareTimeout 设置准备和读数据超时阈值,需在{@link #prepareAsync()}之前调用方可生效 准备超时阈值,即播放器在建立链接、解析流媒体信息的超时阈值
      * @param readTimeout    读数据超时阈值
@@ -1104,14 +1138,16 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void setController(BaseController controller) {
-        this.mController=controller;
         PlayerUtils.getInstance().removeViewFromParent(mController);
+        this.mController=controller;
+        PlayerUtils.getInstance().removeViewFromParent(controller);
         FrameLayout controllerView = (FrameLayout) findViewById(R.id.player_controller);
         if(null!=controllerView){
             controllerView.removeAllViews();
             if(null!= mController){
-                mController.attachedVideoPlayerControl(this);//绑定播放器代理人
+                mController.attachedPlayer(this);//绑定播放器代理人
                 controllerView.addView(mController,new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));//添加到播放器窗口
+                mController.onCreate();//初始化
             }
         }
     }
@@ -1130,7 +1166,6 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public boolean isBackPressed() {
-        ILogger.d(TAG,"isBackPressed-->screenOrientation:"+mScreenOrientation+",isWindowProperty:"+mIsWindowProperty);
         //退出全屏模式
         if(mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
             quitFullScreen();
@@ -1149,7 +1184,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void onResume(){
-        if(null!= mController) mController.onResumePlayer();
+        if(null!= mController) mController.onResume();
         if(null!=mIVideoPlayer) mIVideoPlayer.onResume();
     }
 
@@ -1159,7 +1194,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void onPause(){
         if(null!=mIVideoPlayer) mIVideoPlayer.onPause();
-        if(null!= mController) mController.onPausePlayer();
+        if(null!= mController) mController.onResume();
     }
 
     /**
@@ -1199,6 +1234,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void onDestroy(){
+        if(null!=mController) mController.onDestroy();
         if(null!=mIVideoPlayer){
             mIVideoPlayer.onDestroy();
             mIVideoPlayer=null;

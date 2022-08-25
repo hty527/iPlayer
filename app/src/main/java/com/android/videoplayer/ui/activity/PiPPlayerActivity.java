@@ -15,11 +15,9 @@ import android.os.Bundle;
 import android.util.Rational;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
@@ -31,7 +29,6 @@ import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.Logger;
-
 import java.util.ArrayList;
 
 /**
@@ -56,7 +53,7 @@ public class PiPPlayerActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_player);
+        setContentView(R.layout.activity_pip_player);
         TitleView titleView = (TitleView) findViewById(R.id.title_view);
         titleView.setTitle(getIntent().getStringExtra("title"));
         titleView.setOnTitleActionListener(new TitleView.OnTitleActionListener() {
@@ -77,31 +74,9 @@ public class PiPPlayerActivity extends BaseActivity {
      * 播放器初始化及调用示例
      */
     private void initPlayer() {
-        findViewById(R.id.btn_enter_picture).setVisibility(View.VISIBLE);
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
         VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-        //设置交互监听
-        controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
-
-            //竖屏的返回事件
-            @Override
-            public void onBack() {
-                Logger.d(TAG,"onBack");
-                onBackPressed();
-            }
-
-            //开启全局悬浮窗
-            @Override
-            public void onGobalWindow() {
-                Toast.makeText(getApplicationContext(),"请参考基础示例",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCompletion() {//试播结束或播放完成
-                Logger.d(TAG,"onCompletion");
-            }
-        });
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             /**
@@ -144,8 +119,8 @@ public class PiPPlayerActivity extends BaseActivity {
         mVideoPlayer.setMobileNetwork(true);
         mVideoPlayer.setLoop(false);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-        mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-        mVideoPlayer.setDataSource(URL3);//播放地址设置
+        controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        mVideoPlayer.setDataSource(MP4_URL3);//播放地址设置
         mVideoPlayer.playOrPause();//开始异步准备播放
     }
 

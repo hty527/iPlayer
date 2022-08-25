@@ -22,49 +22,17 @@ public interface IMediaPlayer {
     int MODE_ZOOM_CROPPING = 1;//视频裁剪缩放模式,裁剪铺满全屏模式
     int MODE_NOZOOM_TO_FIT = 2;//拉伸铺满屏幕模式,视频完全填满显示窗口,视频与窗口比例不匹配画面会有变形
 
-    /** 视频开始渲染 */
-    int MEDIA_INFO_VIDEO_RENDERING_START = 3;
-    /** 开始缓存数据,可认为是一次卡顿 */
-    int MEDIA_INFO_BUFFERING_START = 701;
-    /** 播放器缓存结束,开始播放音视频 */
-    int MEDIA_INFO_BUFFERING_END = 702;
-    /** 播放器缓存结束 */
-    int MEDIA_INFO_NETWORK_BANDWIDTH = 703;
+    /** 音视频开始渲染 */
+    int MEDIA_INFO_VIDEO_RENDERING_START    = 3;
+    /** 开始缓存数据 */
+    int MEDIA_INFO_BUFFERING_START          = 701;
+    /** 结束缓存数据 */
+    int MEDIA_INFO_BUFFERING_END            = 702;
+    /** 结束缓存数据 */
+    int MEDIA_INFO_NETWORK_BANDWIDTH        = 703;
+    /** 视频旋转变化了 */
+    int MEDIA_INFO_VIDEO_ROTATION_CHANGED   = 10001;
 
-    /** 未定义的消息 */
-    int MEDIA_INFO_UNKNOWN = 1;
-    int MEDIA_INFO_STARTED_AS_NEXT = 2;
-    /** 视频复杂，解码器效率不足 */
-    int MEDIA_INFO_VIDEO_TRACK_LAGGING = 700;
-
-
-    int MEDIA_INFO_BAD_INTERLEAVING = 800;
-    /** 该多媒体文件不可快进/快退 */
-    int MEDIA_INFO_NOT_SEEKABLE = 801;
-    int MEDIA_INFO_METADATA_UPDATE = 802;
-    int MEDIA_INFO_TIMED_TEXT_ERROR = 900;
-    int MEDIA_INFO_UNSUPPORTED_SUBTITLE = 901;
-    int MEDIA_INFO_SUBTITLE_TIMED_OUT = 902;
-
-    /** 视频方向发生变化 */
-    int MEDIA_INFO_VIDEO_ROTATION_CHANGED = 10001;
-    /** 音频开始播放 */
-    int MEDIA_INFO_AUDIO_RENDERING_START = 10002;
-
-    int MEDIA_INFO_SPEED_LOW = 40003;
-    /** 建议使用者调用reload接口 */
-    int MEDIA_INFO_SUGGEST_RELOAD = 40020;
-
-    /** 播放器使用硬解 */
-    int MEDIA_INFO_HARDWARE_DECODE = 41000;
-    /** 播放器使用软解 */
-    int MEDIA_INFO_SOFTWARE_DECODE = 41001;
-    /** reload成功 */
-    int MEDIA_INFO_RELOADED = 50001;
-
-    int MEDIA_ERROR_UNKNOWN = 1;
-    int MEDIA_ERROR_SERVER_DIED = 100;
-    int MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK = 200;
     /** Input/Output相关错误,一般是网络超时 */
     int MEDIA_ERROR_IO = -1004;
     int MEDIA_ERROR_MALFORMED = -1007;
@@ -208,6 +176,12 @@ public interface IMediaPlayer {
      * @return 单位:毫秒
      */
     long getDuration();
+
+    /**
+     * 返回当前缓冲进度
+     * @return 单位:百分比
+     */
+    int getBuffer();
 
     /**
      * 同步播放器准备

@@ -3,42 +3,40 @@ package com.android.videoplayer.ui.activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControWindowView;
+import com.android.iplayer.widget.controls.ControlCompletionView;
+import com.android.iplayer.widget.controls.ControlFunctionBarView;
+import com.android.iplayer.widget.controls.ControlGestureView;
+import com.android.iplayer.widget.controls.ControlLoadingView;
+import com.android.iplayer.widget.controls.ControlStatusView;
+import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.controller.DanmuController;
 import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.media.JkMediaPlayer;
+import com.android.videoplayer.video.ui.widget.SdkDefaultFuncation;
 import com.android.videoplayer.ui.widget.TitleView;
-import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
-import com.android.videoplayer.video.listener.OnMenuActionListener;
-import com.android.videoplayer.video.ui.widget.PlayerMenuView;
 
 /**
  * created by hty
  * 2022/6/22
- * Desc:这是一个支持带弹幕控制的常规视频播放器控件封装的示例
+ * Desc:这是一个SDK播放器+默认控制器+默认自定义UI交互组件使用的示例
  */
 public class VideoPlayerActivity extends BaseActivity {
 
-    private boolean mDanmu;//是否启用弹幕
-    private boolean mIslive;//是否播放直播流
-    private DanmuController mDanmuController;
-    private PlayerMenuView mMenuView;
-    private int mediaCore;//多媒体解码器 0:系统默认 1:ijk 2:exo
-    private VideoController mController;
+    private int MEDIA_CORE=0;//多媒体解码器 0:系统默认 1:ijk 2:exo
+    private VideoController mController;//控制器
+    private SdkDefaultFuncation mSdkDefaultFuncation;//播放器支持更多功能的交互示例
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,8 +50,6 @@ public class VideoPlayerActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        mDanmu = getIntent().getBooleanExtra("danmu",false);
-        mIslive = getIntent().getBooleanExtra("islive",false);
         initPlayer();
     }
 
@@ -66,221 +62,161 @@ public class VideoPlayerActivity extends BaseActivity {
      * 播放器初始化及调用示例
      */
     private void initPlayer() {
+        //播放器播放之前准备工作
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
-        //绑定控制器
+        /**
+         * 给播放器设置一个控制器
+         */
         mController = new VideoController(mVideoPlayer.getContext());
-        mController.showBackBtn(false);//竖屏下是否显示返回按钮
-        mController.showMenus(true,true,true);//是否显示右上角菜单栏功能按钮
-        mController.showSoundMute(true,false);//启用静音功能交互\默认不静音
-        //设置交互监听
-        mController.setOnControllerListener(new VideoController.OnControllerEventListener() {
+        //mController.setCanTouchInPortrait(false);//竖屏状态下是否开启手势交互,内部默认允许
+        //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
+        mVideoPlayer.setController(mController);//绑定控制器到播放器
 
-            //菜单按钮交给控制器内部处理
+        /**
+         * 给控制器添加各UI交互组件
+         */
+        //给播放器控制器绑定自定义UI交互组件，也可调用initControlComponents()一键使用SDK内部提供的所有UI交互组件
+        ControlToolBarView toolBarView=new ControlToolBarView(this);//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+        toolBarView.showBack(false);//是否显示返回按钮,仅限竖屏情况下，横屏模式下强制显示
+        toolBarView.showMenus(true,true,true);//是否显示投屏\悬浮窗\功能等按钮，仅限竖屏情况下，横屏模式下强制不显示
+        //监听标题栏的功能事件
+        toolBarView.setOnToolBarActionListener(new ControlToolBarView.OnToolBarActionListener() {
             @Override
-            public void onMenu() {
-                showMenuDialog();
-            }
-
-            //竖屏的返回事件
-            @Override
-            public void onBack() {
+            public void onBack() {//仅当设置showBack(true)后并且竖屏情况下才会有回调到此
                 Logger.d(TAG,"onBack");
                 onBackPressed();
             }
 
-            //开启全局悬浮窗
             @Override
-            public void onGobalWindow() {
+            public void onTv() {
+                Logger.d(TAG,"onTv");
+            }
+
+            @Override
+            public void onWindow() {
+                Logger.d(TAG,"onWindow");
                 startGoableWindow(null);
             }
 
             @Override
-            public void onCompletion() {//试播结束或播放完成
-                Logger.d(TAG,"onCompletion");
-            }
-
-            //播放器是否被静音了
-            @Override
-            public void onMute(boolean mute) {
-                if(null!=mMenuView) mMenuView.updateMute(mute);
+            public void onMenu() {
+                Logger.d(TAG,"onMenu");
+                showMenuDialog();
             }
         });
-        //controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
-        //绑定UI控制器
-        mVideoPlayer.setController(mController);
+        ControlFunctionBarView functionBarView=new ControlFunctionBarView(this);//底部时间、seek、静音、全屏功能栏
+        functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音
+        ControlGestureView gestureView=new ControlGestureView(this);//手势控制屏幕亮度、系统音量、快进、快退UI交互
+        ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
+        ControlStatusView statusView=new ControlStatusView(this);//移动网络播放提示、播放失败、试看完成
+        ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
+        ControWindowView windowView=new ControWindowView(this);//悬浮窗窗口播放器的窗口样式
+        mController.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
 
-        //弹幕控制器处理
-        if(mDanmu){
-            mDanmuController = new DanmuController(mController.getContext());
-            mController.addController(0,mDanmuController);
-            Switch aSwitch = (Switch) findViewById(R.id.switch_danmu);
-            aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(null!=mDanmuController){
-                        if(isChecked){
-                            mDanmuController.openDanmu();
-                            ((TextView) findViewById(R.id.tv_danmu)).setText("关闭弹幕");
-                        }else{
-                            mDanmuController.closeDanmu();
-                            ((TextView) findViewById(R.id.tv_danmu)).setText("开启弹幕");
-                        }
-                    }
-                }
-            });
-            findViewById(R.id.danmu_content).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_send_danmu).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(null!=mDanmuController){
-                        mDanmuController.addDanmuItem("这是我发的有颜色的弹幕！",true);
-                    }
-                }
-            });
-            mDanmuController.setDanmuData(DataFactory.getInstance().getDanmus());//添加弹幕数据
-        }else{
-            //功能设置监听
-            findViewById(R.id.controller_content).setVisibility(View.VISIBLE);
-            mMenuView = (PlayerMenuView) findViewById(R.id.menu_view);
-            mMenuView.setOnMenuActionListener(new OnMenuActionListener() {
-                @Override
-                public void onSpeed(float speed) {
-                    if(null!=mVideoPlayer) mVideoPlayer.setSpeed(speed);
-                }
+        //其它设置
+        initSetting();
 
-                @Override
-                public void onZoom(int zoomModel) {
-                    if(null!=mVideoPlayer) mVideoPlayer.setZoomModel(zoomModel);
-                }
-
-                @Override
-                public void onScale(int scale) {
-
-                }
-
-                @Override
-                public void onMute(boolean mute) {
-                    if(null!=mVideoPlayer) mVideoPlayer.setSoundMute(mute);
-                    if(null!=mController) mController.updateMute();
-                }
-
-                @Override
-                public void onMirror(boolean mirror) {
-                    if(null!=mVideoPlayer) mVideoPlayer.setMirror(mirror);
-                }
-            });
-            View btnCore1 = findViewById(R.id.btn_core_1);
-            btnCore1.setSelected(true);
-            //解码器切换监听
-            btnCore1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    findViewById(R.id.btn_core_3).setSelected(false);
-                    findViewById(R.id.btn_core_2).setSelected(false);
-                    findViewById(R.id.btn_core_1).setSelected(true);
-                    mediaCore =0;
-                    rePlay(null);
-                }
-            });
-            findViewById(R.id.btn_core_2).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    findViewById(R.id.btn_core_1).setSelected(false);
-                    findViewById(R.id.btn_core_3).setSelected(false);
-                    findViewById(R.id.btn_core_2).setSelected(true);
-                    mediaCore =1;
-                    rePlay(null);
-                }
-            });
-            findViewById(R.id.btn_core_3).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    findViewById(R.id.btn_core_1).setSelected(false);
-                    findViewById(R.id.btn_core_2).setSelected(false);
-                    findViewById(R.id.btn_core_3).setSelected(true);
-                    mediaCore =2;
-                    rePlay(null);
-                }
-            });
-            //竖屏模式下的手势交互开关监听
-            if(null!=mController) mController.setCanTouchInPortrait(true);//竖屏状态下是否开启手势交互
-            View touch_1 = findViewById(R.id.touch_1);
-            touch_1.setSelected(true);
-            touch_1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    findViewById(R.id.touch_1).setSelected(true);
-                    findViewById(R.id.touch_2).setSelected(false);
-                    if(null!=mController) mController.setCanTouchInPortrait(true);
-                }
-            });
-            findViewById(R.id.touch_2).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    findViewById(R.id.touch_1).setSelected(false);
-                    findViewById(R.id.touch_2).setSelected(true);
-                    if(null!=mController) mController.setCanTouchInPortrait(false);
-                }
-            });
-
-            findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EditText editText = (EditText) findViewById(R.id.input);
-                    String url = editText.getText().toString().trim();
-                    if(TextUtils.isEmpty(url)){
-                        Toast.makeText(getApplicationContext(),"请粘贴或输入播放地址后再播放!",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    rePlay(url);
-                }
-            });
-        }
-        //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+        /**
+         * 如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+         */
+        //自定义解码器、播放状态监听。
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
-            /**
-             * 创建一个自定义的播放器,返回null,则内部自动创建一个默认的解码器
-             * @return
-             */
+
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                if(1==mediaCore){
+                if(1==MEDIA_CORE){
                     return new JkMediaPlayer(VideoPlayerActivity.this);//IJK解码器
-                }else if(2==mediaCore){
+                }else if(2==MEDIA_CORE){
                     return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器
                 }else{
-                    return null;//播放器内部默认的
+                    return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
                 }
             }
 
             @Override
             public void onPlayerState(PlayerState state, String message) {
-                Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
                 if(state==PlayerState.STATE_COMPLETION||state==PlayerState.STATE_RESET||state==PlayerState.STATE_STOP){
-                    if(null!=mMenuView) mMenuView.onReset();//播放完成后重置功能设置
+                    if(null!=mSdkDefaultFuncation) mSdkDefaultFuncation.onReset();//播放完成后重置功能设置
                     if(null!=mMenuDialog) mMenuDialog.onReset();
                 }
             }
+
+            @Override
+            public void onMute(boolean isMute) {
+                if(null!=mSdkDefaultFuncation) mSdkDefaultFuncation.updateMute(isMute,false);
+            }
         });
-        mVideoPlayer.setLoop(mDanmu);
-        mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-        mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-        mVideoPlayer.setDataSource(mIslive?M3U8:URL1);//播放地址设置
+        mVideoPlayer.setLoop(false);//是否循环播放
+        mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);//设置视频画面渲染模式为：全屏缩放模式
+        mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
+        mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
+        mVideoPlayer.setMirror(false);//是否镜像显示
+        //mVideoPlayer.setPlayCompletionRestoreDirection(true);//播放器在横屏状态下播放完成是否自动还原到竖屏状态,默认自动还原到竖屏
+        //mVideoPlayer.setMobileNetwork(true);//移动网络下是否允许播放网络视频,需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        //mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放
+        mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        mVideoPlayer.setDataSource(MP4_URL1);//播放地址设置
         mVideoPlayer.playOrPause();//开始异步准备播放
+    }
+
+    /**
+     * 更多设置功能拓展
+     */
+    private void initSetting() {
+        //功能设置监听
+        mSdkDefaultFuncation = findViewById(R.id.controller_content);
+        mSdkDefaultFuncation.setVisibility(View.VISIBLE);
+        mSdkDefaultFuncation.setOnActionListener(new SdkDefaultFuncation.OnActionListener() {
+            @Override
+            public void setSpeed(float speed) {
+                if (null != mVideoPlayer) mVideoPlayer.setSpeed(speed);
+            }
+
+            @Override
+            public void setZoomModel(int zoomModel) {
+                if (null != mVideoPlayer) mVideoPlayer.setZoomModel(zoomModel);
+            }
+
+            @Override
+            public void setSoundMute(boolean mute) {
+                if (null != mVideoPlayer) mVideoPlayer.setSoundMute(mute);
+            }
+
+            @Override
+            public void setMirror(boolean mirror) {
+                if (null != mVideoPlayer) mVideoPlayer.setMirror(mirror);
+            }
+
+            @Override
+            public void setCanTouchInPortrait(boolean canTouchInPortrait) {
+                if (null != mController) mController.setCanTouchInPortrait(canTouchInPortrait);
+            }
+
+            @Override
+            public void rePlay(String url) {
+                reStartPlay(url);
+            }
+
+            @Override
+            public void onMediaCore(int mediaCore) {
+                MEDIA_CORE = mediaCore;
+            }
+        });
     }
 
     /**
      * 重新播放
      * @param url
      */
-    private void rePlay(String url) {
+    private void reStartPlay(String url) {
         if(null!=mVideoPlayer){
             mVideoPlayer.onReset();
-            mVideoPlayer.setLoop(mDanmu);
+            mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-            mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(!TextUtils.isEmpty(url)?url:mIslive?M3U8:URL1);//播放地址设置 URL4惊奇队长
+            mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.setDataSource(!TextUtils.isEmpty(url)?url: MP4_URL1);//播放地址设置 URL4惊奇队长
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }

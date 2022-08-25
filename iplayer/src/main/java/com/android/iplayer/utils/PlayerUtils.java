@@ -26,13 +26,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import com.android.iplayer.widget.LayoutProvider;
+import com.android.iplayer.widget.view.LayoutProvider;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
@@ -41,7 +38,7 @@ import java.util.Locale;
 /**
  * created by hty
  * 2022/6/28
- * Desc:
+ * Desc:工具类集合
  */
 public class PlayerUtils {
 
@@ -456,103 +453,6 @@ public class PlayerUtils {
         return simpleDateFormat.format(date);
     }
 
-    public interface OnAnimationListener{
-        void onAnimationEnd(Animation animation);
-    }
-
-    /**
-     * 播放透明动画
-     * @param view 目标View
-     * @param duration 动画时长
-     * @param isFillAfter 是否停留在最后一帧
-     * @param listener 状态监听器
-     */
-    public void startAlphaAnimatioTo(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
-        if(null==view) return;
-        new AnimationTask().start(view,duration,isFillAfter,listener);
-    }
-
-    /**
-     * 动画执行
-     */
-    private class AnimationTask{
-
-        private View mView;
-        private OnAnimationListener mOnAnimationListener;
-
-        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
-            this.mView=view;
-            this.mOnAnimationListener=listener;
-            AlphaAnimation alphaAnim = new AlphaAnimation(1f, 0);
-            alphaAnim.setDuration(duration);
-            alphaAnim.setFillAfter(isFillAfter);
-            alphaAnim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if(null!=mOnAnimationListener) mOnAnimationListener.onAnimationEnd(animation);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            mView.startAnimation(alphaAnim);
-        }
-    }
-
-    /**
-     * 播放透明动画
-     * @param view 目标View
-     * @param duration 动画时长
-     * @param isFillAfter 是否停留在最后一帧
-     * @param listener 状态监听器
-     */
-    public void startAlphaAnimatioFrom(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
-        if(null==view) return;
-        new AnimationTaskFrom().start(view,duration,isFillAfter,listener);
-    }
-
-    /**
-     * 动画执行
-     */
-    private class AnimationTaskFrom{
-
-        private View mView;
-        private OnAnimationListener mOnAnimationListener;
-
-        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
-            this.mView=view;
-            this.mOnAnimationListener=listener;
-            mView.setVisibility(View.VISIBLE);
-            AlphaAnimation alphaAnim = new AlphaAnimation(0f, 1f);
-            alphaAnim.setDuration(duration);
-            alphaAnim.setFillAfter(isFillAfter);
-            alphaAnim.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if(null!=mOnAnimationListener) mOnAnimationListener.onAnimationEnd(animation);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            mView.startAnimation(alphaAnim);
-        }
-    }
-
     /**
      * 根据百分比计算出实际占总进度的进度值
      * @param bufferPercent 百分比
@@ -618,32 +518,14 @@ public class PlayerUtils {
      * 用户手指在屏幕边缘检测
      * @param context 上下文
      * @param e 触摸事件
-     * @param isPortrait 是否是竖屏状态下
      * @return
      */
-    public boolean isEdge(Context context, MotionEvent e,boolean isPortrait) {
+    public boolean isEdge(Context context, MotionEvent e) {
         float edgeSize = dpToPx(context, 40);
-        ILogger.d(TAG,"isEdge-->isPortrait:"+isPortrait+",eX:"+e.getRawX()+",eY:"+e.getRawY()+",screenWidt:"+getScreenWidth(context));
+        ILogger.d(TAG,"isEdge-->eX:"+e.getRawX()+",eY:"+e.getRawY()+",screenWidt:"+getScreenWidth(context));
         return e.getRawX() < edgeSize
                 || e.getRawX() > getScreenWidth(context) - edgeSize
                 || e.getRawY() < edgeSize
                 || e.getRawY() > getScreenHeight(context) - edgeSize;
-    }
-
-    private static long lastClickTime;
-
-    /**
-     * 限定时间内响应点击时间
-     * @param maxDuration 间隔的最大时长
-     * @return
-     */
-    public boolean isFastClick(int maxDuration) {
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        if (currentTime - lastClickTime > maxDuration) {
-            lastClickTime = currentTime;
-            return true;
-        }
-        lastClickTime = currentTime;
-        return false;
     }
 }

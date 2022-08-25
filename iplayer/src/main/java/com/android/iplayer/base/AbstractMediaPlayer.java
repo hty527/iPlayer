@@ -7,6 +7,7 @@ import com.android.iplayer.interfaces.IMediaPlayer;
  * created by hty
  * 2022/6/28
  * Desc:多媒体解码器基类，自定义多媒体解码器必须继承此类重写&&赋值所关心的监听器
+ * 1、自定义解码器实现请参考com.android.iplayer.media.core.MediaPlayer类
  */
 public abstract class AbstractMediaPlayer implements IMediaPlayer {
 

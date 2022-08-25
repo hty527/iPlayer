@@ -9,10 +9,13 @@ import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IControllerView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -75,34 +78,35 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }else{
             mVideoPlayer = new VideoPlayer(this);
-            mVideoPlayer.initController();
             findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
             mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-            mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
-            mVideoPlayer.setDataSource(URL2);//播放地址设置
+            mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+
+            //为播放器添加控制器和Ui交互组件
+            VideoController controller = mVideoPlayer.initController();
+            controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
-        //设置交互监听
-        ((VideoController) mVideoPlayer.getController()).setOnControllerListener(new VideoController.OnControllerEventListener() {
 
-            @Override
-            public void onBack() {//竖屏的返回事件
-                Logger.d(TAG,"onBack");
-                onBackPressed();
-            }
+        IControllerView controllerView = mVideoPlayer.getController().findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
+        if(null!=controllerView&&controllerView instanceof ControlToolBarView){
+            ControlToolBarView toolBarView= (ControlToolBarView) controllerView;
+            toolBarView.setOnToolBarActionListener(new ControlToolBarView.OnToolBarActionListener() {
+                @Override
+                public void onBack() {
+                    onBackPressed();
+                }
 
-            @Override
-            public void onCompletion() {//试播结束或播放完成
-                Logger.d(TAG,"onCompletion");
-            }
+                @Override
+                public void onWindow() {
+                    WindowGlobalPlayerActivity.this.startGoableWindow(null);
+                }
+            });
+        }
 
-            @Override
-            public void onGobalWindow() {
-                WindowGlobalPlayerActivity.this.startGoableWindow(null);
-            }
-        });
         /**
          * 从悬浮窗窗口跳转过来的播放器重新设置监听器(如果你关心的话)
          * 如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器

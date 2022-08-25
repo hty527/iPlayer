@@ -33,7 +33,21 @@ public abstract class OnPlayerEventListener {
      * 播放进度实时回调,回调到主线程
      * @param currentDurtion 当前播放进度,单位:毫秒时间戳
      * @param totalDurtion 总时长,单位:毫秒时间戳
-     * @param bufferPercent 已缓冲进度,单位:百分比
      */
-    public void onProgress(long currentDurtion, long totalDurtion, int bufferPercent) {}
+    public void onProgress(long currentDurtion, long totalDurtion) {}
+
+    /**
+     * @param isMute 当静音状态发生了变化回调，true:处于静音状态 false:处于非静音状态
+     */
+    public void onMute(boolean isMute) {}
+
+    /**
+     * @param isMirror 当播放器的内部画面渲染镜像状态发生了变化回调， true:处于镜像状态 false:处于非镜像状态
+     */
+    public void onMirror(boolean isMirror) {}
+
+    /**
+     * @param zoomModel 当播放器内部渲染缩放模式发生了变化回调，，当初始化和播放器缩放模式设置发生变化时回调，参考IMediaPlayer类
+     */
+    public void onZoomModel(int zoomModel) {}
 }

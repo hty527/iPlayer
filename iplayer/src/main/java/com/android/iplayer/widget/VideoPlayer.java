@@ -8,11 +8,9 @@ import com.android.iplayer.controller.VideoController;
 /**
  * created by hty
  * 2022/6/22
- * 注意:
- * 1、如需播放器支持全屏、小窗口、全局悬浮窗口播放功能，则VideoPlayerView需要一个ViewGroup容器来包裹。
- * 2、如播放视频场景是打开一个Activity直接全屏\直接小窗口模式播放(按返回键直接关闭Activity),则只能new 一个播放器对象来使用。
- * Desc:支持横竖屏切换\弹幕\试看\4G网络提示\失败交互的默认播放器
- * 默认的播放器是不包含视图控制器的,如需使用默认控制器,请调用initController方法
+ * desc:这是一个播放器的实现类，内部封装了如何使用SDK提供的交互组件的调用示例
+ * 1、需要功能自定义，请复写父类的方法修改
+ * 2、此播放器封装了使用SDK自带的控制器+各UI交互组件，请调用：请调用：{@link #initController()}
  */
 public class VideoPlayer extends BasePlayer {
 
@@ -40,13 +38,24 @@ public class VideoPlayer extends BasePlayer {
 
     /**
      * 绑定默认的控制器到播放器
-     * @param showBackBtn 是否显示返回按钮 true:是 false:否
+     * @param showBackBtn 是否显示返回按钮
      */
     public VideoController initController(boolean showBackBtn){
+        return initController(showBackBtn,true);
+    }
+
+
+    /**
+     * 绑定默认的控制器到播放器
+     * @param showBackBtn 是否显示返回按钮
+     * @param addWindowWidget 是否添加悬浮窗口交互UI组件
+     */
+    public VideoController initController(boolean showBackBtn,boolean addWindowWidget){
         //绑定控制器
         VideoController controller = new VideoController(getContext());
-        controller.showBackBtn(showBackBtn);
         setController(controller);
+        //添加SDK内部所有UI交互组件
+        controller.initControlComponents(showBackBtn,addWindowWidget);
         return controller;
     }
 }

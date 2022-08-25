@@ -4,18 +4,13 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.ui.widget.TitleView;
-import com.android.videoplayer.utils.Logger;
-import com.android.videoplayer.utils.ScreenUtils;
-
 import java.io.IOException;
 
 /**
@@ -52,24 +47,10 @@ public class AssetsPlayerActivity extends BaseActivity {
     private void init() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-        controller.setTitleTopOffset(ScreenUtils.getInstance().getStatusBarHeight(getApplicationContext()));
-        controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
-
-            @Override
-            public void onBack() {//竖屏的返回事件
-                Logger.d(TAG,"onBack");
-                onBackPressed();
-            }
-
-            @Override
-            public void onCompletion() {//试播结束或播放完成
-                Logger.d(TAG,"onCompletion");
-            }
-        });
+        VideoController controller = mVideoPlayer.initController(false,false);//绑定默认的控制器
         mVideoPlayer.setLoop(false);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-        mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
     }
 
     /**

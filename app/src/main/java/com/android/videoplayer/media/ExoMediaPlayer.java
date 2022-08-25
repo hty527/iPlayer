@@ -140,6 +140,18 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     }
 
     @Override
+    public int getBuffer() {
+        try {
+            if(null!=mMediaPlayer){
+                return mMediaPlayer.getBufferedPercentage();
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
     public void prepare() throws IOException, IllegalStateException {
         isPlaying=false;
         if(null!=mMediaPlayer) mMediaPlayer.prepare();
