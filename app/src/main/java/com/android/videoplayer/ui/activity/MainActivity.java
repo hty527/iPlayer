@@ -271,7 +271,6 @@ public class MainActivity extends BaseActivity {
                 Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
             }
         });
-//        videoPlayer.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
         videoPlayer.setLoop(false);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
         videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)

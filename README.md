@@ -101,9 +101,8 @@
         mVideoPlayer.onDestroy();
     }
 ```
-### 全屏、悬浮窗口、手势、自定义解码器、自定义UI交互组件等功能使用请阅读：
+### 全屏、悬浮窗口、手势、自定义解码器、自定义UI交互组件等功能使用请阅读：**[接入文档]**
 [接入文档]: https://github.com/hty527/iPlayer/wiki/api "接入文档"
-**[接入文档]**
 
 ### SDK及Demo部分功能快照：
 <div align="center">
