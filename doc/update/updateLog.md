@@ -1,12 +1,12 @@
 历史版本
 
-###  1.0.6
-**更新日期：** 2022-8-20<br/>
+###  2.0.0
+**更新日期：** 2022-8-25<br/>
 **更新内容：**<br/>
+>1. 全新的2.0.0版本发布，重新设计Controller架构<br/>
+>1. 所有UI交互组件均支持自定义和局部自定义<br/>
 >1. 去除播放器兜底点击事件,去除setTitle方法,由controller实现<br/>
 >2. 取消开启全屏、小窗口播放后还原到常规播放时的居中于父布局的属性<br/>
->3. 去除IVideoController的addController和removeController,用addControllerWidget和removeCoustomWidget代替<br/>
->4. 优化Controller,所有控制器组件支持自选择和自定义<br/>
 ___
 ###  1.0.5.2
 **更新日期：** 2022-8-20<br/>

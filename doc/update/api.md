@@ -1,3 +1,123 @@
+#### 常用功能使用说明
+##### 播放器的所有api
+* 请阅读IVideoPlayerControl
+##### 自定义Controller及UI交互组件
+###### 自定义Controller
+* 所有自定义Controller需继承BaseController，若您的Controll需要支持手势交互，请继承GestureController，GestureController内部处理了手势事件。
+* 自定义Controller的使用
+```
+        VideoController controller=new VideoController(videoPlayer.getContext());
+        BasePlayer.setController(controller);
+        //或使用SDK内置的
+        BasePlayer.initController();
+```
+###### 自定义UI交互组件
+* SDK提供了一套标题栏、底部控制栏、播放器状态(网络提示、播放失败)、播放完成、手势交互相应处理、Window窗口、列表模式 等UI交互组件。Controller的任意UI交互组件均支持自定义。
+如需自定义请继承BaseControllerWidget，请阅读IControllerView提供的API来实现自己的交互。
+* 自定义UI交互组件的使用(请参考Demo中的VideoPlayerActivity类)
+```
+        /**
+         * 1、给播放器设置一个控制器
+         */
+        mController = new VideoController(mVideoPlayer.getContext());
+        //mController.setCanTouchInPortrait(false);//竖屏状态下是否开启手势交互,内部默认允许
+        //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
+        mVideoPlayer.setController(mController);//绑定控制器到播放器
+
+        /**
+         * 2、给控制器添加各UI交互组件
+         */
+        //给播放器控制器绑定自定义UI交互组件，也可调用initControlComponents()一键使用SDK内部提供的所有UI交互组件
+        ControlToolBarView toolBarView=new ControlToolBarView(this);//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+        toolBarView.showBack(false);//是否显示返回按钮,仅限竖屏情况下，横屏模式下强制显示
+        toolBarView.showMenus(true,true,true);//是否显示投屏\悬浮窗\功能等按钮，仅限竖屏情况下，横屏模式下强制不显示
+        //监听标题栏的功能事件
+        toolBarView.setOnToolBarActionListener(new ControlToolBarView.OnToolBarActionListener() {
+            @Override
+            public void onBack() {//仅当设置showBack(true)后并且竖屏情况下才会有回调到此
+                Logger.d(TAG,"onBack");
+                onBackPressed();
+            }
+
+            @Override
+            public void onTv() {
+                Logger.d(TAG,"onTv");
+            }
+
+            @Override
+            public void onWindow() {
+                Logger.d(TAG,"onWindow");
+                startGoableWindow(null);
+            }
+
+            @Override
+            public void onMenu() {
+                Logger.d(TAG,"onMenu");
+                showMenuDialog();
+            }
+        });
+        ControlFunctionBarView functionBarView=new ControlFunctionBarView(this);//底部时间、seek、静音、全屏功能栏
+        functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音
+        ControlGestureView gestureView=new ControlGestureView(this);//手势控制屏幕亮度、系统音量、快进、快退UI交互
+        ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
+        ControlStatusView statusView=new ControlStatusView(this);//移动网络播放提示、播放失败、试看完成
+        ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
+        ControWindowView windowView=new ControWindowView(this);//悬浮窗窗口播放器的窗口样式
+        mController.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
+```
+
+##### 全屏播放
+
+###### 横竖屏切换
+* 支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
+```
+        android:configChanges="orientation|screenSize"
+```
+###### 直接启动全屏播放
+* SDK支持在任意位置直接启动全屏播放,只需要：
+```
+        VideoPlayer videoPlayer = new VideoPlayer(this);
+        videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
+        VideoController controller=new VideoController(videoPlayer.getContext());
+        videoPlayer.setController(controller);
+        /**
+         * 给播放器控制器绑定需要的自定义UI交互组件
+         */
+        ControlToolBarView toolBarView=new ControlToolBarView(this);//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+        ControlFunctionBarView functionBarView=new ControlFunctionBarView(this);//底部时间、seek、静音、全屏功能栏
+        functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音
+        ControlStatusView statusView=new ControlStatusView(this);//移动网络播放提示、播放失败、试看完成
+        ControlGestureView gestureView=new ControlGestureView(this);//手势控制屏幕亮度、系统音量、快进、快退UI交互
+        ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
+        ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
+        controller.addControllerWidget(toolBarView,functionBarView,statusView,gestureView,completionView,loadingView);
+
+        //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+        videoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+            /**
+             * 创建一个自定义的播放器,返回null,则内部自动创建一个默认的解码器
+             * @return
+             */
+            @Override
+            public AbstractMediaPlayer createMediaPlayer() {
+                return new JkMediaPlayer(MainActivity.this);
+            }
+
+            @Override
+            public void onPlayerState(PlayerState state, String message) {
+                Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
+            }
+        });
+        videoPlayer.setLoop(false);
+        videoPlayer.setProgressCallBackSpaceMilliss(300);
+        videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        videoPlayer.setDataSource(MP4_URL2);//播放地址设置
+        videoPlayer.startFullScreen();//开启全屏播放
+        videoPlayer.playOrPause();//开始异步准备播放
+```
+#### 注意点
+
 * 5.全屏播放功能清单文件配置：如果播放器需要横屏播放,需要在Activity清单文件配置如下属性：</br>
 ```
     //在需要全屏播放的Activity清单文件中添加属性：android:configChanges="orientation|screenSize"，防止横屏时Activity重绘
