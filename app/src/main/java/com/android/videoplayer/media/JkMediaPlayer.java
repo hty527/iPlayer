@@ -22,6 +22,7 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
 public class JkMediaPlayer extends AbstractMediaPlayer {
 
     private IjkMediaPlayer mMediaPlayer;
+    private int mBuffer;//缓冲进度
 
     public JkMediaPlayer(Context context) {
         super(context);
@@ -139,6 +140,11 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
     }
 
     @Override
+    public int getBuffer() {
+        return mBuffer;
+    }
+
+    @Override
     public void prepare() throws IOException, IllegalStateException {}
 
     @Override
@@ -163,6 +169,7 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
 
     @Override
     public void reset() {
+        mBuffer=0;
         if(null!=mMediaPlayer){
             final IjkMediaPlayer mediaPlayer = mMediaPlayer;//用于在列表播放时避免卡顿
             new Thread() {
@@ -180,6 +187,7 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
 
     @Override
     public void release() {
+        mBuffer=0;
         if(null!=mMediaPlayer){
             mMediaPlayer.setOnErrorListener(null);
             mMediaPlayer.setOnCompletionListener(null);
@@ -233,6 +241,7 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
         if(null!=mMediaPlayer) mMediaPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+                mBuffer=percent;
                 if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(JkMediaPlayer.this,percent);
             }
         });

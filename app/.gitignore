@@ -1,2 +1,4 @@
 /build
-/iplayer.keystore
+/release
+*.keystore
+*.txt

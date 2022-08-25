@@ -8,30 +8,41 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-
-import com.android.iplayer.R;
+import com.android.iplayer.controller.ControlWrapper;
+import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.android.iplayer.widget.controls.ControWindowView;
+import com.android.iplayer.widget.controls.ControlCompletionView;
+import com.android.iplayer.widget.controls.ControlFunctionBarView;
+import com.android.iplayer.widget.controls.ControlGestureView;
+import com.android.iplayer.widget.controls.ControlLoadingView;
+import com.android.iplayer.widget.controls.ControlStatusView;
+import com.android.iplayer.widget.controls.ControlToolBarView;
+import java.util.LinkedList;
 
 /**
  * Created by hty
  * 2022/6/28
- * desc: 视图UI交互\手势滑动\弹幕等所有视图交互控制器基类
- * IVideoController:所有子Controller都必须实现Controller的所有方法,完全由子Controller自行处理
+ * desc: 视频播放器UI控制器交互基类
+ * 1、此控制器维护所有UI组件，负责传达和处理播放器以及UI组件的事件
+ * 2、控制器的所有UI组件都支持自定义，调用{@link #addControllerWidget(IControllerView)}添加你的自定义UI组件
+ * 3、播放器只能有一个控制器，但一个控制器可以有多个UI交互组件
+ * 4、这个基类封装了一些播放器常用的功能方法，请阅读此类的method
  */
 public abstract class BaseController extends FrameLayout implements IVideoController {
 
     protected static final String TAG = BaseController.class.getSimpleName();
     protected IVideoPlayerControl mVideoPlayerControl;//播放器代理人
     protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT;//当前控制器方向
-    protected List<BaseController> mControllers;//用户自定义的各控制器
-    protected boolean itemPlayerMode,isWindowProperty,isGlobalWindow;//交互控制器是否处于列表播放模式\控制器是否处于窗口模式\是否处于全局悬浮窗或画中画模式
+    protected LinkedList<IControllerView> mIControllerViews =new LinkedList<>();//所有自定义UI控制器组件
+    private ControlWrapper mControlWrapper;
+    protected boolean isCompletion,listPlayerScene,isWindowProperty,isGlobalWindow;//是否播放(试看)完成\交互控制器是否处于列表播放模式\控制器是否处于窗口模式\是否处于全局悬浮窗或画中画模式
+    protected long mPreViewTotalTime;//试看模式下总时长
+
     protected class ExHandel extends Handler{
         public ExHandel(Looper looper){
             super(looper);
@@ -49,10 +60,9 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     public BaseController(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         int layoutId = getLayoutId();
-        View rootView = View.inflate(context, R.layout.player_base_controller, this);
         if(0!=layoutId){
             View inflate = View.inflate(context, getLayoutId(), null);
-            ((FrameLayout) rootView.findViewById(R.id.player_base_controller)).addView(inflate,new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT, Gravity.CENTER));
+            addView(inflate,new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }
         initViews();
     }
@@ -61,49 +71,349 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     public abstract void initViews();
 
-    protected int getOrientation() {
-        return mScreenOrientation;
+    /**
+     * 提供给播放器解码器来绑定播放器代理人
+     * @param playerControl
+     */
+    protected void attachedPlayer(IVideoPlayerControl playerControl) {
+        this.mVideoPlayerControl =playerControl;
+    }
+
+    //=================下列方法由播放器内部回调，请不要随意调用！！！子类复写方法请重载super方法=================
+
+    /**
+     * 组件初始化完成，组件已被添加到播放器
+     */
+    @Override
+    public void onCreate() {}
+
+    /**
+     * 播放器的内部状态发生变化
+     * @param state 播放器的内部状态 状态码 参考:PlayerState
+     * @param message 描述信息
+     */
+    @Override
+    public void onPlayerState(PlayerState state, String message) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPlayerState(state,message);
+        }
     }
 
     /**
-     * 返回窗口模式
-     * @return true:当前正处于窗口模式 false:当前不处于窗口模式
+     * 子类如需关心此回调请复写处理
+     * @param currentDurtion 播放进度 主线程回调：当前播放位置,单位：总进度的毫秒进度
+     * @param totalDurtion 总时长,单位：毫秒
      */
-    public boolean isWindowProperty() {
-        return isWindowProperty;
+    @Override
+    public void onProgress(long currentDurtion, long totalDurtion) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onProgress(currentDurtion,totalDurtion);
+        }
     }
 
     /**
-     * 返回窗口类型
-     * @return true:全局悬浮窗|画中画 false:Activity window窗口模式
+     * 子类如需关心此回调请复写处理
+     * @param bufferPercent 缓冲进度 主线程回调,单位:百分比
      */
-    public boolean isGlobalWindow() {
-        return isGlobalWindow;
+    @Override
+    public void onBuffer(int bufferPercent) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onBuffer(bufferPercent);
+        }
     }
 
     /**
-     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
-     * @param itemPlayerMode 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     * 竖屏状态下,如果用户设置返回按钮可见仅显示返回按钮,切换到横屏模式下播放时初始都不显示
+     * @param orientation 更新控制器方向状态 0:竖屏 1:横屏
      */
-    public void setListPlayerMode(boolean itemPlayerMode) {
-        this.itemPlayerMode =itemPlayerMode;
+    @Override
+    public void onScreenOrientation(int orientation) {
+        this.mScreenOrientation=orientation;
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onOrientation(orientation);
+        }
     }
 
     /**
-     * 是否处于列表模式下播放
-     * @return true:是 false:否
+     * 当切换至小窗口模式播放,取消可能存在的定时器隐藏控制器任务,强制隐藏控制器
+     * @param isWindowProperty 控制器是否处于窗口模式中 true:当前窗口属性显示 false:非窗口模式。当处于创库模式时，所有控制器都处于不可见状态,所有控制器手势都将被window播放器截获
+     * @param isGlobalWindow true:全局悬浮窗窗口|画中画模式 false:Activity局部悬浮窗窗口模式
      */
-    public boolean isListPlayerMode() {
-        return itemPlayerMode;
+    @Override
+    public void onWindowProperty(boolean isWindowProperty, boolean isGlobalWindow) {
+        this.isWindowProperty =isWindowProperty;
+        this.isGlobalWindow =isGlobalWindow;
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPlayerScene(getPlayerScene());
+        }
     }
 
-    //返回是否是竖屏状态
+    /**
+     * 当静音状态发生了变化回调
+     * @param isMute 当静音状态发生了变化回调，true:处于静音状态 false:处于非静音状态
+     */
+    @Override
+    public void onMute(boolean isMute) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onMute(isMute);
+        }
+    }
+
+    /**
+     * 当播放器的内部画面渲染镜像状态发生了变化回调
+     * @param isMirror 当播放器的内部画面渲染镜像状态发生了变化回调， true:处于镜像状态 false:处于非镜像状态
+     */
+    @Override
+    public void onMirror(boolean isMirror) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onMirror(isMirror);
+        }
+    }
+
+    /**
+     * 当播放器内部渲染缩放模式发生了变化回调
+     * @param zoomModel 当播放器内部渲染缩放模式发生了变化回调，，当初始化和播放器缩放模式设置发生变化时回调，参考IMediaPlayer类
+     */
+    @Override
+    public void onZoomModel(int zoomModel) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onZoomModel(zoomModel);
+        }
+    }
+
+    /**
+     * 生命周期可见,在播放器宿主调用播放的onResume方法后回调
+     */
+    @Override
+    public void onResume() {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onResume();
+        }
+    }
+
+    /**
+     * 生命周期不可见,在播放器宿主调用播放的onPause方法后回调
+     */
+    @Override
+    public void onPause() {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPause();
+        }
+    }
+
+    /**
+     * 控制器所有状态重置(由播放器内部回调,与播放器生命周期无关)
+     */
+    @Override
+    public void onReset() {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onReset();
+        }
+    }
+
+    /**
+     * 播放器被销毁(由播放器内部回调)
+     */
+    @Override
+    public void onDestroy() {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onDestroy();
+        }
+    }
+
+    //===================================控制器提供给宿主或子类调用======================================
+
+    /**
+     * 使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
+     */
+    public void initControlComponents() {
+        initControlComponents(false);
+    }
+
+    /**
+     * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
+     * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
+     * @param showBack 是否显示返回按钮
+     */
+    public void initControlComponents(boolean showBack) {
+        initControlComponents(showBack,true);
+
+    }
+
+    /**
+     * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
+     * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
+     * @param showBack 是否显示返回按钮
+     * @param addWindowWidget 是否添加悬浮窗口交互UI组件
+     */
+    public void initControlComponents(boolean showBack,boolean addWindowWidget) {
+        //顶部标题栏
+        ControlToolBarView toolBarView=new ControlToolBarView(getContext());
+        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+        toolBarView.showBack(showBack);
+        //底部播放时间进度、progressBar、seekBae、静音、全屏等功能栏
+        ControlFunctionBarView functionBarView=new ControlFunctionBarView(getContext());
+        functionBarView.setTarget(IVideoController.TARGET_CONTROL_FUNCTION);
+        //手势控制屏幕亮度、系统音量、快进、快退UI交互
+        ControlGestureView gestureView=new ControlGestureView(getContext());
+        gestureView.setTarget(IVideoController.TARGET_CONTROL_GESTURE);
+        //播放完成、重试
+        ControlCompletionView completionView=new ControlCompletionView(getContext());
+        completionView.setTarget(IVideoController.TARGET_CONTROL_COMPLETION);
+        //移动网络播放提示、播放失败、试看完成
+        ControlStatusView statusView=new ControlStatusView(getContext());
+        statusView.setTarget(IVideoController.TARGET_CONTROL_STATUS);
+        //加载中、开始播放
+        ControlLoadingView loadingView=new ControlLoadingView(getContext());
+        loadingView.setTarget(IVideoController.TARGET_CONTROL_LOADING);
+        //悬浮窗窗口播放器的窗口样式
+        if(addWindowWidget){
+            ControWindowView windowView=new ControWindowView(getContext());
+            windowView.setTarget(IVideoController.TARGET_CONTROL_WINDOW);
+            //将所有UI组件添加到控制器
+            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
+        }else{
+            //将所有UI组件添加到控制器
+            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView);
+        }
+    }
+
+    /**
+     * 向视频播放器控制器添加自定义UI组件
+     * @param controllerView 添加自定义UI组件，必须是实现IControllerView接口的UI组件
+     */
+    @Override
+    public void addControllerWidget(IControllerView controllerView) {
+        addControllerWidget(controllerView,-1);
+    }
+
+    /**
+     * 向视频播放器控制器添加自定义UI组件
+     * @param controllerView 移除自定义UI组件
+     * @param index 添加的层级位置,默认是将UI控制组件添加到控制器上层
+     */
+    @Override
+    public void addControllerWidget(IControllerView controllerView, int index) {
+        if(null==controllerView) return;
+        FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        if(null==mControlWrapper){
+            mControlWrapper = new ControlWrapper(this,mVideoPlayerControl);
+        }
+        controllerView.attachControlWrapper(mControlWrapper);
+        mIControllerViews.add(controllerView);
+        if(-1==index){
+            addView(controllerView.getView(),layoutParams);
+        }else{
+            addView(controllerView.getView(),index,layoutParams);
+        }
+        //组件创建完成，各自定义UI组件可在这里初始化自己的逻辑
+        controllerView.onCreate();
+        controllerView.onOrientation(getOrientation());//初始化播放器横竖屏状态
+        controllerView.onPlayerScene(getPlayerScene());//初始化播放器应用场景
+    }
+
+    /**
+     * 向视频播放器控制器批量添加自定义UI组件
+     * @param iControllerViews 添加多个自定义UI组件，必须是实现IControllerView接口的UI组件
+     */
+    @Override
+    public void addControllerWidget(IControllerView... iControllerViews) {
+        if(null!=iControllerViews&&iControllerViews.length>0){
+            for (IControllerView iControllerView : iControllerViews) {
+                addControllerWidget(iControllerView);
+            }
+        }
+    }
+
+    /**
+     * 移除已添加的自定义UI组件
+     * @param controllerView 移除这个实例的控制器
+     */
+    @Override
+    public void removeControllerWidget(IControllerView controllerView) {
+        if(null!=controllerView) removeView(controllerView.getView());
+        if(null!=mIControllerViews) mIControllerViews.remove(controllerView);
+    }
+
+    /**
+     * 移除所有已添加的自定义UI组件
+     */
+    @Override
+    public void removeAllControllerWidget() {
+        if(null!=mIControllerViews){
+            for (IControllerView iControllerView : mIControllerViews) {
+                removeView(iControllerView.getView());
+            }
+            mIControllerViews.clear();
+        }
+    }
+
+    /**
+     * 是否播放完成
+     * @return true:播放完成 false:未播放完成
+     */
+    @Override
+    public boolean isCompletion() {
+        return isCompletion;
+    }
+
+    /**
+     * 返回是否是竖屏状态
+     * @return true:竖屏状态 false:非竖屏状态
+     */
+    @Override
     public boolean isOrientationPortrait() {
         return mScreenOrientation==IMediaPlayer.ORIENTATION_PORTRAIT;
     }
 
-    protected String getOrientationStr(){
-        return ",Orientation:"+getOrientation();
+    /**
+     * 返回控制器是否处于竖屏状态
+     * @return true:处于竖屏状态 false:非竖屏状态
+     */
+    @Override
+    public boolean isOrientationLandscape() {
+        return mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE;
+    }
+
+    /**
+     * 返回播放器当前正处于什么场景
+     * @return 返回值参考IControllerView，1：activity小窗口 2：全局悬浮窗窗口 3：列表
+     */
+    @Override
+    public int getPlayerScene() {
+        if(isGlobalWindow()){
+            return IControllerView.SCENE_GLOBAL_WINDOW;
+        }
+        if(isWindowProperty()){
+            return IControllerView.SCENE_WINDOW;
+        }
+        if(isListPlayerScene()){
+            return IControllerView.SCENE_LISTS;
+        }
+        return IControllerView.SCENE_NOIMAL;
+    }
+
+    /**
+     * 返回试看模式下的虚拟总时长
+     * @return
+     */
+    @Override
+    public long getPreViewTotalTime() {
+        return mPreViewTotalTime;
+    }
+
+    protected Activity getActivity() {
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getParentContext()){
+            return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getParentContext());
+        }
+        return PlayerUtils.getInstance().getActivity(getContext());
+    }
+
+    protected Context getParentContext() {
+        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getParentContext()){
+            return  mVideoPlayerControl.getParentContext();
+        }
+        return getContext();
     }
 
     /**
@@ -128,236 +438,303 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
         return false;
     }
 
-    protected Activity getActivity() {
-        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getParentContext()){
-            return  PlayerUtils.getInstance().getActivity(mVideoPlayerControl.getParentContext());
-        }
-        return PlayerUtils.getInstance().getActivity(getContext());
-    }
 
-    protected Context getParentContext() {
-        if(null!= mVideoPlayerControl &&null!= mVideoPlayerControl.getParentContext()){
-            return  mVideoPlayerControl.getParentContext();
+    /**
+     * 返回视频文件总时长
+     * @return 单位：毫秒
+     */
+    protected long getDuration(){
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.getDuration();
         }
-        return getContext();
+        return 0;
     }
 
     /**
-     * 提供给播放器解码器来绑定播放器代理人
-     * @param playerControl
+     * 返回正在播放的位置
+     * @return 单位：毫秒
      */
-    protected void attachedVideoPlayerControl(IVideoPlayerControl playerControl) {
-        this.mVideoPlayerControl =playerControl;
+    protected long getCurrentPosition(){
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.getCurrentPosition();
+        }
+        return 0;
     }
 
     /**
-     * 设置视频标题内容
-     * @param videoTitle
+     * 返回视频分辨率-宽
+     * @return 单位：像素
      */
-    public void setVideoTitle(String videoTitle){}
+    protected int getVideoWidth(){
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.getVideoWidth();
+        }
+        return 0;
+    }
 
     /**
-     * 播放状态
-     * @param state
-     * @param message
+     * 返回视频分辨率-高
+     * @return 单位：像素
      */
-    public void onStatePlayer(PlayerState state, String message){
-        onState(state,message);
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onState(state,message);
-            }
+    protected int getVideoHeight(){
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.getVideoHeight();
         }
+        return 0;
     }
+
     /**
-     * 播放进度 子线程回调
-     * @param currentDurtion 当前播放进度 单位:视频时长毫秒
-     * @param totalDurtion 视频总时长 单位:视频总时长毫秒
-     * @param bufferPercent 当前缓冲进度 百分比
+     * 返回当前视频缓冲的进度
+     * @return 单位：百分比
      */
-    public void onProgressPlayer(long currentDurtion, long totalDurtion, int bufferPercent){
-        onProgress(currentDurtion,totalDurtion,bufferPercent);
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onProgress(currentDurtion,totalDurtion,bufferPercent);
-            }
+    protected int getBuffer(){
+        if(null!=mVideoPlayerControl){
+            return mVideoPlayerControl.getBuffer();
+        }
+        return 0;
+    }
+
+    /**
+     * 快进\快退
+     * @param msec 毫秒进度条
+     */
+    protected void seekTo(long msec){
+        if(null!=mVideoPlayerControl){
+            mVideoPlayerControl.seekTo(msec);
         }
     }
 
-    //实时缓冲进度 百分比
-    public void onBufferPlayer(int bufferPercent){
-        onBuffer(bufferPercent);
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onBuffer(bufferPercent);
-            }
+    /**
+     * 开始\暂停播放
+     */
+    protected void togglePlay() {
+        if(null!=mVideoPlayerControl) mVideoPlayerControl.togglePlay();
+    }
+
+    /**
+     * 结束播放
+     */
+    protected void stopPlay() {
+        if(null!=mVideoPlayerControl) mVideoPlayerControl.onStop();
+    }
+
+    /**
+     * 开启全屏播放
+     */
+    protected void startFullScreen() {
+        if(null!=mVideoPlayerControl) mVideoPlayerControl.startFullScreen();
+    }
+
+    /**
+     * 开启\退出全屏播放
+     */
+    protected void toggleFullScreen() {
+        if(null!=mVideoPlayerControl) mVideoPlayerControl.toggleFullScreen();
+    }
+
+    /**
+     * 是否开启了静音
+     * @return true:已开启静音 false:系统音量
+     */
+    protected boolean isSoundMute() {
+        if(null!=mVideoPlayerControl) {
+            return mVideoPlayerControl.isSoundMute();
+        }
+        return false;
+    }
+
+    /**
+     * 设置\取消静音
+     * @param soundMute true:静音 false:系统音量
+     * @return true:已开启静音 false:系统音量
+     */
+    protected boolean setSoundMute(boolean soundMute) {
+        if(null!=mVideoPlayerControl) {
+            return mVideoPlayerControl.setSoundMute(soundMute);
+        }
+        return false;
+    }
+
+    /**
+     * 静音、取消静音
+     */
+    protected boolean toggleMute() {
+        if(null!=mVideoPlayerControl) {
+            return mVideoPlayerControl.toggleMute();
+        }
+        return false;
+    }
+
+    /**
+     * 镜像、取消镜像
+     */
+    protected boolean toggleMirror() {
+        if(null!=mVideoPlayerControl) {
+            return mVideoPlayerControl.toggleMirror();
+        }
+        return false;
+    }
+
+    /**
+     * 返回播放器交互方向
+     * @return
+     */
+    protected int getOrientation() {
+        return mScreenOrientation;
+    }
+
+    protected String getOrientationStr(){
+        return ",Orientation:"+getOrientation();
+    }
+
+    /**
+     * 返回窗口模式
+     * @return true:当前正处于窗口模式 false:当前不处于窗口模式
+     */
+    public boolean isWindowProperty() {
+        return isWindowProperty;
+    }
+
+    /**
+     * 返回窗口类型
+     * @return true:全局悬浮窗|画中画 false:Activity window窗口模式
+     */
+    public boolean isGlobalWindow() {
+        return isGlobalWindow;
+    }
+
+    /**
+     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
+     * @param listPlayerScene 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     */
+    public void setListPlayerScene(boolean listPlayerScene) {
+        this.listPlayerScene =listPlayerScene;
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPlayerScene(getPlayerScene());
         }
     }
 
-    //更改内部控制器方向
-    public void setScreenOrientationPlayer(int orientation) {
-        this.mScreenOrientation=orientation;
-        setScreenOrientation(orientation);
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.setScreenOrientation(orientation);
-            }
-        }
-    }
-
-    //更改内部控制器属性
-    public void setWindowPropertyPlayer(boolean isWindowProperty,boolean isGlobalWindow) {
-        this.isWindowProperty =isWindowProperty;
-        this.isGlobalWindow =isGlobalWindow;
-        setWindowProperty(isWindowProperty,isGlobalWindow);
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.setWindowProperty(isWindowProperty,isGlobalWindow);
-            }
-        }
-    }
-
-    //控制器所有状态重置(由播放器内部回调,与播放器生命周期无关)
-    public void onResetPlayer(){
-        onReset();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onReset();
-            }
-        }
-    }
-
-    //控制器可见,与播放器生命周期无关
-    public void onResumePlayer(){
-        onResume();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onResume();
-            }
-        }
-    }
-
-    //控制器不可见,与播放器生命周期无关
-    public void onPausePlayer(){
-        onPause();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onPause();
-            }
-        }
-    }
-
-    //播放器被销毁(由播放器内部回调,与播放器生命周期无关)
-    public void onDestroyPlayer(){
-        onDestroy();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onDestroy();
-            }
-        }
+    /**
+     * 是否处于列表模式下播放
+     * @return true:是 false:否
+     */
+    public boolean isListPlayerScene() {
+        return listPlayerScene;
     }
 
     //进入画中画模式
     public void enterPipWindowPlayer() {
         enterPipWindow();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.enterPipWindow();
-            }
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPlayerScene(getPlayerScene());
         }
     }
 
     //退出画中画模式
     public void quitPipWindowPlayer() {
         quitPipWindow();
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.quitPipWindow();
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.onPlayerScene(getPlayerScene());
+        }
+    }
+
+    /**
+     * 根据组件tag标识寻找组件实例
+     * @param tag 标识
+     * @return 组件实例化的对象
+     */
+    public IControllerView findControlWidgetByTag(String tag) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            if(tag.equals(iControllerView.getTarget())){
+                return iControllerView;
             }
         }
+        return null;
     }
 
     /**
-     * 进入画中画模式
+     * 单击事件下-控制器组件显示
+     * @param isAnimation 是否启用动画
      */
-    protected void enterPipWindow(){}
+    protected void showWidget(boolean isAnimation){
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.showControl(isAnimation);
+        }
+    }
 
     /**
-     * 退出画中画模式
+     * 单击事件下-控制器组件隐藏
+     * @param isAnimation 是否启用动画
      */
-    protected void quitPipWindow(){}
+    protected void hideWidget(boolean isAnimation){
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.hideControl(isAnimation);
+        }
+    }
 
     /**
-     * 提供给自定义视频控制器来添加自己的其它功能控制器(如手势控制\弹幕控制器\其它)
-     * 调用这个方法添加的控制器位于视频控制器的上层,添加多个就是逐层往上层添加
-     * @param controller 继承BaseController的自定义控制器
+     * 返回ID对应的字符串
+     * @param resId 资源ID
+     * @return
+     */
+    protected String getString(int resId){
+        return getContext().getResources().getString(resId);
+    }
+
+    //==================下面这些方法时不常用的，子类如果需要处理下列方法,请复写实现自己的逻辑====================
+
+    /**
+     * 返回seek控制器是否正在显示中
+     * @return
      */
     @Override
-    public void addController(BaseController controller) {
-        if(null!=controller){
-            if(null==mControllers) mControllers=new ArrayList<>();
-            if(!mControllers.contains(controller)){
-                controller.attachedVideoPlayerControl(mVideoPlayerControl);//给所有自定义控制器绑定播放器代理人
-                FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                mControllers.add(controller);
-                ((FrameLayout) findViewById(R.id.player_base_controller)).addView(controller,layoutParams);
-//                ILogger.d(TAG,"addController:已添加控制器:"+controller);
-            }else{
-//                ILogger.d(TAG,"重复添加:addController-->");
+    public boolean isControllerShowing() {
+        boolean isShowing=false;
+        for (IControllerView iControllerView : mIControllerViews) {
+            if(iControllerView.isSeekBarShowing()){
+                isShowing=true;
+                break;
             }
         }
+        return isShowing;
     }
 
     /**
-     * 没有手势交互的控制器 推荐调用此方法将自定义控制器添加到位于视频控制器下方
-     * 提供给自定义视频控制器来添加自己的其它功能控制器(如手势控制\弹幕控制器\其它)
-     * 调用这个方法添加的控制器位于视频控制器的上层,添加多个就是逐层往上层添加
-     * @param index 添加的层级位置,推荐将自定义控制器添加到位于视频控制器下方
-     * @param controller 继承BaseController的自定义控制器
+     * 请求其它所有UI组件隐藏自己的控制器,是否开启动画
+     * @param isAnimation 请求其它所有UI组件隐藏自己的控制器,是否开启动画
      */
     @Override
-    public void addController(int index,BaseController controller) {
-        if(null!=controller){
-            if(null==mControllers) mControllers=new ArrayList<>();
-            if(!mControllers.contains(controller)){
-                controller.attachedVideoPlayerControl(mVideoPlayerControl);//给所有自定义控制器绑定播放器代理人
-                FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                mControllers.add(controller);
-                controller.setId(index);
-                ((FrameLayout) findViewById(R.id.player_base_controller)).addView(controller,index,layoutParams);
-//                ILogger.d(TAG,"addController:已添加控制器:index:"+index+",controller:"+controller);
-            }else{
-//                ILogger.d(TAG,"重复添加:addController-->,index:"+index);
-            }
+    public void hideAllController(boolean isAnimation) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.hideControl(isAnimation);
         }
     }
 
-    /**
-     * 移除某个控制器
-     * @param controller 移除这个实例的控制器
-     */
+    //设置视频标题内容
     @Override
-    public void removeController(BaseController controller) {
-        if(null!=controller&&null!=mControllers&&mControllers.size()>0){
-            int index = mControllers.indexOf(controller);
-//            ILogger.d(TAG,"removeController-->已移除控制器,index:"+index+",controller:"+controller);
-            PlayerUtils.getInstance().removeViewFromParent(controller);
-            mControllers.remove(index);
+    public void setTitle(String videoTitle) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            iControllerView.setTitle(videoTitle);
         }
     }
 
-    /**
-     * 移除所有控制器
-     */
+    //进入画中画模式
     @Override
-    public void removeAllController() {
-        if(null!=mControllers&&mControllers.size()>0){
-            for (BaseController controller : mControllers) {
-                controller.onReset();
-                PlayerUtils.getInstance().removeViewFromParent(controller);
-//                ILogger.d(TAG,"removeAllController-->已移除控制器controller:"+controller);
-            }
-            mControllers.clear();
-        }
-    }
+    public void enterPipWindow() {}
+
+    //退出画中画模式
+    @Override
+    public void quitPipWindow() {}
+
+    //开始延时任务
+    @Override
+    public void startDelayedRunnable() {}
+
+    //取消延时任务
+    @Override
+    public void stopDelayedRunnable() {}
+
+    //重新开始延时任务。适用于：当有组件产生了交互后，需要重新开始倒计时关闭控制任务时的场景
+    @Override
+    public void reStartDelayedRunnable() {}
 }

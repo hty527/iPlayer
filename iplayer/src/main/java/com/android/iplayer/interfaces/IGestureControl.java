@@ -3,19 +3,9 @@ package com.android.iplayer.interfaces;
 /**
  * created by hty
  * 2022/8/5
- * Desc:需要处理手势识别交互的控制器请实现此接口
+ * Desc:需要处理手势识别交互的组件UI请实现此接口
  */
 public interface IGestureControl {
-
-    /**
-     * 组件发生点击事件
-     */
-    void onSingleTap();
-
-    /**
-     * 组件发生双击事件
-     */
-    void onDoubleTap();
 
     /**
      * 开始滑动

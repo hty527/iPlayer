@@ -21,6 +21,7 @@ import java.util.Map;
 public class MediaPlayer extends AbstractMediaPlayer {
 
     private android.media.MediaPlayer mMediaPlayer;
+    private int mBuffer;//缓冲进度
 
     public MediaPlayer(Context context) {
         super(context);
@@ -134,6 +135,11 @@ public class MediaPlayer extends AbstractMediaPlayer {
     }
 
     @Override
+    public int getBuffer() {
+        return mBuffer;
+    }
+
+    @Override
     public void prepare() throws IOException, IllegalStateException {
         if(null!=mMediaPlayer) mMediaPlayer.prepare();
     }
@@ -160,6 +166,7 @@ public class MediaPlayer extends AbstractMediaPlayer {
 
     @Override
     public void reset() {
+        mBuffer=0;
         if(null!=mMediaPlayer){
             final android.media.MediaPlayer mediaPlayer = mMediaPlayer;//用于在列表播放时避免卡顿
             new Thread() {
@@ -177,6 +184,7 @@ public class MediaPlayer extends AbstractMediaPlayer {
 
     @Override
     public void release() {
+        mBuffer=0;
         if(null!=mMediaPlayer){
             mMediaPlayer.setOnErrorListener(null);
             mMediaPlayer.setOnCompletionListener(null);
@@ -230,6 +238,7 @@ public class MediaPlayer extends AbstractMediaPlayer {
         if(null!=mMediaPlayer) mMediaPlayer.setOnBufferingUpdateListener(new android.media.MediaPlayer.OnBufferingUpdateListener() {
             @Override
             public void onBufferingUpdate(android.media.MediaPlayer mediaPlayer, int percent) {
+                mBuffer=percent;
                 if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(MediaPlayer.this,percent);
             }
         });

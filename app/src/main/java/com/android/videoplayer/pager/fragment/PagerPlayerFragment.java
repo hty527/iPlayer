@@ -11,6 +11,8 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.BasePresenter;
@@ -19,10 +21,10 @@ import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.pager.adapter.PagerPlayerAdapter;
 import com.android.videoplayer.pager.base.BaseViewPager;
 import com.android.videoplayer.pager.bean.VideoBean;
+import com.android.videoplayer.pager.controller.VideoShortController;
 import com.android.videoplayer.pager.interfaces.OnViewPagerListener;
 import com.android.videoplayer.pager.widget.PagerVideoController;
 import com.android.videoplayer.pager.widget.ViewPagerLayoutManager;
-import com.android.videoplayer.ui.widget.PagerVideoPlayer;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;
@@ -39,7 +41,7 @@ public class PagerPlayerFragment extends BaseFragment {
 
     private PagerPlayerAdapter mAdapter;
     private boolean isVisible=false;
-    private PagerVideoPlayer mVideoPlayer;
+    private VideoPlayer mVideoPlayer;
     private ViewPagerLayoutManager mLayoutManager;
     private int mPosition;//准备待播放的角标位置
     private PreloadManager mPreloadManager;
@@ -149,7 +151,14 @@ public class PagerPlayerFragment extends BaseFragment {
      */
     private void initVideoPlayer() {
         if(null==mVideoPlayer){
-            mVideoPlayer = new PagerVideoPlayer(getContext());
+            mVideoPlayer = new VideoPlayer(getContext());
+            //给播放器设置一个控制器
+            VideoShortController controller = new VideoShortController(getContext());
+            mVideoPlayer.setController(controller);
+            //给控制器添加需要的UI交互组件
+            controller.addControllerWidget(new ControlStatusView(getContext()));
+            mVideoPlayer.setLoop(true);
+            mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**
@@ -218,7 +227,7 @@ public class PagerPlayerFragment extends BaseFragment {
                     initVideoPlayer();
                     PlayerUtils.getInstance().removeViewFromParent(mVideoPlayer);
                     playerContainer.addView(mVideoPlayer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-                    mVideoPlayer.setTitle(videoData.getTitle());//视频标题(默认视图控制器横屏可见)
+                    mVideoPlayer.getController().setTitle(videoData.getTitle());//视频标题(默认视图控制器横屏可见)
                     mVideoPlayer.setDataSource(null!=mPreloadManager?mPreloadManager.getPlayUrl(videoData.getVideoDownloadUrl()):videoData.getVideoDownloadUrl());//播放地址设置
                     mVideoPlayer.playOrPause();//开始异步准备播放
                 }

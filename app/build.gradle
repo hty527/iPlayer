@@ -5,11 +5,11 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.android.iplayer"
+        applicationId "com.android.videoplayer"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 10005
-        versionName "1.0.5"
+        versionCode 20000
+        versionName "2.0.0"
         multiDexEnabled true
         ndk {
             //使用abiFilters筛选你需要的so
@@ -19,9 +19,9 @@ android {
 
     signingConfigs {
         app {
-            storeFile file('iplayer.keystore')
+            storeFile file('player.keystore')
             storePassword "123456"
-            keyAlias "iplayer"
+            keyAlias "player"
             keyPassword "123456"
         }
     }
@@ -89,5 +89,5 @@ dependencies {
     //播放器
     implementation project(':iplayer')
     //播放器SDK
-//    implementation 'com.github.hty527:iPlayer:1.0.5.2'
+//    implementation 'com.github.hty527:iPlayer:2.0.0'
 }

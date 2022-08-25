@@ -75,8 +75,20 @@ public interface IVideoPlayerControl<V extends BaseController> {
     /**
      * 设置画面镜像旋转
      * @param mirror 设置画面镜像旋转 true:画面翻转 false:正常
+     * @return true:画面翻转 false:正常
      */
-    void setMirror(boolean mirror);
+    boolean setMirror(boolean mirror);
+
+    /**
+     * 开启、关闭画面镜像旋转
+     * @return 是否镜像,true:镜像音 false:正常
+     */
+    boolean toggleMirror();
+
+    /**
+     * @param restoreDirection 设置当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态,true:自动还原到竖屏 false:保留当前屏幕方向状态
+     */
+    void setPlayCompletionRestoreDirection(boolean restoreDirection);
 
     /**
      * 设置播放器在移动网络能否继续工作
@@ -89,12 +101,6 @@ public interface IVideoPlayerControl<V extends BaseController> {
      * @param interceptTAudioFocus 设置是否监听并处理音频焦点事件 true:拦截，并在收到音频焦点失去后暂停播放 false:什么也不处理
      */
     void setInterceptTAudioFocus(boolean interceptTAudioFocus);
-
-    /**
-     * 设置标题
-     * @param title 设置标题,也可以调用控制器的setTitle方法
-     */
-    void setTitle(String title);
 
     /**
      * 驾驶异步准备播放
@@ -331,25 +337,30 @@ public interface IVideoPlayerControl<V extends BaseController> {
     void setContinuityPlay(boolean continuityPlay);
 
     /**
-     * @return 返回视频分辨率-宽
+     * @return 返回视频分辨率-宽，单位：像素
      */
     int getVideoWidth();
 
     /**
-     * @return 返回视频分辨率-高
+     * @return 返回视频分辨率-高，单位：像素
      */
     int getVideoHeight();
 
     /**
-     * @return 返回视频文件总时长
+     * @return 返回视频文件总时长,单位：毫秒
      */
 
     long getDuration();
 
     /**
-     * @return 返回正在播放的位置
+     * @return 返回正在播放的位置,单位：毫秒
      */
     long getCurrentPosition();
+
+    /**
+     * @return 返回缓冲进度，单位：百分比
+     */
+    int getBuffer();
 
     /**
      * @param prepareTimeout 设置准备和读数据超时阈值,需在{@link #prepareAsync()}之前调用方可生效 准备超时阈值,即播放器在建立链接、解析流媒体信息的超时阈值

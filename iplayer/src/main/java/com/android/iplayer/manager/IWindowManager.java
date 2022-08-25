@@ -10,7 +10,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
-import com.android.iplayer.widget.WindowPlayerFloatView;
+import com.android.iplayer.widget.view.WindowPlayerFloatView;
 
 /**
  * created by hty
@@ -59,7 +59,6 @@ public class IWindowManager {
      * @param bgColor 窗口的背景颜色
      */
     public boolean addGolbalWindow(Context context, BasePlayer basePlayer, int width, int height, float startX, float startY, float radius, int bgColor) {
-        ILogger.d(TAG,"addGolbalWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor);
         quitGlobaWindow();//清除可能存在的窗口播放器
         try {
             //悬浮窗口准备
@@ -90,7 +89,6 @@ public class IWindowManager {
             mPlayerContainer.setOnWindowActionListener(new OnWindowActionListener() {
                 @Override
                 public void onMovie(float x, float y) {
-                    ILogger.d(TAG,"onMovie-->x:"+x+",y:"+y);
                     if(null!=mLayoutParams){
                         mLayoutParams.x= (int) x;
                         mLayoutParams.y= (int) y;
@@ -108,7 +106,6 @@ public class IWindowManager {
 
                 @Override
                 public void onClose() {
-                    ILogger.d(TAG,"addGolbalWindow-->onClose");
                     if(null!=mWindowActionListener){
                         mWindowActionListener.onClose();
                     }else{
@@ -129,7 +126,6 @@ public class IWindowManager {
      * 清除悬浮窗所有View
      */
     public void quitGlobaWindow() {
-        ILogger.d(TAG,"quitGlobaWindow-->");
         if(null!=mPlayerContainer){
             getWindowManager(mPlayerContainer.getContext()).removeViewImmediate(mPlayerContainer);
             //销毁此前的播放器

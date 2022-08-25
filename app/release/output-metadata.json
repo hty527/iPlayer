@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.android.iplayer",
+  "applicationId": "com.android.videoplayer",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "properties": [],
-      "versionCode": 10005,
-      "versionName": "1.0.5",
+      "versionCode": 20000,
+      "versionName": "2.0.0",
       "enabled": true,
       "outputFile": "app-release.apk"
     }

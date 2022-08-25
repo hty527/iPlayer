@@ -13,11 +13,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IControllerView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControWindowView;
+import com.android.iplayer.widget.controls.ControlCompletionView;
+import com.android.iplayer.widget.controls.ControlFunctionBarView;
+import com.android.iplayer.widget.controls.ControlGestureView;
+import com.android.iplayer.widget.controls.ControlListView;
+import com.android.iplayer.widget.controls.ControlLoadingView;
+import com.android.iplayer.widget.controls.ControlStatusView;
+import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.adapter.interfaces.OnItemChildClickListener;
@@ -221,7 +231,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 container.getLocalVisibleRect(rect);
                 int height = container.getHeight();
                 if (rect.top == 0 && rect.bottom == height) {
-                    startPlayer(container,holder.getAdapterPosition());
+                    startPlayer(container,holder.getAbsoluteAdapterPosition());
                     break;
                 }
             }else{
@@ -264,7 +274,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(position),View.INVISIBLE);//隐藏播放按钮可见状态
             mPlayerContainer.addView(mVideoPlayer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
             String[] videoPath = PlayerManager.getInstance().getVideoPath(itemData);
-            mVideoPlayer.setTitle(videoPath[1]);//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.getController().setTitle(videoPath[1]);//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(videoPath[0]);//播放地址设置
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
@@ -320,15 +330,16 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             PlayerUtils.getInstance().removeViewFromParent(videoPlayer);
             mVideoPlayer=videoPlayer;
             /**
-             * 重要,还原到宿主后需要置空临时上下文
+             * 重要,还原到宿主后需要更换宿主上下文
+             * 这里存在一种情况，假设用户在列表界面未开始播放，而是点击条目跳转到详情页开始播放，此时播放器会在详情页创建，上下文是详情页的，这是转场回到此界面开始播放视频时，全屏是无效的。所以要更重置上下文为自己
              */
-            mVideoPlayer.setParentContext(null);
+            mVideoPlayer.setParentContext(getContext());
             /**
              * 还原到列表模式
              */
             BaseController videoController = mVideoPlayer.getController();
             if(null!=videoController&&autoPlayer()){
-                videoController.setListPlayerMode(true);//从列表模式转换为正常模式
+                videoController.setListPlayerScene(true);//从列表模式转换为正常模式
             }
             setListener(false);//绑定监听器到此界面
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(mCurrentPosition),View.INVISIBLE);//隐藏播放按钮的可见状态
@@ -347,10 +358,29 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
      */
     private void initVideoPlayer() {
         if(null==mVideoPlayer){
-            Logger.d(TAG,"initVideoPlayer-->播放器初始化");
             mVideoPlayer = new VideoPlayer(getContext());
-//        mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-            mVideoPlayer.initController(false);//绑定默认的控制器
+            //为播放器添加控制器
+            VideoController controller=new VideoController(mVideoPlayer.getContext());
+            mVideoPlayer.setController(controller);
+            //为控制器添加UI交互组件
+            ControlToolBarView toolBarView=new ControlToolBarView(controller.getContext());//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
+            toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+            toolBarView.showMenus(false,false,false);
+            ControlFunctionBarView functionBarView=new ControlFunctionBarView(controller.getContext());//底部时间、seek、静音、全屏功能栏
+            ControlGestureView gestureView=new ControlGestureView(controller.getContext());//手势控制屏幕亮度、系统音量、快进、快退UI交互
+            ControlCompletionView completionView=new ControlCompletionView(controller.getContext());//播放完成、重试
+            ControlStatusView statusView=new ControlStatusView(controller.getContext());//移动网络播放提示、播放失败、试看完成
+            ControlLoadingView loadingView=new ControlLoadingView(controller.getContext());//加载中、开始播放
+            ControWindowView windowView=new ControWindowView(controller.getContext());//悬浮窗窗口UI交互
+            //自动播放场景下添加列表专用UI交互组件
+            if(autoPlayer()){
+                ControlListView controlListView=new ControlListView(controller.getContext());//列表播放器场景专用交互组件
+                controller.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView,controlListView);
+            }else{
+                controller.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
+            }
+            //启用静音功能交互\默认当自动播放时静音，非自动播放不静音 跟播放器交互的设置需要在addControllerWidget之后调用
+            functionBarView.showSoundMute(true,autoPlayer());
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             setListener(true);
         }
@@ -364,29 +394,25 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         if(null==mVideoPlayer) return;
         VideoController controller = (VideoController) mVideoPlayer.getController();
         if(null!=controller){
-            controller.showMenus(false,false,false);
-            controller.setCanTouchInPortrait(true);//竖屏下允许手势交互(列表下只有横向滑动滚动生效)
+            //找到此前添加\在详情页添加的titleBar组件
+            IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
+            if(null!=controllerView&&controllerView instanceof ControlToolBarView){
+                ControlToolBarView controlToolBarView= (ControlToolBarView) controllerView;
+                controlToolBarView.showMenus(false,false,false);
+            }
+            Logger.d(TAG,"setListener-->autoPlayer:"+autoPlayer()+",isInit:"+isInit);
             if(autoPlayer()){//自动播放场景启用列表模式,点击播放使用常规播放模式
                 if(isInit){
-                    controller.setListPlayerMode(true,true);//列表播放模式,默认静音
-                    controller.showSoundMute(true);//显示静音按钮，这个按钮给无缝转场的播放器使用设置
+                    controller.setListPlayerScene(true);//列表播放模式,默认静音
+                    IControllerView controllerView1 = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_FUNCTION);
+                    if(null!=controllerView1&&controllerView1 instanceof ControlFunctionBarView){
+                        ControlFunctionBarView functionBarView= (ControlFunctionBarView) controllerView;
+                        functionBarView.showSoundMute(true);//显示静音按钮，这个按钮给无缝转场的播放器使用设置
+                    }
                 }else{
-                    controller.setListPlayerMode(true);//列表播放模式
+                    controller.setListPlayerScene(true);//列表播放模式
                 }
             }
-            controller.setOnControllerListener(new VideoController.OnControllerEventListener() {
-
-                @Override
-                public void onBack() {//竖屏的返回事件
-                    Logger.d(TAG,"onBack");
-                    onBackPressed();
-                }
-
-                @Override
-                public void onCompletion() {//试播结束或播放完成
-                    Logger.d(TAG,"onCompletion");
-                }
-            });
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**
                  * 创建一个自定义的播放器,返回null,则内部自动创建一个默认的解码器

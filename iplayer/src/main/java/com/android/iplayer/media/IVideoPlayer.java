@@ -20,15 +20,15 @@ import com.android.iplayer.utils.AudioFocus;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.ThreadPool;
-import com.android.iplayer.widget.MediaTextureView;
+import com.android.iplayer.widget.view.MediaTextureView;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * created by hty
  * 2022/6/28
- * Desc:视频解码\播放\功能处理
- * 如需使用自定义解码器,请继承AbstractMediaPlayer
+ * Desc:视频解码\播放\进度更新\特性功能等处理
+ * 1、可支持用户自定义视频解码器，内部默认使用系统的MediaPlayer解码器。详细使用请参考BasePlayer文档描述
  */
 public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListener,
         IMediaPlayer.OnCompletionListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnVideoSizeChangedListener,
@@ -77,10 +77,9 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      * 实时播放进度条,回调给播放控制器宿主
      * @param currentPosition 当前播放时长进度 毫秒
      * @param duration 总时长 毫秒
-     * @param buffer 当前缓冲进度 百分比
      */
-    private void onProgress(long currentPosition, long duration, int buffer) {
-        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onProgress(currentPosition,duration,buffer);
+    private void onProgress(long currentPosition, long duration) {
+        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onProgress(currentPosition,duration);
     }
 
     //===========================================视频播放逻辑=========================================
@@ -194,6 +193,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
         ILogger.d(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
+        if(-38==what) return true;
         stopTimer();
         sPlayerState = PlayerState.STATE_ERROR;
         onPlayerState(sPlayerState,getErrorMessage(what));
@@ -209,25 +209,30 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     @Override
     public boolean onInfo(IMediaPlayer mp, int what, int extra) {
         ILogger.d(TAG,"onInfo-->what:"+what+",extra:"+extra);
-        if(what== IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START){//开始渲染
-            sPlayerState = PlayerState.STATE_START;
-            onPlayerState(sPlayerState,getString(R.string.player_media_start,"首帧渲染"));
-            startTimer();
-            if(mSeekDuration>0){
-                long seekDuration =mSeekDuration;
-                mSeekDuration=0;
-                seekTo(seekDuration);
-            }
-            listenerAudioFocus();
-        }else if(what== IMediaPlayer.MEDIA_INFO_BUFFERING_START){//缓冲开始
-            sPlayerState = PlayerState.STATE_BUFFER;
-            onPlayerState(sPlayerState,getString(R.string.player_media_buffer_start,"缓冲开始"));
-        }else if(what== IMediaPlayer.MEDIA_INFO_BUFFERING_END||what==IMediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH){//缓冲结束
-            sPlayerState = PlayerState.STATE_PLAY;
-            onPlayerState(sPlayerState,getString(R.string.player_media_buffer_end,"缓冲结束"));
-        }else{
-            sPlayerState = PlayerState.STATE_PLAY;
-            onPlayerState(sPlayerState,getString(R.string.player_media_buffer_end,"缓冲结束"));
+        switch (what) {
+            case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START://开始首帧渲染
+                sPlayerState = PlayerState.STATE_START;
+                onPlayerState(sPlayerState,getString(R.string.player_media_start,"首帧渲染"));
+                startTimer();
+                if(mSeekDuration>0){
+                    long seekDuration =mSeekDuration;
+                    mSeekDuration=0;
+                    seekTo(seekDuration);
+                }
+                listenerAudioFocus();
+                break;
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_START://缓冲开始
+                sPlayerState = PlayerState.STATE_BUFFER;
+                onPlayerState(sPlayerState,getString(R.string.player_media_buffer_start,"缓冲开始"));
+                break;
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_END://缓冲结束
+            case IMediaPlayer.MEDIA_INFO_NETWORK_BANDWIDTH://缓冲结束
+                sPlayerState = PlayerState.STATE_PLAY;
+                onPlayerState(sPlayerState,getString(R.string.player_media_buffer_end,"缓冲结束"));
+                break;
+            case IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED://视频旋转变化了
+                if(null!=mTextureView) mTextureView.setDegree(extra);
+                break;
         }
         return true;
     }
@@ -297,8 +302,9 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             case IMediaPlayer.MEDIA_ERROR_VIDEO_DECODE_FAILED:
             case IMediaPlayer.MEDIA_ERROR_AUDIO_DECODE_FAILED:
                 return getString(R.string.player_media_error_core,"视频解码失败");
+            default:
+                return what+"";
         }
-        return null;
     }
 
     /**
@@ -330,7 +336,6 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             onPlayerState(sPlayerState,getString(R.string.player_media_mobile,"移动网络播放"));
             return;
         }
-        ILogger.d(TAG,"startPlayer-->");
         boolean result = createPlayer();
         if(result){
             sPlayerState = PlayerState.STATE_PREPARE;
@@ -338,13 +343,12 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             try {
                 if(dataSource instanceof String){
                     this.mDataSource = (String) dataSource;
-                    ILogger.d(TAG,"startPlayer-->string");
                     mMediaPlayer.setDataSource(mDataSource);
                 }else if(dataSource instanceof AssetFileDescriptor){
                     this.mAssetsSource = (AssetFileDescriptor) dataSource;
-                    ILogger.d(TAG,"startPlayer-->assets");
                     mMediaPlayer.setDataSource(mAssetsSource);
                 }
+                ILogger.d(TAG,"startPlayer-->source:"+(null!=mAssetsSource?mAssetsSource:mDataSource));
                 mMediaPlayer.prepareAsync();
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -442,7 +446,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
                         @Override
                         public void run() {
                             try {
-                                onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration(),0);
+                                onProgress(mMediaPlayer.getCurrentPosition(),mMediaPlayer.getDuration());
                             }catch (Throwable e){
                                 e.printStackTrace();
                             }
@@ -620,13 +624,26 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     }
 
     /**
-     * 设置播放器镜像角度
-     * @param mirror
+     * 设置画面渲染是否镜像
+     * @param mirror true:镜像 false:正常
+     * @return true:镜像 false:正常
      */
-    public void setMirror(boolean mirror) {
+    public boolean setMirror(boolean mirror) {
         if(null!=mTextureView){
-            mTextureView.setMirror(mirror);
+            return mTextureView.setMirror(mirror);
         }
+        return false;
+    }
+
+    /**
+     * 画面渲染是否镜像
+     * @return true:镜像 false:正常
+     */
+    public boolean toggleMirror() {
+        if(null!=mTextureView){
+            return mTextureView.toggleMirror();
+        }
+        return false;
     }
 
     /**
@@ -682,7 +699,6 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             onPlayerState(sPlayerState,getString(R.string.player_media_error_path_empty,"播放地址为空,请检查!"));
             return;
         }
-        ILogger.d(TAG,"playOrPause-->source:"+dataSource+"\nstate:"+sPlayerState);
         switch (sPlayerState) {
             case STATE_RESET:
             case STATE_STOP:
@@ -828,6 +844,21 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
         if(null!=mMediaPlayer){
             try {
                 return mMediaPlayer.getCurrentPosition();
+            }catch (RuntimeException e){
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * 返回当前缓冲进度
+     * @return 单位：百分比
+     */
+    public int getBuffer() {
+        if(null!=mMediaPlayer){
+            try {
+                return mMediaPlayer.getBuffer();
             }catch (RuntimeException e){
                 e.printStackTrace();
             }

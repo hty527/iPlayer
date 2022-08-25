@@ -76,6 +76,7 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
         mMenuMirrors.add(menu_degree_1);mMenuMirrors.add(menu_degree_2);
 
         onReset();
+        selectedMuteIndex(1,false);//是否静音
     }
 
     @Override
@@ -104,9 +105,9 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
         }else if (id == R.id.menu_scale_3) {
             selectedScaleIndex(2);
         }else if (id == R.id.menu_mute_1) {
-            selectedMuteIndex(0);
+            selectedMuteIndex(0,true);
         }else if (id == R.id.menu_mute_2) {
-            selectedMuteIndex(1);
+            selectedMuteIndex(1,true);
         }else if (id == R.id.menu_degree_1) {
             selectedMirrorsIndex(0);
         }else if (id == R.id.menu_degree_2) {
@@ -182,15 +183,16 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
     /**
      * 静音
      * @param index
+     * @param isSet 是否设置
      */
-    private void selectedMuteIndex(int index) {
+    private void selectedMuteIndex(int index,boolean isSet) {
         if(null!= mMenuMutes && mMenuMutes.size()>0){
             for (View view : mMenuMutes) {
                 view.setSelected(false);
             }
             if(mMenuMutes.size()>index){
                 mMenuMutes.get(index).setSelected(true);
-                if(null!=mOnMenuActionListener) {
+                if(isSet&&null!=mOnMenuActionListener) {
                     mOnMenuActionListener.onMute(0==index?true:false);
                 }
             }
@@ -200,9 +202,10 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
     /**
      * 更新静音状态
      * @param mute true:已静音 false:未静音
+     * @param isSet 是否设置
      */
-    public void updateMute(boolean mute) {
-        selectedMuteIndex(mute?0:1);
+    public void updateMute(boolean mute,boolean isSet) {
+        selectedMuteIndex(mute?0:1,isSet);
     }
 
     /**
@@ -234,7 +237,6 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
      */
     public void onReset(){
         selectedMirrorsIndex(1);//是否镜像
-        selectedMuteIndex(1);//是否静音
         selectedZoomIndex(IVideoManager.getInstance().getZoomModel());//缩放模式,取全局的初始设置
         selectedSpeedIndex(2);//播放倍速
         selectedScaleIndex(0);//画面显示比例

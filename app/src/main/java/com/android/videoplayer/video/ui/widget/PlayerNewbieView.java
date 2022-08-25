@@ -13,9 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.android.iplayer.utils.PlayerUtils;
-import com.android.iplayer.widget.LayoutProvider;
+import com.android.iplayer.utils.AnimationUtils;
+import com.android.iplayer.widget.view.LayoutProvider;
 import com.android.videoplayer.R;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;
@@ -106,7 +105,7 @@ public class PlayerNewbieView extends FrameLayout {
 
     private void dismiss() {
         reset();
-        PlayerUtils.getInstance().startAlphaAnimatioTo(findViewById(R.id.ll_handel), 300, false, new PlayerUtils.OnAnimationListener() {
+        AnimationUtils.getInstance().startAlphaAnimatioTo(findViewById(R.id.ll_handel), 300, false, new AnimationUtils.OnAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
                 if(null!=mOnDismissListener){

@@ -1,9 +1,7 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
@@ -16,7 +14,6 @@ import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
-
 import java.util.List;
 
 /**
@@ -57,19 +54,6 @@ public class VideoListPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
         VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
-        controller.setOnControllerListener(new VideoController.OnControllerEventListener(){
-
-            @Override
-            public void onBack() {//竖屏的返回事件
-                Logger.d(TAG,"onBack");
-                onBackPressed();
-            }
-
-            @Override
-            public void onCompletion() {//试播结束或播放完成
-                Logger.d(TAG,"onCompletion");
-            }
-        });
 //        controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
@@ -105,7 +89,7 @@ public class VideoListPlayerActivity extends BaseActivity {
         });
         mVideoPlayer.setLoop(false);//连续播放模式下只能设置为false
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-        mVideoPlayer.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+        controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setDataSource(getUrl(mPosition));//播放地址设置
         mVideoPlayer.setContinuityPlay(true);//告诉播放器连续播放模式,此模式下播放器内部播放完成后不会自动退出全屏\小窗口\悬浮窗口等.
 //        直到播放到最后一个地址的时候，需告诉播放器关闭连续播放模式
