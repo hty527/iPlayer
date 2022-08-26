@@ -11,19 +11,52 @@ public interface IVideoController {
 
     int MATION_DRAUTION            = 300;//控制器、控制锁等显示\隐藏过渡动画时长(毫秒)
 
-    String TARGET_CONTROL_TOOL          =   "toolBar";//播放器的顶部title组件默认标识
+    /** 播放器的顶部title组件默认标识 */
+    String TARGET_CONTROL_TOOL          =   "toolBar";
 
-    String TARGET_CONTROL_FUNCTION      =   "functionBar";//播放器的底部功能菜单组件默认标识
+    /** 播放器的底部功能菜单组件默认标识 */
+    String TARGET_CONTROL_FUNCTION      =   "functionBar";
 
-    String TARGET_CONTROL_WINDOW        =   "windowBar";//播放器的window组件默认标识
+    /** 播放器的window组件默认标识 */
+    String TARGET_CONTROL_WINDOW        =   "windowBar";
 
-    String TARGET_CONTROL_COMPLETION    =   "completionBar";//播放器的播放完成组件默认标识
+    /** 播放器的播放完成组件默认标识 */
+    String TARGET_CONTROL_COMPLETION    =   "completionBar";
 
-    String TARGET_CONTROL_STATUS        =   "statusBar";//播放器的各种状态默认标识
+    /** 播放器的各种状态默认标识 */
+    String TARGET_CONTROL_STATUS        =   "statusBar";
 
-    String TARGET_CONTROL_LOADING       =   "loadingBar";//播放器的loading组件默认标识
+    /** 播放器的loading组件默认标识 */
+    String TARGET_CONTROL_LOADING       =   "loadingBar";
 
-    String TARGET_CONTROL_GESTURE       =   "gestureBar";//播放器的手势交互组件默认标识
+    /** 播放器的手势交互组件默认标识 */
+    String TARGET_CONTROL_GESTURE       =   "gestureBar";
+
+    /**
+     * 播放器/控制器场景-常规（包括竖屏、横屏两种状态）
+     */
+    int SCENE_NOIMAL            =0;
+
+    /**
+     * 播放器/控制器场景-activity小窗口
+     */
+    int SCENE_ACTIVITY_WINDOW   =1;
+
+    /**
+     * 播放器/控制器场景-全局悬浮窗窗口
+     */
+    int SCENE_GLOBAL_WINDOW     =2;
+
+    /**
+     * 播放器/控制器场景-画中画窗口
+     */
+    int SCENE_PIP_WINDOW        =3;
+
+    /**
+     * 播放器/控制器场景-列表
+     */
+    int SCENE_LISTS             =4;
+
 
     //=======================================生命周期及状态回调=========================================
 
@@ -56,10 +89,10 @@ public interface IVideoController {
     void onScreenOrientation(int orientation);
 
     /**
-     * @param isWindowProperty 控制器是否处于窗口模式中 true:当前窗口属性显示 false:非窗口模式。当处于创库模式时，所有控制器都处于不可见状态,所有控制器手势都将被window播放器截获
-     * @param isGlobalWindow true:全局悬浮窗窗口|画中画模式 false:Activity局部悬浮窗窗口模式
+     * 播放器/控制器的场景变化
+     * @param playerScene 播放器/控制器的场景变化 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：Android8.0的画中画，4：列表 其它：自定义场景
      */
-    void onWindowProperty(boolean isWindowProperty, boolean isGlobalWindow);
+    void onPlayerScene(int playerScene);
 
     /**
      * @param isMute 当静音状态发生了变化回调，true:处于静音状态 false:处于非静音状态
@@ -170,8 +203,15 @@ public interface IVideoController {
     boolean isOrientationLandscape();
 
     /**
-     * 返回播放器当前正处于什么场景
-     * @return 返回值参考IControllerView，0：竖屏 1：横屏 2：activity小窗口 4：全局悬浮窗窗口 5：列表
+     * 更新播放器场景
+     * @param playerScene 更新播放器场景，自定义场景可调用此方法设置，设置后会同步通知到所有实现IControllerView接口的UI组件中的onPlayerScene方法
+     *                    播放器\控制器场景 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画 其它：自定义场景
+     */
+    void setPlayerScene(int playerScene);
+
+    /**
+     * 返回控制器当前正处于什么场景，各UI组件初始化后会收到回调：onPlayerScene
+     * @return 播放器\控制器场景 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画 其它：自定义场景
      */
     int getPlayerScene();
 
@@ -180,6 +220,12 @@ public interface IVideoController {
      * @return 返回试看模式下的试看时长，单位：毫秒
      */
     long getPreViewTotalTime();
+
+    /**
+     * 设置控制器为列表模式
+     * @param listPlayerScene 设置控制器为列表模式 true：列表模式 false：非列表模式
+     */
+    void setListPlayerMode(boolean listPlayerScene);
 
     /**
      * 进入画中画模式

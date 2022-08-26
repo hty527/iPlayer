@@ -118,7 +118,7 @@ public class ControlGestureView extends BaseControllerWidget implements IGesture
     public void onPlayerState(PlayerState state, String message) {}
 
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
 
     }
 

@@ -339,7 +339,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
              */
             BaseController videoController = mVideoPlayer.getController();
             if(null!=videoController&&autoPlayer()){
-                videoController.setListPlayerScene(true);//从列表模式转换为正常模式
+                videoController.setListPlayerMode(true);//从列表模式转换为正常模式
             }
             setListener(false);//绑定监听器到此界面
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(mCurrentPosition),View.INVISIBLE);//隐藏播放按钮的可见状态
@@ -403,14 +403,14 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             Logger.d(TAG,"setListener-->autoPlayer:"+autoPlayer()+",isInit:"+isInit);
             if(autoPlayer()){//自动播放场景启用列表模式,点击播放使用常规播放模式
                 if(isInit){
-                    controller.setListPlayerScene(true);//列表播放模式,默认静音
+                    controller.setListPlayerMode(true);//列表播放模式,默认静音
                     IControllerView controllerView1 = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_FUNCTION);
                     if(null!=controllerView1&&controllerView1 instanceof ControlFunctionBarView){
                         ControlFunctionBarView functionBarView= (ControlFunctionBarView) controllerView;
                         functionBarView.showSoundMute(true);//显示静音按钮，这个按钮给无缝转场的播放器使用设置
                     }
                 }else{
-                    controller.setListPlayerScene(true);//列表播放模式
+                    controller.setListPlayerMode(true);//列表播放模式
                 }
             }
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {

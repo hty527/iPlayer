@@ -14,13 +14,18 @@ import java.util.Map;
 public interface IMediaPlayer {
 
     //播放器方向
-    int ORIENTATION_PORTRAIT    =0;//竖屏
-    int ORIENTATION_LANDSCAPE   =1;//横屏
+    /** 竖屏 */
+    int ORIENTATION_PORTRAIT    =0;
+    /** 横屏 */
+    int ORIENTATION_LANDSCAPE   =1;
 
     //画面渲染填充方式
-    int MODE_ZOOM_TO_FIT = 0;//原始大小填充模式,在视频宽高比例与手机宽高比例不一致时,播放可能留有黑边,具体接口
-    int MODE_ZOOM_CROPPING = 1;//视频裁剪缩放模式,裁剪铺满全屏模式
-    int MODE_NOZOOM_TO_FIT = 2;//拉伸铺满屏幕模式,视频完全填满显示窗口,视频与窗口比例不匹配画面会有变形
+    /** 原始大小填充模式,在视频宽高比例与手机宽高比例不一致时,播放可能留有黑边 */
+    int MODE_ZOOM_TO_FIT = 0;
+    /** 视频裁剪缩放模式,裁剪铺满全屏模式 */
+    int MODE_ZOOM_CROPPING = 1;
+    /** 拉伸铺满屏幕模式,视频完全填满显示窗口,视频与窗口比例不匹配画面会有变形 */
+    int MODE_NOZOOM_TO_FIT = 2;
 
     /** 音视频开始渲染 */
     int MEDIA_INFO_VIDEO_RENDERING_START    = 3;

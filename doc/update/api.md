@@ -141,6 +141,17 @@
         });
     }
 ```
+##### 5.5、控制器场景
+###### 5.5.1、场景介绍
+* SDK控制器内置5种场景，分别是：0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画。 
+###### 5.5.2、场景使用
+* 当场景变化时会回调到IVideoController的onPlayerScene(int playerScene)和IControllerView的onPlayerScene(int playerScene)方法。开发者可在控制器或UI交互组件中根据场景的变化做相应的UI交互变更。
+###### 5.5.3、自定义场景
+* 为方便播放器应用于不同场景，SDK支持自定义场景设置，用户可根据自己的场景来实现不同的UI交互。
+```
+    //更新播放器\控制器所在场景,调用此方法后控制器和所有UI组件都会收到onPlayerScene(int playerScene)回调
+    controller.setPlayerScene(IVideoController.SCENE_NOIMAL);
+```
 #### 6、全屏播放
 ##### 6.1、横竖屏切换
 * 6.1.1、支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
@@ -387,5 +398,4 @@
 ```
 ##### 4.2、自定义屏幕锁交互
 * 4.2.1、自定义Controller实现自己的屏幕锁交互
-##### 3.1、Flutter
 #### 更多文档持续更新中...

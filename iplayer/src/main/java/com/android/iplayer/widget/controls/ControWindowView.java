@@ -8,10 +8,8 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
 import com.android.iplayer.R;
 import com.android.iplayer.base.BaseControllerWidget;
-import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
@@ -176,11 +174,11 @@ public class ControWindowView extends BaseControllerWidget implements View.OnCli
     public void onOrientation(int direction) {}
 
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
         //仅当窗口模式时启用窗口控制器
-        if (IControllerView.SCENE_GLOBAL_WINDOW == scene || IControllerView.SCENE_WINDOW == scene) {
+        if (isWindowScene()) {
             show();
-            findViewById(R.id.window_fullscreen).setVisibility(isWindowGlobalScene() ? View.VISIBLE : View.GONE);
+            findViewById(R.id.window_fullscreen).setVisibility(isWindowGlobalScene(playerScene) ? View.VISIBLE : View.GONE);
         } else {
             hide();
         }

@@ -82,9 +82,9 @@ public class ControlListView extends BaseControllerWidget implements View.OnClic
     }
 
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
         if(isOrientationPortrait()){
-            if(isListPlayerScene(scene)){
+            if(isListPlayerScene(playerScene)){
                 if(isPlaying()){
                     show();
                 }

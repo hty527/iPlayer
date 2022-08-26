@@ -294,7 +294,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             });
             VideoController controller = (VideoController) mVideoPlayer.getController();
             if(null!=controller){
-                controller.setListPlayerScene(false);//从可能的列表模式转换为正常模式
+                controller.setListPlayerMode(false);//从可能的列表模式转换为正常模式
                 //启用多功能和设置菜单功能监听器
                 IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
                 if(null!=controllerView&&controllerView instanceof ControlToolBarView){

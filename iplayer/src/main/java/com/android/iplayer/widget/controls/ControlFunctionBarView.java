@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.android.iplayer.R;
 import com.android.iplayer.base.BaseControllerWidget;
 import com.android.iplayer.controller.ControlWrapper;
-import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AnimationUtils;
@@ -264,8 +263,8 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
     }
 
     @Override
-    public void onPlayerScene(int scene) {
-        findViewById(R.id.controller_progress).setVisibility(IControllerView.SCENE_LISTS==scene?View.GONE:View.VISIBLE);
+    public void onPlayerScene(int playerScene) {
+        findViewById(R.id.controller_progress).setVisibility(isListPlayerScene() ?View.GONE:View.VISIBLE);
         //当播放器和控制器在专场播放、场景发生变化时，仅当在常规模式下并且正在播放才显示控制器
         if(isNoimalScene()){
             show();

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.android.iplayer.controller.ControlWrapper;
 import com.android.iplayer.interfaces.IControllerView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.model.PlayerState;
 
 /**
@@ -48,8 +49,8 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
     public abstract void initViews();
 
     /**
-     * 返回播放器\控制器当前正处于什么场景
-     * @return 返回值参考IControllerView，0：竖屏 1：横屏 2：activity小窗口 4：全局悬浮窗窗口 5：列表
+     * 返回控制器当前正处于什么场景
+     * @return 播放器\控制器场景 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画 其它：自定义场景
      */
     protected int getPlayerScene() {
         if(null!=mControlWrapper) {
@@ -85,15 +86,41 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
      * @return true:处于竖屏状态 false:非竖屏状态
      */
     protected boolean isNoimalScene() {
-        return IControllerView.SCENE_NOIMAL==getPlayerScene();
+        return IVideoController.SCENE_NOIMAL==getPlayerScene();
+    }
+
+    /**
+     * 返回播放器\控制器是否处于常规的竖屏或横屏状态状态
+     * @param scene 当前场景
+     * @return true:处于竖屏状态 false:非竖屏状态
+     */
+    protected boolean isNoimalScene(int scene) {
+        return IVideoController.SCENE_NOIMAL==scene;
+    }
+
+    /**
+     * 返回播放器是否正处于Activity window\全局悬浮窗\画中画 场景
+     * @return true:正处于 Activity window\全局悬浮窗\画中画 窗口模式下播放 false:非窗口模式下播放
+     */
+    protected boolean isWindowScene(){
+        return isWindowScene(getPlayerScene());
+    }
+
+    /**
+     * 返回播放器是否正处于Activity window\全局悬浮窗\画中画 场景
+     * @param scene 场景
+     * @return true:正处于 Activity window\全局悬浮窗\画中画 窗口模式下播放 false:非窗口模式下播放
+     */
+    protected boolean isWindowScene(int scene){
+        return isWindowActivityScene(scene)||isWindowGlobalScene(scene)||isWindowPipScene(scene);
     }
 
     /**
      * 返回播放器是否在Activity级别悬浮窗窗口模式下
      * @return true:正处于窗口模式下播放 false:非窗口模式下播放
      */
-    protected boolean isWindowScene(){
-        return isWindowScene(getPlayerScene());
+    protected boolean isWindowActivityScene(){
+        return isWindowActivityScene(getPlayerScene());
     }
 
     /**
@@ -101,8 +128,8 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
      * @param scene 场景
      * @return true:正处于窗口模式下播放 false:非窗口模式下播放
      */
-    protected boolean isWindowScene(int scene){
-        return IControllerView.SCENE_GLOBAL_WINDOW == scene || IControllerView.SCENE_WINDOW == scene;
+    protected boolean isWindowActivityScene(int scene){
+        return IVideoController.SCENE_ACTIVITY_WINDOW == scene;
     }
 
     /**
@@ -119,7 +146,24 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
      * @return true:正处于全局悬浮窗窗口模式下播放 false:非全局悬浮窗窗口模式下播放
      */
     protected boolean isWindowGlobalScene(int scene){
-        return IControllerView.SCENE_GLOBAL_WINDOW==scene;
+        return IVideoController.SCENE_GLOBAL_WINDOW==scene;
+    }
+
+    /**
+     * 返回播放器是否在画中画窗口模式下
+     * @return true:正处于画中画窗口模式下播放 false:非全局悬浮窗窗口模式下播放
+     */
+    protected boolean isWindowPipScene(){
+        return isWindowPipScene(getPlayerScene());
+    }
+
+    /**
+     * 返回播放器是否在画中画窗口模式下
+     * @param scene 场景
+     * @return true:正处于画中画窗口模式下播放 false:非全局悬浮窗窗口模式下播放
+     */
+    protected boolean isWindowPipScene(int scene){
+        return IVideoController.SCENE_PIP_WINDOW ==scene;
     }
 
     /**
@@ -136,7 +180,7 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
      * @return true:正处于列表模式下播放 false:非列表模式下播放
      */
     protected boolean isListPlayerScene(int scene){
-        return IControllerView.SCENE_LISTS==scene;
+        return IVideoController.SCENE_LISTS==scene;
     }
 
     /**
@@ -456,7 +500,7 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
 
     //当前播放器所处的场景，场景描述请参考方法：getPlayerScene();
     @Override
-    public void onPlayerScene(int scene) {}
+    public void onPlayerScene(int playerScene) {}
 
     //视频标题
     @Override

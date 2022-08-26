@@ -57,7 +57,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private ViewGroup mParent;//自己的宿主
     private int[] mPlayerParams;//自己的宽高属性和位于父容器的层级位置
     private IVideoPlayer mIVideoPlayer;
-    private boolean mIsWindowProperty,mContinuityPlay,mIsGlobalWindow,mRestoreDirection=true;//是否开启了窗口播放模式/是否开启了连续播放模式/是否处于全局悬浮窗|画中画模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态
+    private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
 
     public BasePlayer(Context context) {
@@ -99,17 +99,17 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
 
     /**
      * 改变播放器窗口属性
-     * @param isWindowProperty true:窗口模式 false:非窗口模式
-     * @param isGlobalWindow true:全局悬浮窗窗口|画中画模式 false:Activity局部悬浮窗窗口模式
+     * @param isActivityWindow true:Activity窗口模式 false:非Activity窗口模式
+     * @param isGlobalWindow true:全局悬浮窗窗口 false:非全局悬浮窗窗口模式
      */
-    private void setWindowPropertyPlayer(boolean isWindowProperty,boolean isGlobalWindow) {
-        this.mIsWindowProperty=isWindowProperty;
+    private void setWindowPropertyPlayer(boolean isActivityWindow,boolean isGlobalWindow) {
+        this.mIsActivityWindow =isActivityWindow;
         this.mIsGlobalWindow=isGlobalWindow;
-        if(null!= mController) mController.onWindowProperty(isWindowProperty,isGlobalWindow);
+        if(null!= mController) mController.setWindowPropertyPlayer(isActivityWindow,isGlobalWindow);
     }
 
-    public boolean isWindowProperty() {
-        return mIsWindowProperty;
+    public boolean isActivityWindow() {
+        return mIsActivityWindow;
     }
 
     public boolean isGlobalWindow() {
@@ -660,8 +660,8 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void startWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
-        ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+mIsWindowProperty+",screenOrientation:"+mScreenOrientation);
-        if(mIsWindowProperty||mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;//已开启窗口模式或者横屏情况下不允许开启小窗口
+        ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+ mIsActivityWindow +",screenOrientation:"+mScreenOrientation);
+        if(mIsActivityWindow ||mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;//已开启窗口模式或者横屏情况下不允许开启小窗口
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if (null != activity&& !activity.isFinishing()) {
             ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
@@ -770,7 +770,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void toggleWindow() {
-        if(mIsWindowProperty){
+        if(mIsActivityWindow){
             quitWindow();
             return;
         }
@@ -867,8 +867,8 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
-        ILogger.d(TAG,"startGlobalWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+mIsWindowProperty+",screenOrientation:"+mScreenOrientation);
-        if(mIsWindowProperty||mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
+        ILogger.d(TAG,"startGlobalWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor +",screenOrientation:"+mScreenOrientation);
+        if(mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
             return false;
         }
         boolean existPermission = PlayerUtils.getInstance().existPermission(getContext(), Manifest.permission.SYSTEM_ALERT_WINDOW);//检查开发者是否申明悬浮窗权限
@@ -919,7 +919,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
 //                    ILogger.d(TAG,"startGlobalWindow--悬浮窗创建结果："+success);
                     //4.改变播放器横屏或窗口播放状态
                     if(success){
-                        setWindowPropertyPlayer(true,true);
+                        setWindowPropertyPlayer(false,true);
                     }
                     return success;
                 }catch (Throwable e){
@@ -964,7 +964,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void toggleGlobaWindow() {
-        if(mIsWindowProperty){
+        if(mIsGlobalWindow){
             quitGlobaWindow();
             return;
         }
@@ -980,7 +980,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void enterPipWindow() {
-        if(null!= mController) mController.enterPipWindowPlayer();
+        if(null!= mController) mController.enterPipWindow();
     }
 
     /**
@@ -988,7 +988,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     @Override
     public void quitPipWindow() {
-        if(null!= mController) mController.quitPipWindowPlayer();
+        if(null!= mController) mController.quitPipWindow();
     }
 
     @Override
@@ -1172,7 +1172,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             return false;
         }
         //退出局部窗口模式
-        if(mIsWindowProperty){
+        if(mIsActivityWindow){
             quitWindow();
             return false;
         }
@@ -1243,7 +1243,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             mParent.removeAllViews();
             mParent=null;
         }
-        mIsWindowProperty=false;mContinuityPlay=false;mDataSource=null;mAssetsSource=null;
+        mIsActivityWindow =false;mContinuityPlay=false;mDataSource=null;mAssetsSource=null;
         mOnPlayerActionListener=null;mScreenOrientation=IMediaPlayer.ORIENTATION_PORTRAIT;
     }
 }
