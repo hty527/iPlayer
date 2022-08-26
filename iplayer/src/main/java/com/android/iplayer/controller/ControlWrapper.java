@@ -63,8 +63,8 @@ public class ControlWrapper {
     }
 
     /**
-     * 返回播放器\控制器当前正处于什么场景
-     * @return 返回值参考IControllerView，0：竖屏 1：横屏 2：activity小窗口 4：全局悬浮窗窗口 5：列表
+     * 返回控制器当前正处于什么场景
+     * @return 返回值参考IVideoController，0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：Android8.0的画中画，4：列表 也可自定义更多场景
      */
     public int getPlayerScene() {
         if(null!= mController) {

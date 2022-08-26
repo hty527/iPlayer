@@ -209,10 +209,10 @@ public class ControlStatusView extends BaseControllerWidget {
 
     /**
      * 适配常规场景和窗口场景样式
-     * @param scene
+     * @param playerScene
      */
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
 //        if(IControllerView.SCENE_GLOBAL_WINDOW==scene||IControllerView.SCENE_WINDOW==scene){
 //            setSceneType(1);
 //        }else{

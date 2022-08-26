@@ -7,7 +7,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.android.iplayer.R;
 import com.android.iplayer.base.BaseControllerWidget;
-import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AnimationUtils;
@@ -109,7 +108,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
         //首帧渲染
         if(state==PlayerState.STATE_START){
             //渲染第一帧时，竖屏和横屏都显示
-            if(IControllerView.SCENE_NOIMAL==getPlayerScene()){
+            if(isNoimalScene()){
                 show();
             }
             showControl(false);
@@ -156,7 +155,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
     }
 
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
         //当播放器和控制器在专场播放、场景发生变化时，仅当在常规模式下并且正在播放才显示控制器
         if(isNoimalScene()){
             show();

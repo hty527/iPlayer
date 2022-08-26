@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
@@ -75,8 +76,9 @@ public class PiPPlayerActivity extends BaseActivity {
      */
     private void initPlayer() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
-        findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
+        mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
         VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
+        controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             /**
@@ -116,10 +118,10 @@ public class PiPPlayerActivity extends BaseActivity {
                 }
             }
         });
+        mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);
         mVideoPlayer.setMobileNetwork(true);
         mVideoPlayer.setLoop(false);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-        controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setDataSource(MP4_URL3);//播放地址设置
         mVideoPlayer.playOrPause();//开始异步准备播放
     }
@@ -142,12 +144,19 @@ public class PiPPlayerActivity extends BaseActivity {
                 mBuilder.setAspectRatio(aspectRatio).build();
 //                builder.setAutoEnterEnabled(true);//提升动画流畅性,Android 12支持
                 forbidCycle();//告诉父类忽视生命周期
+                hideAllView();
                 enterPictureInPictureMode(mBuilder.build());
             }else{
                 forbidCycle();//告诉父类忽视生命周期
+                hideAllView();
                 enterPictureInPictureMode();
             }
         }
+    }
+
+    private void hideAllView() {
+        findViewById(R.id.title_view).setVisibility(View.GONE);
+        findViewById(R.id.btn_enter_picture).setVisibility(View.GONE);
     }
 
     /**
@@ -161,9 +170,6 @@ public class PiPPlayerActivity extends BaseActivity {
     private void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             final ArrayList<RemoteAction> actions = new ArrayList<>();
-            // This is the PendingIntent that is invoked when a user clicks on the action item.
-            // You need to use distinct request codes for play and pause, or the PendingIntent won't
-            // be properly updated.
             final PendingIntent intent =
                     PendingIntent.getBroadcast(PiPPlayerActivity.this, requestCode,
                             new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType), 0);
@@ -171,9 +177,6 @@ public class PiPPlayerActivity extends BaseActivity {
             icon = Icon.createWithResource(PiPPlayerActivity.this, iconId);
             actions.add(new RemoteAction(icon, title, title, intent));
             mBuilder.setActions(actions);
-            // This is how you can update action items (or aspect ratio) for Picture-in-Picture mode.
-            // Note this call can happen even when the app is not in PiP mode. In that case, the
-            // arguments will be used for at the next call of #enterPictureInPictureMode.
             setPictureInPictureParams(mBuilder.build());
         }
     }
@@ -187,26 +190,22 @@ public class PiPPlayerActivity extends BaseActivity {
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
         Logger.d(TAG, "onPictureInPictureModeChanged isPip = " + isInPictureInPictureMode+",newConfig:"+(null!=newConfig?newConfig.toString():""));
-        findViewById(R.id.title_view).setVisibility(isInPictureInPictureMode?View.GONE:View.VISIBLE);
-        findViewById(R.id.btn_enter_picture).setVisibility(isInPictureInPictureMode?View.GONE:View.VISIBLE);
+        if(!isInPictureInPictureMode){
+            findViewById(R.id.title_view).setVisibility(View.VISIBLE);
+            findViewById(R.id.btn_enter_picture).setVisibility(View.VISIBLE);
+        }
         if(null!=mVideoPlayer){
             if(isInPictureInPictureMode){
                 forbidCycle();//告诉父类忽视生命周期
-                mVideoPlayer.enterPipWindow();//进入画中画
-//                mVideoPlayer.setLayoutParams(new FrameLayout.LayoutParams(
-//                        ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                mVideoPlayer.enterPipWindow();//告诉播放器进入画中画场景
                 mVideoPlayer.requestLayout();
                 registerActionReceiver();//注册广播事件
             }else{
                 if(null!=mReceiver){
                     unregisterReceiver(mReceiver);
                 }
-                enableCycle();//告诉父类忽视生命周期
-                mVideoPlayer.quitPipWindow();//退出画中画
-//                int width = ScreenUtils.getInstance().getScreenWidth();
-//                int height = width* 9 /16;
-//                mVideoPlayer.setLayoutParams(new FrameLayout.LayoutParams(width, height));
+                enableCycle();//告诉父类关心生命周期
+                mVideoPlayer.quitPipWindow();//告诉播放器退出画中画场景
                 mVideoPlayer.requestLayout();
             }
         }
@@ -219,8 +218,6 @@ public class PiPPlayerActivity extends BaseActivity {
             if (intent == null || !ACTION_MEDIA_CONTROL.equals(intent.getAction())) {
                 return;
             }
-            // This is where we are called mBack from Picture-in-Picture action
-            // items.
             final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
             Logger.d(TAG,"controlType:"+controlType);
             switch (controlType) {

@@ -12,26 +12,6 @@ import com.android.iplayer.model.PlayerState;
 public interface IControllerView {
 
     /**
-     * 播放器/控制器场景-常规（包括竖屏、横屏两种状态）
-     */
-    int SCENE_NOIMAL            =0;
-
-    /**
-     * 播放器/控制器场景-activity小窗口
-     */
-    int SCENE_WINDOW            =1;
-
-    /**
-     * 播放器/控制器场景-全局悬浮窗窗口
-     */
-    int SCENE_GLOBAL_WINDOW     =2;
-
-    /**
-     * 播放器/控制器场景-列表
-     */
-    int SCENE_LISTS             =3;
-
-    /**
      * 绑定控制器代理人
      * @param controlWrapper 控制器+播放器代理中间人
      */
@@ -109,9 +89,9 @@ public interface IControllerView {
 
     /**
      * 播放器场景回调(组件初始化、场景发生变化时都会回调)
-     * @param scene 播放器场景 0：竖屏 1：横屏 2：activity小窗口 4：全局悬浮窗窗口 5：列表
+     * @param playerScene 播放器\控制器场景 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：Android8.0的画中画，4：列表，其它：自定义场景
      */
-    void onPlayerScene(int scene);
+    void onPlayerScene(int playerScene);
 
     /**
      * 视频播放进度

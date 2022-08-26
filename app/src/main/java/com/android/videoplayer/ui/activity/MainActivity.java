@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
@@ -254,7 +257,6 @@ public class MainActivity extends BaseActivity {
         ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
         ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
         controller.addControllerWidget(toolBarView,functionBarView,statusView,gestureView,completionView,loadingView);
-
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
         videoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             /**

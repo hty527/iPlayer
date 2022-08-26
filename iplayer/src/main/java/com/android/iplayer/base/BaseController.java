@@ -37,10 +37,10 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     protected static final String TAG = BaseController.class.getSimpleName();
     protected IVideoPlayerControl mVideoPlayerControl;//播放器代理人
-    protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT;//当前控制器方向
+    protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT,mPlayerScene=IVideoController.SCENE_NOIMAL;//当前控制器(播放器)方向\当前控制器(播放器)场景
     protected LinkedList<IControllerView> mIControllerViews =new LinkedList<>();//所有自定义UI控制器组件
     private ControlWrapper mControlWrapper;
-    protected boolean isCompletion,listPlayerScene,isWindowProperty,isGlobalWindow;//是否播放(试看)完成\交互控制器是否处于列表播放模式\控制器是否处于窗口模式\是否处于全局悬浮窗或画中画模式
+    protected boolean isCompletion;//是否播放(试看)完成
     protected long mPreViewTotalTime;//试看模式下总时长
 
     protected class ExHandel extends Handler{
@@ -135,14 +135,11 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     /**
-     * 当切换至小窗口模式播放,取消可能存在的定时器隐藏控制器任务,强制隐藏控制器
-     * @param isWindowProperty 控制器是否处于窗口模式中 true:当前窗口属性显示 false:非窗口模式。当处于创库模式时，所有控制器都处于不可见状态,所有控制器手势都将被window播放器截获
-     * @param isGlobalWindow true:全局悬浮窗窗口|画中画模式 false:Activity局部悬浮窗窗口模式
+     * 播放器/控制器的场景变化
+     * @param playerScene 播放器/控制器的场景变化 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：Android8.0的画中画，4：列表 其它：自定义场景
      */
     @Override
-    public void onWindowProperty(boolean isWindowProperty, boolean isGlobalWindow) {
-        this.isWindowProperty =isWindowProperty;
-        this.isGlobalWindow =isGlobalWindow;
+    public void onPlayerScene(int playerScene) {
         for (IControllerView iControllerView : mIControllerViews) {
             iControllerView.onPlayerScene(getPlayerScene());
         }
@@ -218,6 +215,47 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     public void onDestroy() {
         for (IControllerView iControllerView : mIControllerViews) {
             iControllerView.onDestroy();
+        }
+        removeAllControllerWidget();
+    }
+
+    /**
+     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
+     * @param listPlayerScene 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     */
+    @Override
+    public void setListPlayerMode(boolean listPlayerScene) {
+        setPlayerScene(listPlayerScene?SCENE_LISTS:SCENE_NOIMAL);
+    }
+
+    /**
+     * 进入画中画模式
+     */
+    @Override
+    public void enterPipWindow() {
+        setPlayerScene(SCENE_PIP_WINDOW);
+    }
+
+    /**
+     * 退出画中画模式
+     */
+    @Override
+    public void quitPipWindow() {
+        setPlayerScene(SCENE_NOIMAL);
+    }
+
+    /**
+     * 当切换至小窗口模式播放,取消可能存在的定时器隐藏控制器任务,强制隐藏控制器
+     * @param isActivityWindow 控制器是否处于Activity级别窗口模式中
+     * @param isGlobalWindow 控制器是否处于全局悬浮窗窗口模式中
+     */
+    public void setWindowPropertyPlayer(boolean isActivityWindow, boolean isGlobalWindow) {
+        if(isActivityWindow){
+            setPlayerScene(SCENE_ACTIVITY_WINDOW);
+        }else if(isGlobalWindow){
+            setPlayerScene(SCENE_GLOBAL_WINDOW);
+        }else{
+            setPlayerScene(SCENE_NOIMAL);
         }
     }
 
@@ -398,21 +436,22 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     /**
-     * 返回播放器当前正处于什么场景
-     * @return 返回值参考IControllerView，1：activity小窗口 2：全局悬浮窗窗口 3：列表
+     * 更新播放器场景
+     * @param playerScene 更新播放器场景，自定义场景可调用此方法设置，设置后会同步通知到所有实现IControllerView接口的UI组件中的onPlayerScene方法
+     */
+    @Override
+    public void setPlayerScene(int playerScene) {
+        this.mPlayerScene=playerScene;
+        onPlayerScene(mPlayerScene);
+    }
+
+    /**
+     * 返回控制器当前正处于什么场景，各UI组件初始化后会收到回调：onPlayerScene
+     * @return 播放器\控制器场景 0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画 其它：自定义场景
      */
     @Override
     public int getPlayerScene() {
-        if(isGlobalWindow()){
-            return IControllerView.SCENE_GLOBAL_WINDOW;
-        }
-        if(isWindowProperty()){
-            return IControllerView.SCENE_WINDOW;
-        }
-        if(isListPlayerScene()){
-            return IControllerView.SCENE_LISTS;
-        }
-        return IControllerView.SCENE_NOIMAL;
+        return mPlayerScene;
     }
 
     /**
@@ -610,30 +649,27 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     /**
-     * 返回窗口模式
-     * @return true:当前正处于窗口模式 false:当前不处于窗口模式
+     * 返回是否是Activity悬浮窗窗口模式
+     * @return true:当前正处于Activity窗口模式 false:当前不处于Activity窗口模式
      */
-    public boolean isWindowProperty() {
-        return isWindowProperty;
+    public boolean isActivityWindow() {
+        return SCENE_ACTIVITY_WINDOW ==getPlayerScene();
     }
 
     /**
-     * 返回窗口类型
-     * @return true:全局悬浮窗|画中画 false:Activity window窗口模式
+     * 返回是否是全局悬浮窗窗口模式
+     * @return true:当前正处于全局悬浮窗窗口模式 false:当前不处于全局悬浮窗窗口模式
      */
     public boolean isGlobalWindow() {
-        return isGlobalWindow;
+        return SCENE_GLOBAL_WINDOW==getPlayerScene();
     }
 
     /**
-     * 是否处于列表播放模式，在开始播放和开启\退出全屏时都需要设置
-     * @param listPlayerScene 是否处于列表播放模式(需要在开始播放之前设置),列表播放模式下首次渲染不会显示控制器,否则首次渲染会显示控制器 true:处于列表播放模式 false:不处于列表播放模式
+     * 返回是否是画中画窗口模式
+     * @return true:当前正处于画中画窗口模式 false:当前不处于画中画窗口模式
      */
-    public void setListPlayerScene(boolean listPlayerScene) {
-        this.listPlayerScene =listPlayerScene;
-        for (IControllerView iControllerView : mIControllerViews) {
-            iControllerView.onPlayerScene(getPlayerScene());
-        }
+    public boolean isPipWindow() {
+        return SCENE_PIP_WINDOW==getPlayerScene();
     }
 
     /**
@@ -641,23 +677,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * @return true:是 false:否
      */
     public boolean isListPlayerScene() {
-        return listPlayerScene;
-    }
-
-    //进入画中画模式
-    public void enterPipWindowPlayer() {
-        enterPipWindow();
-        for (IControllerView iControllerView : mIControllerViews) {
-            iControllerView.onPlayerScene(getPlayerScene());
-        }
-    }
-
-    //退出画中画模式
-    public void quitPipWindowPlayer() {
-        quitPipWindow();
-        for (IControllerView iControllerView : mIControllerViews) {
-            iControllerView.onPlayerScene(getPlayerScene());
-        }
+        return SCENE_LISTS==getPlayerScene();
     }
 
     /**
@@ -739,14 +759,6 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
             iControllerView.setTitle(videoTitle);
         }
     }
-
-    //进入画中画模式
-    @Override
-    public void enterPipWindow() {}
-
-    //退出画中画模式
-    @Override
-    public void quitPipWindow() {}
 
     //开始延时任务
     @Override

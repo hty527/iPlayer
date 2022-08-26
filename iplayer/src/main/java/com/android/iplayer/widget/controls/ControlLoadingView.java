@@ -61,8 +61,8 @@ public class ControlLoadingView extends BaseControllerWidget {
     public void onOrientation(int direction) {}
 
     @Override
-    public void onPlayerScene(int scene) {
-        if(isWindowScene(scene)||isWindowGlobalScene(scene)){
+    public void onPlayerScene(int playerScene) {
+        if(isWindowScene(playerScene)){
             hide();
         }else{
             show();

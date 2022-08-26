@@ -80,7 +80,7 @@ public class DanmuWidgetView extends BaseControllerWidget {
     public void onOrientation(int direction) {}
 
     @Override
-    public void onPlayerScene(int scene) {
+    public void onPlayerScene(int playerScene) {
         findViewById(R.id.view_tool_bar).getLayoutParams().height= isOrientationPortrait()?0:ScreenUtils.getInstance().getStatusBarHeight(getContext());
     }
 
