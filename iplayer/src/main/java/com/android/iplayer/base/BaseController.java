@@ -280,7 +280,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     /**
      * 向视频播放器控制器添加自定义UI组件
-     * @param controllerView 添加自定义UI组件，必须是实现IControllerView接口的UI组件
+     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
      */
     @Override
     public void addControllerWidget(IControllerView controllerView) {
@@ -289,17 +289,39 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
 
     /**
      * 向视频播放器控制器添加自定义UI组件
-     * @param controllerView 移除自定义UI组件
+     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
      * @param index 添加的层级位置,默认是将UI控制组件添加到控制器上层
      */
     @Override
     public void addControllerWidget(IControllerView controllerView, int index) {
+        addControllerWidget(controllerView,null,index);
+    }
+
+    /**
+     * 向视频播放器控制器添加自定义UI组件
+     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
+     * @param target 唯一的标识，设置此值后可在不同的场景下找到此值对应的Widget组件
+     */
+    @Override
+    public void addControllerWidget(IControllerView controllerView, String target) {
+        addControllerWidget(controllerView,target,-1);
+    }
+
+    /**
+     * 向视频播放器控制器添加自定义UI组件
+     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
+     * @param target 唯一的标识，设置此值后可在不同的场景下找到此值对应的Widget组件
+     * @param index 添加的层级位置,默认是将UI控制组件添加到控制器上层
+     */
+    @Override
+    public void addControllerWidget(IControllerView controllerView, String target, int index) {
         if(null==controllerView) return;
         FrameLayout.LayoutParams layoutParams=new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         if(null==mControlWrapper){
             mControlWrapper = new ControlWrapper(this,mVideoPlayerControl);
         }
         controllerView.attachControlWrapper(mControlWrapper);
+        controllerView.setTarget(target);
         mIControllerViews.add(controllerView);
         if(-1==index){
             addView(controllerView.getView(),layoutParams);
