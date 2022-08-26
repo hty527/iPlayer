@@ -27,9 +27,8 @@ public class VideoController extends GestureController {
     private static final int DELAYED_INVISIBLE      = 5000;//延时隐藏锁时长
 
     private View mController;//屏幕锁
-    //是否播放(试看)完成\是否开启屏幕锁\用户设置的横屏是否启用屏幕锁状态
-    protected boolean isCompletion,isLocked,isUserShowLocker=true;
-
+    //是否播放(试看)完成\是否开启屏幕锁
+    protected boolean isCompletion,isLocked;
 
     public VideoController(Context context) {
         super(context);
@@ -141,7 +140,7 @@ public class VideoController extends GestureController {
             }else{
                 setLocker(false);
                 if(isPlayering()){
-                    mController.setVisibility(isUserShowLocker?View.VISIBLE:View.GONE);
+                    mController.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -282,7 +281,7 @@ public class VideoController extends GestureController {
      * @param showLocker true:启用 fasle:禁止
      */
     public void showLocker(boolean showLocker) {
-        this.isUserShowLocker = showLocker;
+        findViewById(R.id.controller_root).setVisibility(showLocker?View.VISIBLE:View.GONE);
     }
 
     /**

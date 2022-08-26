@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
+import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.widget.VideoPlayer;
@@ -14,7 +15,6 @@ import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.media.JkMediaPlayer;
-import com.android.videoplayer.pager.controller.LiveController;
 import com.android.videoplayer.pager.widget.ControlLiveView;
 
 /**
@@ -51,7 +51,8 @@ public class LivePlayerActivity extends BaseActivity {
         mVideoPlayer.setLoop(true);
         mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置视频画面渲染模式为：全屏缩放模式
         //给播放器设置一个控制器
-        LiveController controller = new LiveController(mVideoPlayer.getContext());
+        VideoController controller = new VideoController(mVideoPlayer.getContext());
+        controller.showLocker(false);
         mVideoPlayer.setController(controller);
         //给控制器添加需要的UI交互组件
         ControlLoadingView controlLoadingView = new ControlLoadingView(controller.getContext());//加载中、开始播放按钮

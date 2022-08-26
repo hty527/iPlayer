@@ -15,12 +15,11 @@
 **[查看历史版本]**
 
 ### SDK功能支持:
-* 支持网络地址、本地Assets和Raw资源文件播放</br>
+* 支持网络地址、直播流、本地Assets和Raw资源文件播放</br>
 * 支持播放倍速、缩放模式、静音、镜像等功能设置</br>
 * 支持多播放器同时播放</br>
 * 支持自定义视频解码器、自定义控制器、自定义UI交互组件</br>
-* SDK自带默认解码器+控制器+UI交互组件交互(任意局部UI组件也支持自定义)、支持片段试看交互</br>
-* 支持直播拉流</br>
+* SDK自带默认解码器+控制器+UI交互组件(任意局部UI组件也支持自定义)、支持片段试看交互</br>
 * 支持任意界面开启无权限Activity级别可拖拽小窗口播放</br>
 * 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
 * 支持任意界面直接启动全屏播放</br>
@@ -51,7 +50,7 @@
         implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
 
         //播放器SDK
-        implementation 'com.github.hty527:iPlayer:2.0.0'
+        implementation 'com.github.hty527:iPlayer:2.0.0.1'
     }
 ```
 * 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -63,11 +62,11 @@
 ```
 * 3.播放器准备及开始播放</br>
 ```
-    mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);//或者直接 new 一个VideoPlayer(context);对象
-    mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//固定播放器高度
-    //使用SDK自带控制器+UI交互组件
+    mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
+    mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//固定播放器高度，或高度设置为:match_parent
+    //使用SDK自带控制器+各UI交互组件
     VideoController controller = mVideoPlayer.initController();
-    //设置视频标题(横屏状态下可见)
+    //设置视频标题(仅横屏状态可见)
     controller.setTitle("测试地址播放");
     //设置播放源
     mVideoPlayer.setDataSource("https://upload.dongfeng-nissan.com.cn/nissan/video/202204/4cfde6f0-bf80-11ec-95c3-214c38efbbc8.mp4");
@@ -101,7 +100,7 @@
         mVideoPlayer.onDestroy();
     }
 ```
-### 全屏、悬浮窗口、手势、自定义解码器、自定义UI交互组件等功能使用请阅读：**[接入文档]**
+### 自定义解码器、自定义UI交互组件、悬浮窗口播放等功能请阅读：**[接入文档]**
 [接入文档]: https://github.com/hty527/iPlayer/wiki/api "接入文档"
 
 ### SDK及Demo部分功能快照：
