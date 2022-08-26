@@ -1,14 +1,40 @@
 ## 文档和功能介绍
 ### 一、常用功能使用说明
-#### 1、播放器功能API
-* 1.1、请阅读IVideoPlayerControl接口类
-#### 2、控制器功能API
-* 2.1、请阅读IVideoController接口类
-#### 3、交互组件API
-* 3.1、请阅读IControllerView接口类
-#### 4、自定义解码器
-* 4.1、SDK默认使用MediaPlayer解码器，Demo中示例了两套自定义解码器的使用,请参考：JkMediaPlayer\ExoMediaPlayer
+#### 1、播放器API
+* 1.1、请阅读[IVideoPlayerControl][1]
+* 1.2、常用API
 ```
+    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//居中显示,定宽等高 (更多缩放模式请参考IMediaPlayer设置)
+    mVideoPlayer.setLoop(true);//是否循环播放
+    mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
+    mVideoPlayer.setSoundMute(false);//是否开启静音播放
+    mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
+    mVideoPlayer.setMirror(false);//是否镜像显示
+    mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放
+    mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
+```
+#### 2、控制器API
+* 2.1、请阅读[IVideoController][2]
+* 2.2、常用API
+```
+    mController.setTitle("测试地址播放");//视频标题(默认控制器横屏状态下可见)
+    mController.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法
+    mController.setPlayerScene(IVideoController.SCENE_NOIMAL);//设置控制器应用场景
+```
+#### 3、交互组件API
+* 3.1、请阅读[IControllerView][3]
+
+[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoPlayerControl.java "IVideoPlayerControl"
+[2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
+[3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
+#### 4、自定义解码器
+* 4.1、SDK默认使用MediaPlayer解码器，Demo中示例了两套自定义解码器的使用,请参考：[JkMediaPlayer][4]和[ExoMediaPlayer][5]
+
+[4]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/JkMediaPlayer.java "JkMediaPlayer"
+[5]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
+```
+    int MEDIA_CORE=1;
     /**
      * 如果使用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
      */
@@ -28,9 +54,11 @@
 ```
 #### 5、自定义UI交互组件
 ##### 5.1、自定义Controller
-* 5.1.1、继承BaseController实现自己的控制器，如需手势交互，请继承GestureController
+* 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
 * 5.1.2、设置控制器到播放器
 
+[6]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseController.java "BaseController"
+[7]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/controller/GestureController.java "GestureController"
 ```
     VideoController controller=new VideoController(videoPlayer.getContext());
     mVideoPlayer.setController(controller);//将控制器绑定到播放器
@@ -41,15 +69,20 @@
 * 5.2.1、为什么有自定义Controller还要整个"自定义UI交互组件"出来？<br>
 因为Controller在处理交互比较复杂或功能比较多的场景下耦合性太高，于是Controller就拓展了自定义UI交互组件能力，可根据需要来添加自己的UI交互组件和任意自定义单个交互模块的UI组件。
 * 5.2.2、SDK提供了一套标题栏、底部控制栏、播放器状态(网络提示、播放失败)、播放完成、手势交互相应处理、Window窗口、列表模式 等UI交互组件。Controller的任意UI交互组件均支持自定义。
-如需自定义请继承BaseControllerWidget，请阅读IControllerView提供的API来实现自己的交互。
-* 5.2.3、代码示例：
+* 5.2.3、自定义UI交互组件需要继承[BaseControllerWidget][8]，参考[IControllerView][9]接口回调来实现自己的交互：
+
+[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControllerWidget.java "BaseControllerWidget"
+[9]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 ```
     /**
      * 1、给播放器设置一个控制器
      */
     mController = new VideoController(mVideoPlayer.getContext());
-    //mController.setCanTouchInPortrait(false);//竖屏状态下是否开启手势交互,内部默认允许
     //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
+    //mController.setCanTouchInPortrait(true);//竖屏状态下是否开启手势交互,内部默认允许
+    //mController.setCanTouchPosition(true);//设置是否可以滑动调节进度，默认可以
+    //mController.setGestureEnabled(true);//是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
+    //mController.setDoubleTapTogglePlayEnabled(true);//是否开启双击播放/暂停，默认关闭
     mVideoPlayer.setController(mController);//绑定控制器到播放器
 
     /**
@@ -96,15 +129,17 @@
     mController.addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
 ```
 ##### 5.3、使用自定义组件对象
-* 5.3.1、 在列表跳转到Activity转场播放、开启悬浮窗后转场到Activity等场景下，需要找到此前初始化播放器时设置的自定义交互UI组件。如下所示：
+* 5.3.1、 假设播放器在A界面初始化，如何在B界面找到此前在A界面设置的自定义交互组件并使用此组件对象？
 ```
-    //1、在添加控制器时，可调用BaseController的addControllerWidget(IControllerView controllerView,String target)两参方法
-    //   或在addControllerWidget之前设置Target，如：
+    //1、在给控制器设置自定义交互组件时，可为自定义组件设置target
     ControlToolBarView controlToolBarView=new ControlToolBarView(this);
-    controlToolBarView.setTarget(“target”);
-    mController.addControllerWidget(controlToolBarView,"toolBar");
-    //2、在需要使用此前添加的UI组件地方：
-    IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
+    controlToolBarView.setTarget("target");
+    mController.addControllerWidget(controlToolBarView);//添加到控制器
+    //或者：
+    mController.addControllerWidget(new ControlToolBarView(this),"target");//添加到控制器
+
+    //2、根据target寻找自定义交互组件
+    IControllerView controllerView = mController.findControlWidgetByTag("target");
     if(null!=controllerView&&controllerView instanceof ControlToolBarView){
         ControlToolBarView controlToolBarView= (ControlToolBarView) controllerView;
         controlToolBarView.showMenus(true,true,true);
@@ -121,8 +156,11 @@
         });
     }
 ```
-##### 5.4、找到SDK自带UI交互组件
-* 5.4.1、在调用mVideoPlayer.initController();时，SDK内部会为添加的每一个自定义UI组件绑定一个target，所有的target请阅读：IVideoController类。找到某个组件对象方法如下：
+##### 5.4、使用SDK默认组件对象
+* 5.4.1、使用默认Controller+自定义交互组件时，SDK内部会为添加的每一个自定义UI组件绑定一个target，默认target请阅读[IVideoController][10]类。
+* 根据默认target寻找组件：
+
+[10]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 ```
     IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
     if(null!=controllerView&&controllerView instanceof ControlToolBarView){
@@ -143,9 +181,10 @@
 ```
 ##### 5.5、控制器场景
 ###### 5.5.1、场景介绍
-* SDK控制器内置5种场景，分别是：0：常规状态(包括竖屏、横屏)，1：activity小窗口，2：全局悬浮窗窗口，3：列表，4：Android8.0的画中画。 
+* SDK控制器内置5种场景，分别是：0：常规状态(包括竖屏、横屏)，1：Activity级别悬浮窗，2：全局悬浮窗，3：画中画悬浮窗，4：列表模式， 
 ###### 5.5.2、场景使用
-* 当场景变化时会回调到IVideoController的onPlayerScene(int playerScene)和IControllerView的onPlayerScene(int playerScene)方法。开发者可在控制器或UI交互组件中根据场景的变化做相应的UI交互变更。
+* 当场景变化时会回调到[IVideoController][10]的onPlayerScene和[IControllerView][9]的onPlayerScene方法。开发者可在控制器或UI交互组件中根据场景的变化做相应的UI交互变更。
+
 ###### 5.5.3、自定义场景
 * 为方便播放器应用于不同场景，SDK支持自定义场景设置，用户可根据自己的场景来实现不同的UI交互。
 ```
@@ -154,7 +193,7 @@
 ```
 #### 6、全屏播放
 ##### 6.1、横竖屏切换
-* 6.1.1、支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
+* 6.1.1、如需支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
 ```
     android:configChanges="orientation|screenSize"
 ```
@@ -258,7 +297,9 @@
     IVideoManager.getInstance().setInterceptTAudioFocus(false);
 ```
 #### 9、直播拉流
-* 9.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请自定义解码器拓展。直播流相关请参考LivePlayerActivity类
+* 9.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
+
+[11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
 #### 10、收费试看模式
 * 10.1、SDK默认Controller支持试看模式，分两步实现：
 ```
@@ -285,7 +326,9 @@
     controller.addControllerWidget(controPerviewView);
 ```
 #### 11、连续播放
-* 可参考Demo中的VideoListPlayerActivity类
+* 可参考Demo中的[VideoListPlayerActivity][12]类
+
+[12]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
 ```
     //1、mVideoPlayer.setLoop(false);//连续播放模式下只能设置为false
     //2、实现连续播放可在收到播放完成时切换视频流
@@ -325,7 +368,11 @@
     3、回到列表界面时如果播放的视频源没有被切换,关闭当前Activity不要销毁播放器,将播放器从当前父容器中移除
     4、重新添加到列表界面的此前正在播放的item中的ViewGroup中
 ```
-* 12.1.2、列表转场衔接继续播放实现：主要参考Demo中的ListPlayerChangedFragment、ListPlayerFragment、VideoDetailsActivity类
+* 12.1.2、列表转场衔接继续播放实现：主要参考Demo中的[ListPlayerChangedFragment][13]、[ListPlayerFragment][14]、[VideoDetailsActivity][15]类
+
+[13]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
+[14]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
+[15]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/activity/VideoDetailsActivity.java "VideoDetailsActivity"
 ``` 
     1、开始播放：参考ListPlayerFragment类的startPlayer()方法，注意标记当前mCurrentPosition和mPlayerContainer
     2、点击item跳转：参考ListPlayerChangedFragment类的onItemClick()方法，跳转到新的Activity
@@ -334,19 +381,48 @@
     5、回到列表界面：如果处理了第4步，在回到列表界面时接收并处理播放器，参考：ListPlayerChangedFragment类的onActivityResult方法和ListPlayerFragment类的recoverPlayerParent方法
 ```
 ###### 12.2、悬浮窗转场
-* 12.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo WindowGlobalPlayerActivity类的initPlayer方法或VideoDetailsActivity类的initPlayer方法
+* 12.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo [WindowGlobalPlayerActivity][16]类的initPlayer方法或[VideoDetailsActivity][15]类的initPlayer方法
 #### 13、视频缓存
-* Demo的“防抖音”模块支持视频缓存和秒播，请参考PagerPlayerAdapter类的 //开始预加载 和 //结束预加载
+* Demo的“防抖音”模块支持视频缓存和秒播，请参考[PagerPlayerAdapter][17]类的 //开始预加载 和 //结束预加载
+
+[16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
+[17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
 ### 二、异常现象及注意点
-#### 1、全屏、小窗口播放无效
+#### 1、网络地址无法播放
+* 请检查AndroidManifest文件中是否声明INTERNET权限
+```
+    <!--播放网络视频需要声明此权限-->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--信任http明文-->
+    <application
+        android:usesCleartextTraffic="true">
+    </application>
+```
+
+#### 2、移动网络未出现交互提示
+* 请检查AndroidManifest文件中是否声明ACCESS_NETWORK_STATE权限
+```
+    <!--如您的播放器需要支持移动网路提示用户的交互,需要申明此权限,SDK用来检测网络状态-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
+#### 3、全局悬浮窗播放失败
+* 请检查AndroidManifest文件中是否声明SYSTEM_ALERT_WINDOW权限
+```
+    <!--如您的播放器需要支持全局悬浮窗窗口播放请申明此权限-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+#### 4、全屏\小窗口播放无效
 * 从列表或全局悬浮窗窗口转场跳转到Activity衔接继续播放场景下全屏、小窗口播放时全屏功能、手势设置屏幕亮度等和Activity相关的功能会失效。是因为播放器在上一个Activity创建并被添加到上一个Activity 的Window中，此时全屏、小窗口、屏幕亮度的结果会反馈给上一个Activity，
 解决办法：
 ```
     //给播放器设置一个ParentConttext 上下文
     mVideoPlayer.setParentContext(context);上下文传递当前Activity Context
 ```
-#### 2、播放器还原到竖屏位置
-* 2.1、播放器在开启全屏、小窗口播放后还原到竖屏状态时，可能会因为下面这种布局方式而产生错位问题
+#### 5、播放器还原到竖屏位置
+* 5.1、播放器在开启全屏、小窗口播放后还原到竖屏状态时，可能会因为下面这种布局方式而产生错位问题
 ```
     <?xml version="1.0" encoding="utf-8"?>
     <FrameLayout
@@ -382,20 +458,20 @@
         </FrameLayout>
     </FrameLayout>
 ```
-#### 3、混合语言兼容方案
-##### 3.1、Flutter
+#### 6、混合语言兼容方案
+##### 6.1、Flutter
 * 3.1.1、将此播放器SDK应用到Android原生和Flutter混合开发使用时，会出现全屏功能、Activity级别小窗、屏幕亮度设置功能无法使用，解决办法：
 ```
     //给播放器设置一个ParentConttext 上下文
     mVideoPlayer.setParentContext(context);上下文传递当前混合语言所在的宿主Activity Context
 ```
-#### 4、VideoController屏幕锁
-##### 4.1、屏幕锁禁用
-* 4.1.1、SDK内部提供的VideoController默认开启了屏幕锁交互，关闭方法：
+#### 7、VideoController屏幕锁
+##### 7.1、屏幕锁禁用
+* 7.1.1、SDK内部提供的VideoController默认开启了屏幕锁交互，关闭方法：
 ```
     VideoController controller = new VideoController(mVideoPlayer.getContext());
     controller.showLocker(false);//禁止屏幕锁功能
 ```
-##### 4.2、自定义屏幕锁交互
-* 4.2.1、自定义Controller实现自己的屏幕锁交互
+##### 7.2、自定义屏幕锁交互
+* 7.2.1、自定义Controller实现自己的屏幕锁交互
 #### 更多文档持续更新中...
