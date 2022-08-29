@@ -81,7 +81,7 @@ public abstract class GestureController extends BaseController implements View.O
     }
 
     /**
-     * 是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
+     * 是否开启手势控制，默认开启，关闭之后，手势调节进度，音量，亮度功能将关闭
      * @param gestureEnabled true:允许手势交互 false:不允许手势交互
      */
     public void setGestureEnabled(boolean gestureEnabled) {
