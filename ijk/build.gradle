@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.hty527'//xxx:代表你的github用户名
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -7,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 1
+        versionCode 10000
         versionName "1.0.0"
     }
     lintOptions {
@@ -15,6 +18,8 @@ android {
     }
 }
 
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+// 打包源码jar
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = 'sources'
 }
