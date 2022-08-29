@@ -105,15 +105,21 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
 
     @Override
     public void onPlayerState(PlayerState state, String message) {
-        //首帧渲染
-        if(state==PlayerState.STATE_START){
-            //渲染第一帧时，竖屏和横屏都显示
-            if(isNoimalScene()){
-                show();
-            }
-            showControl(true);
-        }else if(state==PlayerState.STATE_PREPARE){
-            hide();
+        switch (state) {
+            case STATE_RESET://初始状态\播放器还原重置
+            case STATE_STOP://初始\停止
+                onReset();
+                break;
+            case STATE_START://首帧渲染
+                //渲染第一帧时，竖屏和横屏都显示
+                if(isNoimalScene()){
+                    show();
+                }
+                showControl(true);
+                break;
+            case STATE_PREPARE://准备中
+                hide();
+                break;
         }
     }
 
@@ -161,6 +167,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
             show();
             if(isPlaying()){
                 showControl(false);
+                reStartDelayedRunnable();
             }
         }else{
             hide();
@@ -205,5 +212,11 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
 
     public void setOnToolBarActionListener(OnToolBarActionListener onToolBarActionListener) {
         mOnToolBarActionListener = onToolBarActionListener;
+    }
+
+    @Override
+    public void onReset() {
+        super.onReset();
+        hideControl(false);
     }
 }

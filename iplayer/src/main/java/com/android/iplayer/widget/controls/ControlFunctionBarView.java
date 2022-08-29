@@ -271,6 +271,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
             show();
             if(isPlaying()){
                 showControl(false);
+                reStartDelayedRunnable();
             }
         }else{
             hide();
@@ -367,6 +368,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
             mSeekBar.setMax(0);
         }
         resetProgressBar();
+        hideControl(false);
         if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(0));
         if(null!=mCurrentDuration) mCurrentDuration.setText(PlayerUtils.getInstance().stringForAudioTime(0));
         if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
