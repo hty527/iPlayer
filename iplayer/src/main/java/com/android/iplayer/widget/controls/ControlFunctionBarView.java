@@ -144,8 +144,8 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
             reStartDelayedRunnable();
             toggleMute();
         }else if (view.getId() == R.id.controller_btn_fullscreen) {
-            reStartDelayedRunnable();
             toggleFullScreen();
+            reStartDelayedRunnable();
         }
     }
 
@@ -207,6 +207,8 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
                 hide();
                 break;
             case STATE_BUFFER://缓冲中
+            case STATE_PAUSE://人为暂停中
+            case STATE_ON_PAUSE://生命周期暂停中
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
                 break;
             case STATE_START://首次播放
@@ -218,14 +220,8 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
                 showControl(true);
                 break;
             case STATE_PLAY://缓冲结束恢复播放
-                if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);
-                break;
             case STATE_ON_PLAY://生命周期\暂停情况下恢复播放
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);
-                break;
-            case STATE_PAUSE://人为暂停中
-            case STATE_ON_PAUSE://生命周期暂停中
-                if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
                 break;
             case STATE_COMPLETION://播放结束
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_play);
@@ -251,6 +247,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
             //横屏下处理标题栏和控制栏的左右两侧缩放
             mController.setPadding(margin22,0,margin22,0);
             show();
+            if(isPlaying()) reStartDelayedRunnable();
         }else {
             int margin5 = PlayerUtils.getInstance().dpToPxInt(5f);
             mController.setPadding(margin5, 0, margin5, 0);

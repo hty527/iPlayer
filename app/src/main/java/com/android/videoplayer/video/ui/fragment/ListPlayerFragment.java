@@ -339,7 +339,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
              */
             BaseController videoController = mVideoPlayer.getController();
             if(null!=videoController&&autoPlayer()){
-                videoController.setListPlayerMode(true);//从列表模式转换为正常模式
+                videoController.setListPlayerMode(true);//改变播放器为列表模式
             }
             setListener(false);//绑定监听器到此界面
             if(null!=mLayoutManager) changedPlayerIcon(mLayoutManager.findViewByPosition(mCurrentPosition),View.INVISIBLE);//隐藏播放按钮的可见状态

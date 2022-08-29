@@ -241,11 +241,60 @@
 ```
 #### 7、窗口播放
 ##### 7.1、Activity级别悬浮窗
-* 7.1.1、Activity级别悬浮窗无需悬浮窗权限，可在任意位置启动Activity级别悬浮窗窗口播放。
+* 7.1.1、Activity级别悬浮窗无需悬浮窗权限直接开启：
 ```
     //startWindow支持多参传入，请阅读api。参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色
     mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f), Color.parseColor("#99000000"));
 ```
+* 7.1.2、SDK支持在任意位置直接启动Activity级别悬浮窗播放：
+```
+    private void startMiniWindowPlayer() {
+        //播放器内部在收到返回事件时，检查到没有宿主ViewGroup会自动销毁播放器，测试应该在收到PlayerState.STATE_DESTROY状态时清除播放器变量
+        if(null==mVideoPlayer){
+            mVideoPlayer = new VideoPlayer(this);
+            VideoController controller=new VideoController(this);
+            //给播放器设置控制器
+            mVideoPlayer.setController(controller);
+            //给播放器控制器绑定需要的自定义UI交互组件
+            ControWindowView controWindowView=new ControWindowView(this);//加载中、开始播放
+            controller.addControllerWidget(controWindowView);
+            //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+            mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+         
+                @Override
+                public AbstractMediaPlayer createMediaPlayer() {
+                    return new JkMediaPlayer(MainActivity.this);
+                }
+    
+                @Override
+                public void onPlayerState(PlayerState state, String message) {
+                    Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
+                    if(PlayerState.STATE_DESTROY==state){
+                        mVideoPlayer=null;
+                    }
+                }
+            });
+            mVideoPlayer.setLoop(false);
+            mVideoPlayer.setProgressCallBackSpaceMilliss(300);
+            mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
+            mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
+            //自定义窗口播放的宽,高,起始X轴,起始Y轴属性,这里示例将播放器添加到标题栏下方右侧
+            //mVideoPlayer.startWindow();
+            int[] screenLocation=new int[2];
+            TitleView titleView = findViewById(R.id.title_view);
+            titleView.getLocationInWindow(screenLocation);
+            int width = (PlayerUtils.getInstance().getScreenWidth(MainActivity.this)/2)+ScreenUtils.getInstance().dpToPxInt(30f);
+            int height = width*9/16;
+            float startX=PlayerUtils.getInstance().getScreenWidth(MainActivity.this)/2-PlayerUtils.getInstance().dpToPxInt(45f);//开始位置
+            float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
+            //启动窗口播放
+            mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
+            //mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//也可以使用内部默认的窗口宽高和位置属性
+            mVideoPlayer.playOrPause();//开始异步准备播放
+        }
+    }
+```
+
 ##### 7.2、全局悬浮窗
 ###### 7.2.1、悬浮窗开启
 * 7.2.1.1、全局悬浮窗需要SYSTEM_ALERT_WINDOW权限，SDK内部会自动检测和申请SYSTEM_ALERT_WINDOW权限。可在任意位置开启悬浮窗窗口播放。
@@ -257,6 +306,21 @@
     //2、开启全局悬浮窗窗口播放，startGlobalWindow支持多参传入，请阅读api。参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色
     boolean globalWindow = mVideoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
 ```
+* 7.2.1.2、SDK支持在任意位置直接启动全局悬浮窗窗口播放：
+```
+    VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
+    videoPlayer.setLoop(false);
+    videoPlayer.setProgressCallBackSpaceMilliss(300);
+    videoPlayer.setDataSource(MP4_URL2);//播放地址设置
+    VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+    controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
+    boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
+    if(globalWindow) {
+        IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
+        videoPlayer.playOrPause();//开始异步准备播放,注意界面关闭不要销毁播放器实例
+    }
+```
+
 ###### 7.2.2、悬浮窗点击
 * 7.2.2.1、SDK内部提供了监听悬浮窗窗口播放器的关闭、点击回调监听器
 ```

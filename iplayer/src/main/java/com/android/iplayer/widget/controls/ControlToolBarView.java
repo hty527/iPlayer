@@ -140,6 +140,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
             //竖屏下处理标题栏和控制栏的左右两侧缩放
             int margin = PlayerUtils.getInstance().dpToPxInt(22f);
             mController.setPadding(margin,0,margin,0);
+            if(isPlaying()) reStartDelayedRunnable();
         }else{
             findViewById(R.id.controller_title).setVisibility(View.GONE);//视频标题
             findViewById(R.id.controller_title_back).setVisibility(showBack?View.VISIBLE:View.GONE);//返回按钮
