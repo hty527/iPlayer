@@ -6,7 +6,7 @@
 * 支持多播放器同时播放</br>
 * 支持自定义视频解码器、自定义控制器、自定义UI交互组件</br>
 * SDK自带默认解码器+控制器+UI交互组件(任意局部UI组件也支持自定义)、支持片段试看交互</br>
-* 支持任意界面开启无权限Activity级别可拖拽小窗口播放</br>
+* 支持任意界面无权限开启Activity级别可拖拽小窗口播放</br>
 * 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
 * 支持任意界面直接启动全屏播放</br>
 * 支持连续播放视频列表</br>
@@ -36,10 +36,7 @@
 
     //2.在你的模块build.gradle中添加：   
     dependencies {
-        implementation 'androidx.appcompat:appcompat:1.2.0' // 或 implementation 'com.android.support:appcompat-v7:+'
-
-        //播放器SDK
-        implementation 'com.github.hty527:iPlayer:2.0.0.5'
+        implementation 'com.github.hty527:iPlayer:2.0.0.6'
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>

@@ -1,4 +1,4 @@
-package com.android.iplayer.controller;
+package com.android.videoplayer.controller;
 
 import android.content.Context;
 import com.android.iplayer.base.BaseController;

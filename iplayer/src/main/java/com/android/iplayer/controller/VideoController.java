@@ -25,6 +25,7 @@ public class VideoController extends GestureController {
     private static final int MESSAGE_CONTROL_HIDE   = 10;//延时隐藏控制器
     private static final int MESSAGE_LOCKER_HIDE    = 11;//延时隐藏屏幕锁
     private static final int DELAYED_INVISIBLE      = 5000;//延时隐藏锁时长
+    private static final int MATION_DRAUTION        = 300;//控制器、控制锁等显示\隐藏过渡动画时长(毫秒)
     private View mController;//屏幕锁
     //是否播放(试看)完成\是否开启屏幕锁
     protected boolean isCompletion,isLocked;
