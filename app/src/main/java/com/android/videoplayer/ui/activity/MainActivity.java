@@ -8,18 +8,16 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
-import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.controls.ControWindowView;
 import com.android.iplayer.widget.controls.ControlCompletionView;
 import com.android.iplayer.widget.controls.ControlFunctionBarView;
 import com.android.iplayer.widget.controls.ControlGestureView;
@@ -198,7 +196,12 @@ public class MainActivity extends BaseActivity {
     private void startMiniWindowPlayer() {
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(this);
-            mVideoPlayer.initController();//初始化一个默认的控制器
+            VideoController controller=new VideoController(this);
+            //给播放器设置控制器
+            mVideoPlayer.setController(controller);
+            //给播放器控制器绑定需要的自定义UI交互组件
+            ControWindowView controWindowView=new ControWindowView(this);//加载中、开始播放
+            controller.addControllerWidget(controWindowView);
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**
@@ -245,6 +248,9 @@ public class MainActivity extends BaseActivity {
         VideoPlayer videoPlayer = new VideoPlayer(this);
         videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
         VideoController controller=new VideoController(videoPlayer.getContext());
+        /**
+         * 给播放器设置控制器
+         */
         videoPlayer.setController(controller);
         /**
          * 给播放器控制器绑定需要的自定义UI交互组件

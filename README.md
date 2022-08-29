@@ -16,7 +16,6 @@
 * Demo仿抖音播放示例，支持视频缓存、秒播</br>
 * Demo弹幕交互示例</br>
 * Demo Android8.0+画中画示例</br>
-* Demo 视频本地缓存</br>
 
 #### 二、[历史版本][1]
 [1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"

@@ -2,6 +2,8 @@ package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
@@ -59,12 +61,14 @@ public class PerviewPlayerActivity extends BaseActivity {
             public void onBuy() {
                 Logger.d(TAG,"单片购买");
                 //如果设置了setPlayCompletionRestoreDirection(false),需先退出横屏
+                Toast.makeText(getApplicationContext(),"单片购买",Toast.LENGTH_SHORT).show();
                 mVideoPlayer.isBackPressed();
             }
 
             @Override
             public void onVipBuy() {
                 Logger.d(TAG,"会员价格购买");
+                Toast.makeText(getApplicationContext(),"会员价格购买",Toast.LENGTH_SHORT).show();
                 //如果设置了setPlayCompletionRestoreDirection(false),需先退出横屏
                 mVideoPlayer.isBackPressed();
             }
