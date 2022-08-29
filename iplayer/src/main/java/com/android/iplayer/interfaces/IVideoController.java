@@ -137,16 +137,16 @@ public interface IVideoController {
     void addControllerWidget(IControllerView controllerView);
 
     /**
-     * @param index 添加的层级位置,默认是将UI控制组件添加到控制器上层
-     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
-     */
-    void addControllerWidget(IControllerView controllerView,int index);
-
-    /**
      * @param target 唯一的标识，设置此值后可在不同的场景下找到此值对应的Widget组件
      * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
      */
     void addControllerWidget(IControllerView controllerView,String target);
+
+    /**
+     * @param index 添加的层级位置,默认是将UI控制组件添加到控制器上层
+     * @param controllerView 添加自定义UI组件，必须是实现{@link IControllerView}接口的UI组件
+     */
+    void addControllerWidget(IControllerView controllerView,int index);
 
     /**
      * @param target 唯一的标识，设置此值后可在不同的场景下找到此值对应的Widget组件

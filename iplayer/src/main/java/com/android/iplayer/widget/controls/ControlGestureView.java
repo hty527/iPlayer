@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.android.iplayer.R;
 import com.android.iplayer.base.BaseControllerWidget;
 import com.android.iplayer.interfaces.IGestureControl;
@@ -25,7 +24,7 @@ import com.android.iplayer.utils.PlayerUtils;
  */
 public class ControlGestureView extends BaseControllerWidget implements IGestureControl {
 
-    private View mGesturePresent;//UI交互区域
+    private View mController;//UI交互区域
     private ImageView mPresentIcon;//ICON
     private TextView mPresentText;//进度文字
     private ProgressBar mPresentProgress;//亮度、声音进度
@@ -42,7 +41,7 @@ public class ControlGestureView extends BaseControllerWidget implements IGesture
     @Override
     public void initViews() {
         hide();
-        mGesturePresent = findViewById(R.id.gesture_present);
+        mController = findViewById(R.id.gesture_present);
         mPresentIcon = (ImageView) findViewById(R.id.gesture_present_icon);
         mPresentText = (TextView) findViewById(R.id.gesture_present_text);
         mPresentProgress = (ProgressBar) findViewById(R.id.gesture_present_progress);
@@ -135,10 +134,10 @@ public class ControlGestureView extends BaseControllerWidget implements IGesture
      * 进入竖屏模式 默认竖屏模式
      */
     private void enterPortrait() {
-        if(null!=mGesturePresent){
-            mGesturePresent.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(146f);
-            mGesturePresent.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(79f);
-            mGesturePresent.setBackgroundResource(R.drawable.player_gesture_content_portrait_bg);
+        if(null!= mController){
+            mController.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(146f);
+            mController.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(79f);
+            mController.setBackgroundResource(R.drawable.player_gesture_content_portrait_bg);
         }
         if(null!=mPresentProgress){
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
@@ -153,10 +152,10 @@ public class ControlGestureView extends BaseControllerWidget implements IGesture
      * 进入横屏模式
      */
     private void enterLandscape() {
-        if(null!=mGesturePresent){
-            mGesturePresent.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(168f);
-            mGesturePresent.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(99f);
-            mGesturePresent.setBackgroundResource(R.drawable.player_gesture_content_bg);
+        if(null!= mController){
+            mController.getLayoutParams().width=PlayerUtils.getInstance().dpToPxInt(168f);
+            mController.getLayoutParams().height=PlayerUtils.getInstance().dpToPxInt(99f);
+            mController.setBackgroundResource(R.drawable.player_gesture_content_bg);
         }
         if(null!=mPresentProgress){
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPresentProgress.getLayoutParams();
