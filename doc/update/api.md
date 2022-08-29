@@ -300,8 +300,9 @@
 * 9.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
 
 [11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
+[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
 #### 10、收费试看模式
-* 10.1、SDK默认Controller支持试看模式，分两步实现：
+* 10.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
     VideoController controller = mVideoPlayer.initController();
     //1、设置虚拟的视频总时长,即可开启试看模式
