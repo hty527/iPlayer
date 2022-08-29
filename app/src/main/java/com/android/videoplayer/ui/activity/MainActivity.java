@@ -185,7 +185,6 @@ public class MainActivity extends BaseActivity {
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
             IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
-            Logger.d(TAG, "startGoableWindow-->mVideoPlayer:" + videoPlayer);
             videoPlayer.playOrPause();//开始异步准备播放,注意界面关闭不要销毁播放器实例
         }
     }
