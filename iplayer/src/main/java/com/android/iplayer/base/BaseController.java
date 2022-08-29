@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -359,7 +360,9 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
             mControlWrapper = new ControlWrapper(this,mVideoPlayerControl);
         }
         controllerView.attachControlWrapper(mControlWrapper);
-        controllerView.setTarget(target);
+        if(TextUtils.isEmpty(controllerView.getTarget())){//未设置target情况下才主动为IControllerView添加target
+            controllerView.setTarget(target);
+        }
         mIControllerViews.add(controllerView);
         if(-1==index){
             addView(controllerView.getView(),layoutParams);

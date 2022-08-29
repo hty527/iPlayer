@@ -365,7 +365,6 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             //为控制器添加UI交互组件
             ControlToolBarView toolBarView=new ControlToolBarView(controller.getContext());//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
             toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
-            toolBarView.showMenus(false,false,false);
             ControlFunctionBarView functionBarView=new ControlFunctionBarView(controller.getContext());//底部时间、seek、静音、全屏功能栏
             ControlGestureView gestureView=new ControlGestureView(controller.getContext());//手势控制屏幕亮度、系统音量、快进、快退UI交互
             ControlCompletionView completionView=new ControlCompletionView(controller.getContext());//播放完成、重试
