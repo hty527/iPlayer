@@ -1,20 +1,6 @@
 # **iPlayer**
 
-### 免责声明：
-此项目中视频列表数据使用了开眼API，纯属Demo演示，无任何商业用途，禁止任何人将示例项目中的第三方API应用于商业用途，如果使用了，连带的法律责任与本作者无关!
-
-### 项目介绍：
-一个封装基础视频播放器功能交互的SDK。
-
-### 强烈推荐集成前先下载体验Apk，找到对应的功能后再开始集成：
-[Demo apk下载]: https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.0.apk?version=2.0.0 "Download"
-**[Demo apk下载]**
-
-### 历史版本
-[查看历史版本]: https://github.com/hty527/iPlayer/wiki/Version "历史版本"
-**[查看历史版本]**
-
-### SDK功能支持:
+#### 一、SDK基础功能及Demo示例:
 * 支持网络地址、直播流、本地Assets和Raw资源文件播放</br>
 * 支持播放倍速、缩放模式、静音、镜像等功能设置</br>
 * 支持多播放器同时播放</br>
@@ -30,13 +16,16 @@
 * Demo仿抖音播放示例，支持视频缓存、秒播</br>
 * Demo弹幕交互示例</br>
 * Demo Android8.0+画中画示例</br>
-***
-### Android SDK集成：
-```
-    集成前请下载体验Demo,复杂场景集成请参考Demo
-```
-#### 一、SDK配置及基础功能:
-* 1.项目根build.gradle及模块build.gradle配置</br>
+
+#### 二、[历史版本][1]
+[1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"
+
+#### 三、SDK集成
+* 强烈建议集成前[下载apk][2]体验找到自己想要实现的功能模块，后续集成可参考demo功能模块/br>
+
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.0.apk?version=2.0.0 "下载apk"
+
+##### 1、项目根build.gradle及模块build.gradle配置</br>
 ```
     //1.在你的根build.gradle中添加：
     allprojects {
@@ -53,14 +42,14 @@
         implementation 'com.github.hty527:iPlayer:2.0.0.4'
     }
 ```
-* 2.在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
+##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
 ```
     <com.android.iplayer.widget.VideoPlayer
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 ```
-* 3.播放器准备及开始播放</br>
+##### 3、播放器准备及开始播放</br>
 ```
     mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
     mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//固定播放器高度，或高度设置为:match_parent
@@ -73,7 +62,7 @@
     //异步开始准备播放
     mVideoPlayer.prepareAsync();
 ```
-* 4.生命周期处理</br>
+##### 4、生命周期处理</br>
 ```
     @Override
     protected void onResume() {
@@ -100,10 +89,9 @@
         mVideoPlayer.onDestroy();
     }
 ```
-### 自定义解码器、自定义UI交互组件、悬浮窗口播放等功能请阅读：**[接入文档]**
-[接入文档]: https://github.com/hty527/iPlayer/wiki/api "接入文档"
-
-### SDK及Demo部分功能快照：
+##### 5、自定义解码器、自定义UI交互组件、悬浮窗口播放等功能请阅读[接入文档][3]</br>
+[3]:https://github.com/hty527/iPlayer/wiki/api "接入文档"
+#### 四、SDK及Demo部分功能快照
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot1.jpg?q=1" width="270",height="585">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot2.jpg?q=2" width="270",height="585">
