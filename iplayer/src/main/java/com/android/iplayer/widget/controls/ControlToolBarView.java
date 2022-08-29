@@ -111,7 +111,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
             if(isNoimalScene()){
                 show();
             }
-            showControl(false);
+            showControl(true);
         }else if(state==PlayerState.STATE_PREPARE){
             hide();
         }

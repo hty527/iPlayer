@@ -183,7 +183,8 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             mController.setVisibility(GONE);
-                            if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
+                            AnimationUtils.getInstance().startAlphaAnimatioFrom(mProgressBar,MATION_DRAUTION,false,null);
+//                            if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
                         }
                     });
                 }else{
@@ -214,7 +215,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
                     show();
                 }
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);
-                showControl(false);
+                showControl(true);
                 break;
             case STATE_PLAY://缓冲结束恢复播放
                 if(null!=mPlayIcon) mPlayIcon.setImageResource(R.mipmap.ic_player_pause);

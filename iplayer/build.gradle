@@ -13,8 +13,8 @@ android {
         minSdkVersion 16
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 30
-        versionCode 20003
-        versionName "2.0.0.3"
+        versionCode 20004
+        versionName "2.0.0.4"
     }
     lintOptions {
         abortOnError false
