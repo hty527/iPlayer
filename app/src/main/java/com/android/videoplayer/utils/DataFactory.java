@@ -80,7 +80,7 @@ public class DataFactory {
         Version version=new Version();
         version.setCode("2.0.xx");
         version.setTime(getString(R.string.text_item_time,"待定,请持续关注"));
-        version.setDescript(getString(R.string.text_item_desc,"1、新增投屏TV功能"));
+        version.setDescript(getString(R.string.text_item_desc,"1、新增重力旋转功能，支持重力旋转开关及阻尼设置"));
         menu.setVersion(version);
         menus.add(menu);
         return menus;

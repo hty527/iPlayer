@@ -35,7 +35,7 @@
     <string name="text_item_home">Project homepage</string>
     <string name="text_item_version">Version of the trailer</string>
     <string name="text_item_time">Undetermined, please stay tuned</string>
-    <string name="text_item_desc">1、New screen projection TV function</string>
+    <string name="text_item_desc">1、New gravity rotation function, support the gravity rotation switch and damping setting</string>
     <string name="text_item_sub_noimal">Basis</string>
     <string name="text_item_sub_list">List</string>
     <string name="text_item_sub_window">Window</string>
