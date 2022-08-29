@@ -21,7 +21,7 @@
 [1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"
 
 #### 三、SDK集成
-* 强烈建议集成前[下载apk][2]体验找到自己想要实现的功能模块，后续集成可参考demo功能模块/br>
+* 强烈建议集成前[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo功能模块。
 
 [2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.0.apk?version=2.0.0 "下载apk"
 
@@ -91,7 +91,7 @@
 ```
 ##### 5、自定义解码器、自定义UI交互组件、悬浮窗口播放等功能请阅读[接入文档][3]</br>
 [3]:https://github.com/hty527/iPlayer/wiki/api "接入文档"
-#### 四、SDK及Demo部分功能快照
+#### 四、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot1.jpg?q=1" width="270",height="585">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot2.jpg?q=2" width="270",height="585">
