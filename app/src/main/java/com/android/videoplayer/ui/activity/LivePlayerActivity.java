@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.controller.LiveController;
+import com.android.videoplayer.controller.LiveController;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.widget.VideoPlayer;

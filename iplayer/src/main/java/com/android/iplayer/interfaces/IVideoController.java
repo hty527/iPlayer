@@ -9,8 +9,6 @@ import com.android.iplayer.model.PlayerState;
  */
 public interface IVideoController {
 
-    int MATION_DRAUTION            = 300;//控制器、控制锁等显示\隐藏过渡动画时长(毫秒)
-
     /** 播放器的顶部title组件默认标识 */
     String TARGET_CONTROL_TOOL          =   "toolBar";
 
