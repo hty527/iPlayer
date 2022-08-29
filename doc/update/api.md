@@ -249,7 +249,7 @@
 * 7.1.2、SDK支持在任意位置直接启动Activity级别悬浮窗播放：
 ```
     private void startMiniWindowPlayer() {
-        //播放器内部在收到返回事件时，检查到没有宿主ViewGroup会自动销毁播放器，测试应该在收到PlayerState.STATE_DESTROY状态时清除播放器变量
+        //播放器内部在收到返回事件时，检查到没有宿主ViewGroup时会自动销毁播放器，此时应该在收到PlayerState.STATE_DESTROY状态时清除播放器变量
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(this);
             VideoController controller=new VideoController(this);
@@ -297,7 +297,7 @@
 
 ##### 7.2、全局悬浮窗
 ###### 7.2.1、悬浮窗开启
-* 7.2.1.1、全局悬浮窗需要SYSTEM_ALERT_WINDOW权限，SDK内部会自动检测和申请SYSTEM_ALERT_WINDOW权限。可在任意位置开启悬浮窗窗口播放。
+* 7.2.1.1、全局悬浮窗需要SYSTEM_ALERT_WINDOW权限，SDK内部会自动检测和申请SYSTEM_ALERT_WINDOW权限。
 ``` 
     //1、申明SYSTEM_ALERT_WINDOW权限
     <!--如您的播放器需要支持全局悬浮窗窗口播放请申明此权限-->
