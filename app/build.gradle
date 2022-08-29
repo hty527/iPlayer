@@ -89,5 +89,5 @@ dependencies {
     //播放器
     implementation project(':iplayer')
     //播放器SDK
-//    implementation 'com.github.hty527:iPlayer:2.0.0.4'
+//    implementation 'com.github.hty527:iPlayer:2.0.0.5'
 }
