@@ -36,7 +36,9 @@
 
     //2.在你的模块build.gradle中添加：   
     dependencies {
-        implementation 'com.github.hty527:iPlayer:2.0.0.7'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.0.0.7'
+        //implementation 'com.github.hty527.iPlayer:ijk:1.0.10'//音视频解码器
+        //implementation 'com.github.hty527.iPlayer:videocache:1.0.10'//音视频缓存
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
