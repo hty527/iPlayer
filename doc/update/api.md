@@ -539,4 +539,13 @@
 ```
 ##### 7.2、自定义屏幕锁交互
 * 7.2.1、自定义Controller实现自己的屏幕锁交互
+##### 7.3、IJKPlayer库体积大小
+* 7.2.2、ijk支持5中CPU架构，需根据你的需要做筛选配置，在你使用IJKPlayer的模块的build.gradle中的defaultConfig中加入：
+```
+    defaultConfig {
+        ndk {
+            abiFilters 'arm64-v8a','armeabi-v7a','armeabi','x86','x86_64'
+        }
+    }
+```
 #### 更多文档持续更新中...
