@@ -41,8 +41,8 @@
             
         //可选，音视频解码器    
         //implementation 'com.github.hty527.iPlayer:ijk:2.0.1'
-        //可选，音视频解码器
-        //implementation 'com.github.hty527.iPlayer:videocache:2.0.1'//音视频缓存
+        //可选，音视频缓存
+        //implementation 'com.github.hty527.iPlayer:videocache:2.0.1'
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -94,9 +94,10 @@
 ```
 ##### 5、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
 [3]:https://github.com/hty527/iPlayer/wiki/api "wiki"
-#### 四、遇到问题请阅读文档[wiki][3]
-* 1、提交 [issue](https://github.com/hty527/iPlayer/issues)
-* 2、联系作者：584312311@qq.com
+#### 四、遇到问题
+* 1、阅读接入文档[wiki][3]
+* 2、提交 [issue](https://github.com/hty527/iPlayer/issues)
+* 3、联系作者：584312311@qq.com
 #### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot1.jpg?q=1" width="270",height="585">
