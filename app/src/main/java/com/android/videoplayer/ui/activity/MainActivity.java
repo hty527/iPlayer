@@ -235,7 +235,6 @@ public class MainActivity extends BaseActivity {
             float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
             //启动窗口播放
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
-//            mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//也可以使用内部默认的窗口宽高和位置属性
             mVideoPlayer.playOrPause();//开始异步准备播放
         }
     }
