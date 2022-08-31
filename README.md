@@ -98,6 +98,9 @@
 * 1、阅读接入文档[wiki][3]
 * 2、提交 [issue](https://github.com/hty527/iPlayer/issues)
 * 3、联系作者：584312311@qq.com
+* 4、项目无法下载或下载缓慢请至[码云][4]下载
+
+[4]:https://gitee.com/hty_Yuye/iPlayer "码云"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot1.jpg?q=1" width="270",height="585">
