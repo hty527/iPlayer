@@ -18,7 +18,7 @@
 * Demo Android8.0+画中画示例</br>
 
 #### 二、[历史版本][1]
-[1]:https://github.com/hty527/iVideoPlayer/wiki/Version "历史版本"
+[1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"
 
 #### 三、SDK集成
 * 强烈建议集成前[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo功能模块。
@@ -37,12 +37,12 @@
     //2.在你的模块build.gradle中添加：   
     dependencies {
         //播放器
-        implementation 'com.github.hty527.iVideoPlayer:iplayer:2.0.1'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.0.1'
             
         //可选，音视频解码器    
-        //implementation 'com.github.hty527.iVideoPlayer:ijk:2.0.1'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.0.1'
         //可选，音视频解码器
-        //implementation 'com.github.hty527.iVideoPlayer:videocache:2.0.1'//音视频缓存
+        //implementation 'com.github.hty527.iPlayer:videocache:2.0.1'//音视频缓存
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -93,8 +93,10 @@
     }
 ```
 ##### 5、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[接入文档][3]</br>
-[3]:https://github.com/hty527/iVideoPlayer/wiki/api "接入文档"
-#### 四、SDK及Demo部分功能预览
+[3]:https://github.com/hty527/iPlayer/wiki/api "接入文档"
+#### 四、遇到问题请阅读文档[wiki][4]
+[4]:https://github.com/hty527/iPlayer/wiki/api#异常现象及注意点 "wiki"
+#### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot1.jpg?q=1" width="270",height="585">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/shot2.jpg?q=2" width="270",height="585">
