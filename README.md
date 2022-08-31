@@ -23,7 +23,7 @@
 #### 三、SDK集成
 * 强烈建议集成前[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo功能模块。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.0.apk?version=2.0.0 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.1.apk?version=2.0.1 "下载apk"
 
 ##### 1、项目根build.gradle及模块build.gradle配置</br>
 ```
