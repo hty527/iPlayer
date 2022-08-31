@@ -82,12 +82,15 @@ dependencies {
     //网络数据
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    //解码器,根据自己需要实现
-    implementation project(':ijk')
-    //视频缓存,根据自己需要实现
-    implementation project(':videocache')
     //播放器
     implementation project(':iplayer')
+    implementation project(':ijk')
+    implementation project(':videocache')
+
     //播放器SDK
-//    implementation 'com.github.hty527:iPlayer:2.0.0.7'
+//    implementation 'com.github.hty527.iPlayer:iplayer:2.0.1'
+    //音视频解码器,根据自己需要实现
+//    implementation 'com.github.hty527.iPlayer:ijk:2.0.1'
+    //音视频缓存,根据自己需要实现
+//    implementation 'com.github.hty527.iPlayer:videocache:2.0.1'
 }
