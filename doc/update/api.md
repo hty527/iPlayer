@@ -25,14 +25,14 @@
 #### 3、交互组件API
 * 3.1、请阅读[IControllerView][3]
 
-[1]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoPlayerControl.java "IVideoPlayerControl"
-[2]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
-[3]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
+[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoPlayerControl.java "IVideoPlayerControl"
+[2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
+[3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
 * 4.1、SDK默认使用MediaPlayer解码器，Demo中示例了两套自定义解码器的使用,请参考：[JkMediaPlayer][4]和[ExoMediaPlayer][5]
 
-[4]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/JkMediaPlayer.java "JkMediaPlayer"
-[5]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
+[4]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/JkMediaPlayer.java "JkMediaPlayer"
+[5]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
 ```
     int MEDIA_CORE=1;
     /**
@@ -57,8 +57,8 @@
 * 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
 * 5.1.2、设置控制器到播放器
 
-[6]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseController.java "BaseController"
-[7]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/controller/GestureController.java "GestureController"
+[6]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseController.java "BaseController"
+[7]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/controller/GestureController.java "GestureController"
 ```
     VideoController controller=new VideoController(videoPlayer.getContext());
     mVideoPlayer.setController(controller);//将控制器绑定到播放器
@@ -71,8 +71,8 @@
 * 5.2.2、SDK提供了一套标题栏、底部控制栏、播放器状态(网络提示、播放失败)、播放完成、手势交互相应处理、Window窗口、列表模式 等UI交互组件。Controller的任意UI交互组件均支持自定义。
 * 5.2.3、自定义UI交互组件需要继承[BaseControllerWidget][8]，参考[IControllerView][9]接口回调来实现自己的交互：
 
-[8]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControllerWidget.java "BaseControllerWidget"
-[9]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
+[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControllerWidget.java "BaseControllerWidget"
+[9]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 ```
     /**
      * 1、给播放器设置一个控制器
@@ -160,7 +160,7 @@
 * 5.4.1、使用默认Controller+自定义交互组件时，SDK内部会为添加的每一个自定义UI组件绑定一个target，默认target请阅读[IVideoController][10]类。
 * 根据默认target寻找组件：
 
-[10]:https://github.com/hty527/iVideoPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
+[10]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 ```
     IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
     if(null!=controllerView&&controllerView instanceof ControlToolBarView){
@@ -363,8 +363,8 @@
 #### 9、直播拉流
 * 9.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
 
-[11]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
-[18]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
+[11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
+[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
 #### 10、收费试看模式
 * 10.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
@@ -393,7 +393,7 @@
 #### 11、连续播放
 * 可参考Demo中的[VideoListPlayerActivity][12]类
 
-[12]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
+[12]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
 ```
     //1、mVideoPlayer.setLoop(false);//连续播放模式下只能设置为false
     //2、实现连续播放可在收到播放完成时切换视频流
@@ -435,9 +435,9 @@
 ```
 * 12.1.2、列表转场衔接继续播放实现：主要参考Demo中的[ListPlayerChangedFragment][13]、[ListPlayerFragment][14]、[VideoDetailsActivity][15]类
 
-[13]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
-[14]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
-[15]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/activity/VideoDetailsActivity.java "VideoDetailsActivity"
+[13]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
+[14]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
+[15]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/activity/VideoDetailsActivity.java "VideoDetailsActivity"
 ``` 
     1、开始播放：参考ListPlayerFragment类的startPlayer()方法，注意标记当前mCurrentPosition和mPlayerContainer
     2、点击item跳转：参考ListPlayerChangedFragment类的onItemClick()方法，跳转到新的Activity
@@ -450,8 +450,8 @@
 #### 13、视频缓存
 * Demo的“防抖音”模块支持视频缓存和秒播，请参考[PagerPlayerAdapter][17]类的 //开始预加载 和 //结束预加载
 
-[16]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
-[17]:https://github.com/hty527/iVideoPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
+[16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
+[17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
 ### 二、异常现象及注意点
 #### 1、网络地址无法播放
 * 请检查AndroidManifest文件中是否声明INTERNET权限
