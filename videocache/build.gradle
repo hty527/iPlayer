@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+//发布到jitpack应用配置
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.hty527'//xxx:代表你的github用户名
 
 android {
     compileSdkVersion 30
@@ -8,9 +11,15 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 20010
-        versionName "1.0.10"
+        versionName "2.0.1"
     }
     lintOptions {
         abortOnError false
     }
+}
+
+// 打包源码jar
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = 'sources'
 }
