@@ -1,27 +1,27 @@
 # **iPlayer**
 
-#### 一、SDK基础功能及Demo示例:
+#### 一、SDK基础功能:
 * 支持网络地址、直播流、本地Assets和Raw资源文件播放</br>
 * 支持播放倍速、缩放模式、静音、镜像等功能设置</br>
-* 支持多播放器同时播放</br>
 * 支持自定义视频解码器、自定义控制器、自定义UI交互组件</br>
-* SDK自带默认解码器+控制器+UI交互组件(任意局部UI组件也支持自定义)、支持片段试看交互</br>
-* 支持任意界面无权限开启Activity级别可拖拽小窗口播放</br>
-* 支持任意界面开启可拖拽全局悬浮窗窗口播放</br>
-* 支持任意界面直接启动全屏播放</br>
+* 支持多播放器同时播放</br>
+* SDK默认控制器(局部UI交互可自定义)支持手势控制、付费试看</br>
+* 支持任意位置启动Activity级别悬浮窗口播放</br>
+* 支持任意位置启动全局悬浮窗口播放</br>
+* 支持任意位置直接启动全屏播放</br>
 * 支持连续播放视频列表</br>
-* Demo列表或组件之间无缝转场播放示例</br>
-* Demo悬浮窗窗口播放带参无缝跳转Activity示例</br>
-* Demo支持MediaPlayer、IjkPlayer、ExoPlayer三种解码器切换示例</br>
-* Demo仿抖音播放示例，支持视频缓存、秒播</br>
-* Demo弹幕交互示例</br>
-* Demo Android8.0+画中画示例</br>
+* Demo：列表或组件之间无缝转场播放</br>
+* Demo：全局悬浮窗播放转场跳转Activity</br>
+* Demo：MediaPlayer、IjkPlayer、ExoPlayer三种解码器切换</br>
+* Demo：仿抖音，支持视频缓存、秒播</br>
+* Demo：弹幕交互</br>
+* Demo：Android8.0+画中画示例</br>
 
 #### 二、[历史版本][1]
 [1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"
 
 #### 三、SDK集成
-* 强烈建议集成前[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo功能模块。
+* 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
 [2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.1.apk?version=2.0.1 "下载apk"
 
