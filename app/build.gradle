@@ -8,8 +8,8 @@ android {
         applicationId "com.android.videoplayer"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 20000
-        versionName "2.0.0"
+        versionCode 20010
+        versionName "2.0.1"
         multiDexEnabled true
         ndk {
             //使用abiFilters筛选你需要的so
@@ -83,14 +83,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     //播放器
-    implementation project(':iplayer')
-    implementation project(':ijk')
-    implementation project(':videocache')
+//    implementation project(':iplayer')
+//    implementation project(':ijk')
+//    implementation project(':videocache')
 
     //播放器SDK
-//    implementation 'com.github.hty527.iPlayer:iplayer:2.0.1'
+    implementation 'com.github.hty527.iPlayer:iplayer:2.0.1'
     //音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:ijk:2.0.1'
+    implementation 'com.github.hty527.iPlayer:ijk:2.0.1'
     //音视频缓存,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:videocache:2.0.1'
+    implementation 'com.github.hty527.iPlayer:videocache:2.0.1'
 }
