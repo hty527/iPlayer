@@ -5,6 +5,7 @@
 * 1.2、常用API
 ```
     mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//居中显示,定宽等高 (更多缩放模式请参考IMediaPlayer设置)
+    mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏模式下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳
     mVideoPlayer.setLoop(true);//是否循环播放
     mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
     mVideoPlayer.setSoundMute(false);//是否开启静音播放
@@ -583,4 +584,28 @@
         }
     }
 ```
+#### 9、横屏全屏沉浸样式
+* 在带有刘海、水滴、挖空的>=28（Android9）设备上，播放器在横屏时无法延申到状态栏，有两个解决方案：
+##### 9.1、播放器启用沉浸模式
+
+* 给播放器设置横屏状态下允许启用全屏沉浸样式式，再配合缩放模式，全屏画面比较震撼。
+```
+    mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏模式下是否启用沉浸样式，在开始全屏前设置生效，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳
+    //mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);//设置视频画面渲染模式为：全屏缩放模式
+```
+##### 9.2、Style配置启用沉浸模式
+* 如果不给播放器设置setLandscapeWindowTranslucent(true),还可以给Activity的style设置属性来达到全屏沉浸效果。两种方法二选一
+```
+    //添加这个属性达到全屏沉浸效果<item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+```
+
 #### 更多文档持续更新中...

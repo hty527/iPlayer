@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import com.android.iplayer.R;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IMediaPlayer;
@@ -59,7 +58,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private ViewGroup mParent;//自己的宿主
     private int[] mPlayerParams;//自己的宽高属性和位于父容器的层级位置
     private IVideoPlayer mIVideoPlayer;
-    private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态
+    private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true,mLandscapeWindowTranslucent;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态\横屏状态下是否启用沉浸式全屏
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
 
     public BasePlayer(Context context) {
@@ -124,7 +123,15 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
      */
     private void hideSystemBar(ViewGroup decorView) {
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
-        if(null!=activity&&!activity.isFinishing()){
+        if(null!=decorView&&null!=activity&&!activity.isFinishing()){
+            ILogger.d(TAG,"hideSystemBar-->"+mLandscapeWindowTranslucent);
+            //全屏模式下是否启用全屏沉浸样式，也可以给Activity的style添加沉浸属性：<item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
+            if(mLandscapeWindowTranslucent){
+                WindowManager.LayoutParams attributes = activity.getWindow().getAttributes();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    attributes.layoutInDisplayCutoutMode=WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                }
+            }
             int uiOptions = decorView.getSystemUiVisibility();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -191,6 +198,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
+        ILogger.d(TAG,"hasWindowFocus:"+hasWindowFocus+",mScreenOrientation:"+mScreenOrientation);
         if(hasWindowFocus&&mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
             hideSystemBar(getDecorView());
         }
@@ -421,6 +429,14 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void setPlayCompletionRestoreDirection(boolean restoreDirection) {
         this.mRestoreDirection=restoreDirection;
+    }
+
+    /**
+     * @param landscapeWindowTranslucent 设置当播放器在开启横屏状态下播放时是否启用全屏沉浸样式，true:启用沉浸式全屏 false:保留状态栏及菜单栏位置(隐藏状态栏及菜单栏图标及按钮)，使用标准的全屏样式
+     */
+    @Override
+    public void setLandscapeWindowTranslucent(boolean landscapeWindowTranslucent) {
+        this.mLandscapeWindowTranslucent = landscapeWindowTranslucent;
     }
 
     /**

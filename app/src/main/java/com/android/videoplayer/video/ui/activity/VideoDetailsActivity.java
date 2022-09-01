@@ -243,7 +243,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             mVideoPlayer=new VideoPlayer(this);
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
-
+            mVideoPlayer.setLandscapeWindowTranslucent(true);
             //为播放器添加控制器
             VideoController controller=new VideoController(mVideoPlayer.getContext());
             mVideoPlayer.setController(controller);

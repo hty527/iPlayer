@@ -438,6 +438,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 }
             });
             mVideoPlayer.setLoop(true);
+            mVideoPlayer.setLandscapeWindowTranslucent(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
         }
     }
