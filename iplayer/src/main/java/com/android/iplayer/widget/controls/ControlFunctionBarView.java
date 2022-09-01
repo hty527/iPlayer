@@ -163,7 +163,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
             if(mController.getVisibility()!=View.VISIBLE){
                 if(null!=mProgressBar) mProgressBar.setVisibility(GONE);
                 if(isAnimation){
-                    AnimationUtils.getInstance().startTranslateBottomToLocat(mController, MATION_DRAUTION,null);
+                    AnimationUtils.getInstance().startTranslateBottomToLocat(mController, getAnimationDuration(),null);
                 }else{
                     mController.setVisibility(View.VISIBLE);
                 }
@@ -179,11 +179,11 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
         if(null!=mController){
             if(mController.getVisibility()!=View.GONE){
                 if(isAnimation){
-                    AnimationUtils.getInstance().startTranslateLocatToBottom(mController, MATION_DRAUTION, new AnimationUtils.OnAnimationListener() {
+                    AnimationUtils.getInstance().startTranslateLocatToBottom(mController, getAnimationDuration(), new AnimationUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             mController.setVisibility(GONE);
-                            AnimationUtils.getInstance().startAlphaAnimatioFrom(mProgressBar,MATION_DRAUTION,false,null);
+                            AnimationUtils.getInstance().startAlphaAnimatioFrom(mProgressBar,getAnimationDuration(),false,null);
 //                            if(null!=mProgressBar) mProgressBar.setVisibility(View.VISIBLE);
                         }
                     });

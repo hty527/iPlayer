@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.videoplayer.media.help.ExoMediaSourceHelper;
@@ -133,7 +132,7 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     @Override
     public long getCurrentPosition() {
         if(null!=mMediaPlayer){
-            if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(this,mMediaPlayer.getBufferedPercentage());
+            if(null!=mListener) mListener.onBufferUpdate(this,mMediaPlayer.getBufferedPercentage());
             return mMediaPlayer.getCurrentPosition();
         }
         return 0;
@@ -205,51 +204,7 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
             mMediaPlayer.removeListener(this);
             mMediaPlayer.release();
         }
-    }
-
-    @Override
-    public void setOnPreparedListener(OnPreparedListener listener) {
-        this.mOnPreparedListener=listener;
-    }
-
-    @Override
-    public void setOnCompletionListener(OnCompletionListener listener) {
-        this.mOnCompletionListener=listener;
-    }
-
-    @Override
-    public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
-        this.mOnBufferingUpdateListener=listener;
-    }
-
-    @Override
-    public void setOnSeekCompleteListener(OnSeekCompleteListener listener) {
-        this.mOnSeekCompleteListener=listener;
-    }
-
-    @Override
-    public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
-        this.mOnVideoSizeChangedListener=listener;
-    }
-
-    @Override
-    public void setOnErrorListener(OnErrorListener listener) {
-        this.mOnErrorListener=listener;
-    }
-
-    @Override
-    public void setOnInfoListener(OnInfoListener listener) {
-        this.mOnInfoListener=listener;
-    }
-
-    @Override
-    public void setOnTimedTextListener(OnTimedTextListener listener) {
-        this.mOnTimedTextListener=listener;
-    }
-
-    @Override
-    public void setOnMessageListener(OnMessageListener listener) {
-
+        super.release();
     }
 
     //==========================================EXO解码器回调=========================================
@@ -259,28 +214,28 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
 //        Logger.d(TAG,"onPlaybackStateChanged-->playbackState:"+playbackState+",isPlaying:"+isPlaying);
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, IMediaPlayer.MEDIA_INFO_BUFFERING_START,0);
+                if(null!=mListener) mListener.onInfo(this, IMediaPlayer.MEDIA_INFO_BUFFERING_START,0);
                 break;
             case Player.STATE_READY:
                 if(null!=mMediaPlayer) mMediaPlayer.setPlayWhenReady(true);
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, isPlaying ? IMediaPlayer.MEDIA_INFO_BUFFERING_END : IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
+                if(null!=mListener) mListener.onInfo(this, isPlaying ? IMediaPlayer.MEDIA_INFO_BUFFERING_END : IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
                 isPlaying=true;
                 break;
             case Player.STATE_ENDED:
-                if(null!=mOnCompletionListener) mOnCompletionListener.onCompletion(null);
+                if(null!=mListener) mListener.onCompletion(this);
                 break;
             default:
-                if(null!=mOnInfoListener) mOnInfoListener.onInfo(this, playbackState,0);
+                if(null!=mListener) mListener.onInfo(this, playbackState,0);
         }
     }
 
     @Override
     public void onPlayerError(PlaybackException error) {
-        if(null!=mOnErrorListener) mOnErrorListener.onError(this,error.errorCode,0);
+        if(null!=mListener) mListener.onError(this,error.errorCode,0);
     }
 
     @Override
     public void onVideoSizeChanged(VideoSize videoSize) {
-        if(null!=mOnVideoSizeChangedListener) mOnVideoSizeChangedListener.onVideoSizeChanged(this, videoSize.width, videoSize.height,0,0);
+        if(null!=mListener) mListener.onVideoSizeChanged(this, videoSize.width, videoSize.height,0,0);
     }
 }

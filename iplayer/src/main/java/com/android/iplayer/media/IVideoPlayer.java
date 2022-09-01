@@ -11,6 +11,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayerControl;
 import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.listener.OnMediaEventListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.media.core.MediaPlayer;
 import com.android.iplayer.model.PlayerState;
@@ -28,9 +29,7 @@ import java.util.TimerTask;
  * Desc:视频解码\播放\进度更新\特性功能等处理
  * 1、可支持用户自定义视频解码器，内部默认使用系统的MediaPlayer解码器。详细使用请参考BasePlayer文档描述
  */
-public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListener,
-        IMediaPlayer.OnCompletionListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnVideoSizeChangedListener,
-        IMediaPlayer.OnErrorListener, IMediaPlayer.OnSeekCompleteListener, AudioFocus.OnAudioFocusListener {
+public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnAudioFocusListener {
 
     private static final String TAG = IVideoPlayer.class.getSimpleName();
     //播放器容器与播放器管理者绑定关系的监听器，必须实现监听
@@ -117,13 +116,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             mMediaPlayer = newInstanceMediaPlayer();
             BasePlayer videoPlayer = mIMediaPlayerControl.getVideoPlayer();
             ILogger.d(TAG,getString(R.string.player_core_name,"解码器内核：")+mMediaPlayer.getClass().getSimpleName());
-            mMediaPlayer.setOnBufferingUpdateListener(this);
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.setOnInfoListener(this);
-            mMediaPlayer.setOnVideoSizeChangedListener(this);
-            mMediaPlayer.setOnErrorListener(this);
-            mMediaPlayer.setOnSeekCompleteListener(this);
+            mMediaPlayer.setMediaEventListener(this);
             mMediaPlayer.setLooping(mLoop);
             if(mSoundMute){
                 mMediaPlayer.setVolume(0,0);
@@ -176,28 +169,42 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     }
 
     @Override
-    public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+    public void onPrepared(IMediaPlayer mp) {
+        ILogger.d(TAG,"onPrepared-->seek:"+mSeekDuration);
+        if(null!=mMediaPlayer){
+            mp.start();
+        }else{
+            mSeekDuration=0;
+            onError(null,0,0);
+        }
+    }
+
+    @Override
+    public void onBufferUpdate(IMediaPlayer mp, int percent) {
 //        ILogger.d(TAG,"onBufferingUpdate-->percent:"+percent);
         if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onBuffer(percent);
     }
 
     @Override
-    public void onCompletion(IMediaPlayer mp) {
-        ILogger.d(TAG,"onCompletion："+mLoop+",mp:"+mp);
+    public void onSeekComplete(IMediaPlayer mp) {
+        ILogger.d(TAG,"onSeekComplete,buffer:");
         mSeekDuration=0;
-        stopTimer();
-        sPlayerState = PlayerState.STATE_COMPLETION;
-        onPlayerState(sPlayerState,getString(R.string.player_media_completion,"播放完成"));
+        startTimer();
+        sPlayerState = PlayerState.STATE_PLAY;
+        onPlayerState(sPlayerState,getString(R.string.player_media_seek,"快进快退恢复播放"));
     }
 
     @Override
-    public boolean onError(IMediaPlayer mp, int what, int extra) {
-        ILogger.d(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
-        if(-38==what) return true;
-        stopTimer();
-        sPlayerState = PlayerState.STATE_ERROR;
-        onPlayerState(sPlayerState,getErrorMessage(what));
-        return true;
+    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+        ILogger.d(TAG,"onVideoSizeChanged,width:"+width+",height:"+height);
+        this.mVideoWidth=width;
+        this.mVideoHeight=height;
+        if(null!= mRenderView){
+            mRenderView.setVideoSize(width,height);
+            mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
+            mRenderView.setSarSize(sar_num,sar_den);
+        }
+        if(null!=mIMediaPlayerControl) mIMediaPlayerControl.onVideoSizeChanged(width,height);
     }
 
     /**
@@ -238,35 +245,22 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     }
 
     @Override
-    public void onPrepared(IMediaPlayer mp) {
-        ILogger.d(TAG,"onPrepared-->seek:"+mSeekDuration);
-        if(null!=mMediaPlayer){
-            mp.start();
-        }else{
-            mSeekDuration=0;
-            onError(null,0,0);
-        }
-    }
-
-    @Override
-    public void onSeekComplete(IMediaPlayer mp) {
-        ILogger.d(TAG,"onSeekComplete,buffer:");
+    public void onCompletion(IMediaPlayer mp) {
+        ILogger.d(TAG,"onCompletion："+mLoop+",mp:"+mp);
         mSeekDuration=0;
-        startTimer();
-        sPlayerState = PlayerState.STATE_PLAY;
-        onPlayerState(sPlayerState,getString(R.string.player_media_seek,"快进快退恢复播放"));
+        stopTimer();
+        sPlayerState = PlayerState.STATE_COMPLETION;
+        onPlayerState(sPlayerState,getString(R.string.player_media_completion,"播放完成"));
     }
 
     @Override
-    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
-        ILogger.d(TAG,"onVideoSizeChanged,width:"+width+",height:"+height);
-        this.mVideoWidth=width;
-        this.mVideoHeight=height;
-        if(null!= mRenderView){
-            mRenderView.setVideoSize(width,height);
-            mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
-        }
-        if(null!=mIMediaPlayerControl) mIMediaPlayerControl.onVideoSizeChanged(width,height);
+    public boolean onError(IMediaPlayer mp, int what, int extra) {
+        ILogger.d(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
+        if(-38==what) return true;
+        stopTimer();
+        sPlayerState = PlayerState.STATE_ERROR;
+        onPlayerState(sPlayerState,getErrorMessage(what));
+        return true;
     }
 
     /**

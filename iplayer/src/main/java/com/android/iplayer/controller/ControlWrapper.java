@@ -121,6 +121,16 @@ public class ControlWrapper {
         if(null!= mController) mController.hideAllController(isAnimation);
     }
 
+    /**
+     * @return 返回控制器的各UI组件显示、隐藏动画持续时间戳，单位：毫秒
+     */
+    public long getAnimationDuration() {
+        if(null!= mController) {
+            return mController.getAnimationDuration();
+        }
+        return IVideoController.MATION_DRAUTION;
+    }
+
     //========================================播放器常用功能方法========================================
 
     /**

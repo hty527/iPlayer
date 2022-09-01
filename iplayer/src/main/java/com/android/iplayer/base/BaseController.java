@@ -41,8 +41,10 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT,mPlayerScene=IVideoController.SCENE_NOIMAL;//当前控制器(播放器)方向\当前控制器(播放器)场景
     protected LinkedList<IControllerView> mIControllerViews =new LinkedList<>();//所有自定义UI控制器组件
     private ControlWrapper mControlWrapper;
+    protected long mAnimationDuration=MATION_DRAUTION;
     protected boolean isCompletion;//是否播放(试看)完成
     protected long mPreViewTotalTime;//试看模式下总时长
+
 
     protected class ExHandel extends Handler{
         public ExHandel(Looper looper){
@@ -389,6 +391,21 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     /**
+     * 根据组件tag标识寻找组件实例
+     * @param target 标识
+     * @return 组件实例化的对象
+     */
+    @Override
+    public IControllerView findControlWidgetByTag(String target) {
+        for (IControllerView iControllerView : mIControllerViews) {
+            if(target.equals(iControllerView.getTarget())){
+                return iControllerView;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 移除已添加的自定义UI组件
      * @param controllerView 移除这个实例的控制器
      */
@@ -655,7 +672,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * 返回是否是Activity悬浮窗窗口模式
      * @return true:当前正处于Activity窗口模式 false:当前不处于Activity窗口模式
      */
-    public boolean isActivityWindow() {
+    protected boolean isActivityWindow() {
         return SCENE_ACTIVITY_WINDOW ==getPlayerScene();
     }
 
@@ -663,7 +680,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * 返回是否是全局悬浮窗窗口模式
      * @return true:当前正处于全局悬浮窗窗口模式 false:当前不处于全局悬浮窗窗口模式
      */
-    public boolean isGlobalWindow() {
+    protected boolean isGlobalWindow() {
         return SCENE_GLOBAL_WINDOW==getPlayerScene();
     }
 
@@ -671,7 +688,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * 返回是否是画中画窗口模式
      * @return true:当前正处于画中画窗口模式 false:当前不处于画中画窗口模式
      */
-    public boolean isPipWindow() {
+    protected boolean isPipWindow() {
         return SCENE_PIP_WINDOW==getPlayerScene();
     }
 
@@ -679,22 +696,8 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * 是否处于列表模式下播放
      * @return true:是 false:否
      */
-    public boolean isListPlayerScene() {
+    protected boolean isListPlayerScene() {
         return SCENE_LISTS==getPlayerScene();
-    }
-
-    /**
-     * 根据组件tag标识寻找组件实例
-     * @param tag 标识
-     * @return 组件实例化的对象
-     */
-    public IControllerView findControlWidgetByTag(String tag) {
-        for (IControllerView iControllerView : mIControllerViews) {
-            if(tag.equals(iControllerView.getTarget())){
-                return iControllerView;
-            }
-        }
-        return null;
     }
 
     /**
@@ -774,4 +777,16 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     //重新开始延时任务。适用于：当有组件产生了交互后，需要重新开始倒计时关闭控制任务时的场景
     @Override
     public void reStartDelayedRunnable() {}
+
+    //设置控制器的各UI组件显示、隐藏动画持续时间戳，单位：毫秒
+    @Override
+    public void setAnimationDuration(long animationDuration) {
+        mAnimationDuration = animationDuration;
+    }
+
+    //返回控制器的各UI组件显示、隐藏动画持续时间戳，单位：毫秒
+    @Override
+    public long getAnimationDuration() {
+        return mAnimationDuration;
+    }
 }

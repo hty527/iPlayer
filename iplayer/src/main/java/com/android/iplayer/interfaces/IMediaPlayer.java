@@ -1,10 +1,9 @@
 package com.android.iplayer.interfaces;
 
 import android.content.res.AssetFileDescriptor;
-import android.os.Bundle;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-
+import com.android.iplayer.listener.OnMediaEventListener;
 import java.io.IOException;
 import java.util.Map;
 
@@ -81,6 +80,8 @@ public interface IMediaPlayer {
     int MEDIA_ERROR_3XX_OVERFLOW            = -10018;
     /** 播放地址无效,只在多URL播放时出现 */
     int MEDIA_ERROR_INVALID_URL             = -10019;
+
+    void setMediaEventListener(OnMediaEventListener listener);
 
     /**
      * 设置是否循环播放
@@ -233,125 +234,4 @@ public interface IMediaPlayer {
      * 释放播放器内部缓存及状态,释放后所有已设置的监听器失效
      */
     void release();
-
-    /**
-     * 设置播放器准备监听器,当调用{@link #prepareAsync()}时必须实现异步监听接口,并在异步回调onPrepared()方法中开始播放视频
-     * @param listener
-     */
-    void setOnPreparedListener(OnPreparedListener listener);
-
-    /**
-     * 设置播放完成监听器,当设置{@link #setLooping(boolean loop)}为true时,此回调设置无效
-     * @param listener
-     */
-    void setOnCompletionListener(OnCompletionListener listener);
-
-    /**
-     * 设置缓冲监听器
-     * @param listener
-     */
-    void setOnBufferingUpdateListener(OnBufferingUpdateListener listener);
-
-    /**
-     * 设置快进\快退监听器
-     * @param listener
-     */
-    void setOnSeekCompleteListener(OnSeekCompleteListener listener);
-
-    /**
-     * 设置视频分辨率变化监听器
-     * @param listener
-     */
-    void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
-
-    /**
-     * 设置错误监听器
-     * @param listener
-     */
-    void setOnErrorListener(OnErrorListener listener);
-
-    /**
-     * 设置状态监听器
-     * @param listener
-     */
-    void setOnInfoListener(OnInfoListener listener);
-
-    /**
-     * 设置字幕监听器
-     * @param listener
-     */
-    void setOnTimedTextListener(OnTimedTextListener listener);
-
-    /**
-     * 设置自定义消息监听器,应用场景:播放器与自由服务器交互时消息透传
-     * @param listener
-     */
-    void setOnMessageListener(OnMessageListener listener);
-
-    /**
-     * 与{@link #prepareAsync()}相对应,在调用{@link #prepareAsync()}之后且准备成功会发出onPrepared回调
-     */
-    interface OnPreparedListener {
-        void onPrepared(IMediaPlayer mp);
-    }
-
-    /**
-     * 播放完成时会发出此回调
-     */
-    interface OnCompletionListener {
-        void onCompletion(IMediaPlayer mp);
-    }
-
-    interface OnBufferingUpdateListener {
-        void onBufferingUpdate(IMediaPlayer mp, int percent);
-    }
-
-    /**
-     * 在seek成功后会发出此回调
-     */
-    interface OnSeekCompleteListener {
-        void onSeekComplete(IMediaPlayer mp);
-    }
-
-    /**
-     * 视频的宽高发生变化时会有相应的回调
-     */
-    interface OnVideoSizeChangedListener {
-        void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den);
-    }
-
-    /**
-     * 错误监听器,播放器遇到错误时会将相应的错误码通过此回调接口告知开发者
-     */
-    interface OnErrorListener {
-        boolean onError(IMediaPlayer mp, int what, int extra);
-    }
-
-    /**
-     * 消息监听器,会将关于播放器的消息告知开发者,例如:视频渲染、音频渲染等
-     */
-    interface OnInfoListener {
-        boolean onInfo(IMediaPlayer mp, int what, int extra);
-    }
-
-    /**
-     * 字幕监听器
-     */
-    interface OnTimedTextListener {
-        void onTimedText(IMediaPlayer mp, String text);
-    }
-
-    /**
-     * 日志回调监听器,播放器会将收集的日志交予开发者
-     */
-    interface OnLogEventListener {
-        void onLogEvent(IMediaPlayer mp, String log);
-    }
-
-    /**
-     * 扩展：live直播流模式下消息通道监听器,可设置此监听器获取主播端通过消息通道发送的信息
-     */
-    interface OnMessageListener {
-        void onMessage(IMediaPlayer mp, Bundle bundle);
-    }
 }

@@ -74,7 +74,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
         if(null!=mController){
             if(mController.getVisibility()!=View.VISIBLE){
                 if(isAnimation){
-                    AnimationUtils.getInstance().startTranslateTopToLocat(mController, MATION_DRAUTION,null);
+                    AnimationUtils.getInstance().startTranslateTopToLocat(mController, getAnimationDuration(),null);
                 }else{
                     mController.setVisibility(View.VISIBLE);
                 }
@@ -90,7 +90,7 @@ public class ControlToolBarView extends BaseControllerWidget implements View.OnC
         if(null!=mController){
             if(mController.getVisibility()!=View.GONE){
                 if(isAnimation){
-                    AnimationUtils.getInstance().startTranslateLocatToTop(mController, MATION_DRAUTION, new AnimationUtils.OnAnimationListener() {
+                    AnimationUtils.getInstance().startTranslateLocatToTop(mController, getAnimationDuration(), new AnimationUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             mController.setVisibility(GONE);
