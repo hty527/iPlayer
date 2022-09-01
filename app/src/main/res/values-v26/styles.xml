@@ -8,6 +8,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
     </style>
+    <!--沉浸样式<item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>-->
     <!--透明StyleTheme-->
     <style name="TranslucentTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>

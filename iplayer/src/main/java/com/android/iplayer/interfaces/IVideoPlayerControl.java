@@ -97,6 +97,11 @@ public interface IVideoPlayerControl<V extends BaseController> {
     void setPlayCompletionRestoreDirection(boolean restoreDirection);
 
     /**
+     * @param landscapeWindowTranslucent 开始全屏前设置生效，设置当播放器在开启横屏状态下播放时是否启用全屏沉浸样式，true:启用沉浸式全屏 false:保留状态栏及菜单栏位置(隐藏状态栏及菜单栏图标及按钮)，使用标准的全屏样式
+     */
+    void setLandscapeWindowTranslucent(boolean landscapeWindowTranslucent);
+
+    /**
      * 设置播放器在移动网络能否继续工作
      * @param mobileNetwork 设置播放器在移动网络能否继续工作 true:允许工作 flase:禁止
      */
