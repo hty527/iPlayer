@@ -8,6 +8,7 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
@@ -23,9 +24,10 @@ import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.media.JkMediaPlayer;
-import com.android.videoplayer.video.ui.widget.SdkDefaultFuncation;
+import com.android.videoplayer.media.render.CoustomSurfaceView;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.Logger;
+import com.android.videoplayer.video.ui.widget.SdkDefaultFuncation;
 
 /**
  * created by hty
@@ -35,6 +37,7 @@ import com.android.videoplayer.utils.Logger;
 public class VideoPlayerActivity extends BaseActivity {
 
     private int MEDIA_CORE=0;//多媒体解码器 0:系统默认 1:ijk 2:exo
+    private int RENDER_CORE=0;//画面渲染器 0:TextureView 1:SurfaceView
     private VideoController mController;//控制器
     private SdkDefaultFuncation mSdkDefaultFuncation;//播放器支持更多功能的交互示例
 
@@ -121,9 +124,10 @@ public class VideoPlayerActivity extends BaseActivity {
         /**
          * 如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
          */
-        //自定义解码器、播放状态监听。
+        //自定义解码器\自定义画面渲染器，在开始播放前设置监听并返回生效
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
 
+            //自定义解码器
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if(1==MEDIA_CORE){
@@ -132,6 +136,16 @@ public class VideoPlayerActivity extends BaseActivity {
                     return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器
                 }else{
                     return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
+                }
+            }
+
+            //自定义画面渲染器
+            @Override
+            public IVideoRenderView createRenderView() {
+                if(1==RENDER_CORE){
+                    return new CoustomSurfaceView(VideoPlayerActivity.this);//不推荐使用SurfaceView,SurfaceView在横竖屏切换时会有短暂黑屏及镜像失效
+                }else{
+                    return null; //返回null时,SDK内部会自动使用自定义的MediaTextureView渲染器,自定义渲染器请参考Demo中CoustomSurfaceView类
                 }
             }
 
@@ -202,6 +216,11 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public void onMediaCore(int mediaCore) {
                 MEDIA_CORE = mediaCore;
+            }
+
+            @Override
+            public void onRenderCore(int renderCore) {
+                RENDER_CORE = renderCore;
             }
         });
     }

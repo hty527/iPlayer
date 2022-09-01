@@ -1,6 +1,7 @@
 package com.android.iplayer.listener;
 
 import com.android.iplayer.base.AbstractMediaPlayer;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.model.PlayerState;
 
 /**
@@ -10,10 +11,16 @@ import com.android.iplayer.model.PlayerState;
  */
 public abstract class OnPlayerEventListener {
     /**
-     * 宿主必须实现,返回一个自定义多媒体解码器,如果返回为空,则适用内部默认的DefaultMediaPlayer解码器
+     * 如需自定义解码器,可复写此方法并返回一个继承自AbstractMediaPlayer的自定义多媒体解码器,如果返回为空,则适用内部默认的DefaultMediaPlayer解码器
      * @return 一个自定义的多媒体解码器
      */
-    public abstract AbstractMediaPlayer createMediaPlayer();
+    public AbstractMediaPlayer createMediaPlayer(){return null;}
+
+    /**
+     * 如需自定义解码器,可复写此方法并返回一个实现了IVideoRenderView接口的自定义画面渲染器,如果返回为空,则适用内部默认的MediaTextureView解码器
+     * @return
+     */
+    public IVideoRenderView createRenderView(){return null;}
 
     /**
      * 播放器内部各状态

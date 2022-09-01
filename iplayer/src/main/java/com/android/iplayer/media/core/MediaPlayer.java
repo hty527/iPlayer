@@ -7,6 +7,8 @@ import android.media.TimedText;
 import android.net.Uri;
 import android.os.Build;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+
 import androidx.annotation.RequiresApi;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.utils.PlayerUtils;
@@ -46,6 +48,11 @@ public class MediaPlayer extends AbstractMediaPlayer {
     @Override
     public void setSurface(Surface surface) {
         if(null!=mMediaPlayer) mMediaPlayer.setSurface(surface);
+    }
+
+    @Override
+    public void setDisplay(SurfaceHolder surfaceHolder) {
+        if(null!=mMediaPlayer) mMediaPlayer.setDisplay(surfaceHolder);
     }
 
     @Override

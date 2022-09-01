@@ -11,6 +11,7 @@
     <string name="player_locker_flase">已解锁</string>
     <string name="player_locker_true">已锁定</string>
     <string name="player_core_name">解码器内核：</string>
+    <string name="player_render_name">渲染器内核：</string>
     <string name="player_media_completion">播放完成</string>
     <string name="player_media_start">首帧渲染</string>
     <string name="player_media_buffer_start">缓冲开始</string>

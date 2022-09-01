@@ -11,6 +11,7 @@
     <string name="player_locker_flase">Unlocked</string>
     <string name="player_locker_true">Locked</string>
     <string name="player_core_name">Decoder core:</string>
+    <string name="player_render_name">Render core:</string>
     <string name="player_media_completion">Play complete</string>
     <string name="player_media_start">First frame rendering</string>
     <string name="player_media_buffer_start">Buffer start</string>

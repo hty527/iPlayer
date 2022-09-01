@@ -6,6 +6,8 @@ import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.videoplayer.media.help.RawDataSourceProvider;
 import java.io.IOException;
@@ -49,6 +51,11 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
     @Override
     public void setSurface(Surface surface) {
         if(null!=mMediaPlayer) mMediaPlayer.setSurface(surface);
+    }
+
+    @Override
+    public void setDisplay(SurfaceHolder surfaceHolder) {
+        if(null!=mMediaPlayer) mMediaPlayer.setDisplay(surfaceHolder);
     }
 
     @Override

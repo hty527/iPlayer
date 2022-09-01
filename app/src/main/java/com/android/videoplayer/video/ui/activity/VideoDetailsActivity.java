@@ -21,6 +21,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
@@ -33,6 +34,7 @@ import com.android.iplayer.widget.controls.ControlListView;
 import com.android.iplayer.widget.controls.ControlLoadingView;
 import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.iplayer.widget.controls.ControlToolBarView;
+import com.android.iplayer.widget.view.MediaTextureView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Params;
@@ -283,6 +285,11 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
                     return new JkMediaPlayer(VideoDetailsActivity.this);
+                }
+
+                @Override
+                public IVideoRenderView createRenderView() {
+                    return new MediaTextureView(VideoDetailsActivity.this);
                 }
 
                 @Override

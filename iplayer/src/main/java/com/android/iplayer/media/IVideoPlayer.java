@@ -2,10 +2,7 @@ package com.android.iplayer.media;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.SurfaceTexture;
 import android.text.TextUtils;
-import android.view.Surface;
-import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.android.iplayer.R;
@@ -13,12 +10,13 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayerControl;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.media.core.MediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AudioFocus;
-import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ILogger;
+import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ThreadPool;
 import com.android.iplayer.widget.view.MediaTextureView;
 import java.util.Timer;
@@ -32,16 +30,14 @@ import java.util.TimerTask;
  */
 public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListener,
         IMediaPlayer.OnCompletionListener, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnInfoListener, IMediaPlayer.OnVideoSizeChangedListener,
-        IMediaPlayer.OnErrorListener, IMediaPlayer.OnSeekCompleteListener, TextureView.SurfaceTextureListener, AudioFocus.OnAudioFocusListener {
+        IMediaPlayer.OnErrorListener, IMediaPlayer.OnSeekCompleteListener, AudioFocus.OnAudioFocusListener {
 
     private static final String TAG = IVideoPlayer.class.getSimpleName();
     //播放器容器与播放器管理者绑定关系的监听器，必须实现监听
     private IMediaPlayerControl mIMediaPlayerControl;
     //播放器画面渲染核心
     private AbstractMediaPlayer mMediaPlayer;//视频格式文件解码器
-    private MediaTextureView mTextureView;//画面渲染
-    private Surface mSurface;
-    private SurfaceTexture mSurfaceTexture;
+    private IVideoRenderView mRenderView;//画面渲染
     private AudioFocus mAudioFocusManager;//多媒体焦点监听,失去焦点暂停播放
     //内部播放器状态,初始为默认/重置状态
     private PlayerState sPlayerState = PlayerState.STATE_RESET;
@@ -99,6 +95,21 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     }
 
     /**
+     * 实例化一个播放器画面渲染器,如果宿主自定义渲染器则使用宿主自定义渲染器,否则使用内部默认渲染器
+     * @param context 上下文
+     * @return 返回一个自定义的VideoRenderView
+     */
+    private IVideoRenderView newInstanceRenderView(Context context) {
+        IVideoRenderView renderView;
+        renderView = mIMediaPlayerControl.getRenderView();
+        if(null==renderView){
+            renderView=new MediaTextureView(context);
+        }
+        renderView.attachMediaPlayer(mMediaPlayer);
+        return renderView;
+    }
+
+    /**
      * 创建播放器
      */
     private boolean initMediaPlayer(){
@@ -131,11 +142,9 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
 
     private void initTextureView(Context context){
         if(null==context) return;
-        mTextureView=new MediaTextureView(context);
-        mTextureView.setZoomMode(IVideoManager.getInstance().getZoomModel());
-        mTextureView.setSaveFromParentEnabled(true);
-        mTextureView.setDrawingCacheEnabled(false);
-        mTextureView.setSurfaceTextureListener(this);
+        mRenderView = newInstanceRenderView(context);
+        ILogger.d(TAG,getString(R.string.player_render_name,"渲染器内核：")+mRenderView.getClass().getSimpleName());
+        mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
     }
 
     //释放解码器\移除画面组件
@@ -151,9 +160,11 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
             }catch (Throwable e){
                 e.printStackTrace();
             }finally {
-                PlayerUtils.getInstance().removeViewFromParent(mTextureView);
+                if(null!=mRenderView){
+                    PlayerUtils.getInstance().removeViewFromParent(mRenderView.getView());
+                }
                 releaseSurfaceTexture();
-                mTextureView=null;mMediaPlayer=null;
+                mRenderView =null;mMediaPlayer=null;
             }
         }
     }
@@ -161,18 +172,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     //释放渲染组件
     private void releaseSurfaceTexture(){
 //        ILogger.d(TAG,"releaseSurfaceTexture");
-        try {
-            if(null!=mSurfaceTexture){
-                mSurfaceTexture.release();
-            }
-            if(null!=mSurface){
-                mSurface.release();
-            }
-        }catch (Throwable e){
-            e.printStackTrace();
-        }finally {
-            mSurfaceTexture=null;mSurface=null;
-        }
+        if(null!=mRenderView) mRenderView.release();
     }
 
     @Override
@@ -231,7 +231,7 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
                 onPlayerState(sPlayerState,getString(R.string.player_media_buffer_end,"缓冲结束"));
                 break;
             case IMediaPlayer.MEDIA_INFO_VIDEO_ROTATION_CHANGED://视频旋转变化了
-                if(null!=mTextureView) mTextureView.setDegree(extra);
+                if(null!= mRenderView) mRenderView.setDegree(extra);
                 break;
         }
         return true;
@@ -262,9 +262,9 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
         ILogger.d(TAG,"onVideoSizeChanged,width:"+width+",height:"+height);
         this.mVideoWidth=width;
         this.mVideoHeight=height;
-        if(null!=mTextureView){
-            mTextureView.setMeasureSize(width,height);
-            mTextureView.setZoomMode(IVideoManager.getInstance().getZoomModel());
+        if(null!= mRenderView){
+            mRenderView.setVideoSize(width,height);
+            mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
         }
         if(null!=mIMediaPlayerControl) mIMediaPlayerControl.onVideoSizeChanged(width,height);
     }
@@ -408,32 +408,6 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
         return defaultStr;
     }
 
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-//        ILogger.d(TAG,"onSurfaceTextureAvailable-->width:"+width+",height:"+height);
-        if(null==mTextureView||null==mMediaPlayer) return;
-        if(null!=mSurfaceTexture){
-            mTextureView.setSurfaceTexture(mSurfaceTexture);
-        }else{
-            mSurfaceTexture = surfaceTexture;
-            mSurface =new Surface(surfaceTexture);
-            mMediaPlayer.setSurface(mSurface);
-        }
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {}
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-//        ILogger.d(TAG,"onSurfaceTextureUpdated");
-    }
-
     /**
      * 播放进度、闹钟倒计时进度 计时器
      */
@@ -490,13 +464,13 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      */
     private void attachedVideoView(BasePlayer basePlayer){
 //        ILogger.d(TAG,"attachedVideoView:id:"+basePlayer);
-        if(null!=mTextureView&&null!=basePlayer){
+        if(null!= mRenderView &&null!=basePlayer){
             ViewGroup viewGroup = basePlayer.findViewById(R.id.player_surface);
             if(null!=viewGroup){
-                PlayerUtils.getInstance().removeViewFromParent(mTextureView);
+                PlayerUtils.getInstance().removeViewFromParent(mRenderView.getView());
                 viewGroup.removeAllViews();
-                viewGroup.addView(mTextureView,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
-                mTextureView.requestLayout();
+                viewGroup.addView(mRenderView.getView(),new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT));
+                mRenderView.requestDrawLayout();
             }
         }
     }
@@ -612,7 +586,15 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      */
     public void setZoomModel(int zoomModel) {
         IVideoManager.getInstance().setZoomModel(zoomModel);
-        if(null!=mTextureView) mTextureView.setZoomMode(zoomModel);
+        if(null!= mRenderView) mRenderView.setZoomMode(zoomModel);
+    }
+
+    /**
+     * 设置画面旋转角度
+     * @param degree 画面的旋转角度
+     */
+    public void setDegree(int degree) {
+        if(null!= mRenderView) mRenderView.setDegree(degree);
     }
 
     /**
@@ -629,8 +611,8 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      * @return true:镜像 false:正常
      */
     public boolean setMirror(boolean mirror) {
-        if(null!=mTextureView){
-            return mTextureView.setMirror(mirror);
+        if(null!= mRenderView){
+            return mRenderView.setMirror(mirror);
         }
         return false;
     }
@@ -640,8 +622,8 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
      * @return true:镜像 false:正常
      */
     public boolean toggleMirror() {
-        if(null!=mTextureView){
-            return mTextureView.toggleMirror();
+        if(null!= mRenderView){
+            return mRenderView.toggleMirror();
         }
         return false;
     }
@@ -655,11 +637,11 @@ public final class IVideoPlayer implements IMediaPlayer.OnBufferingUpdateListene
     }
 
     /**
-     * 设置画面镜像角度
-     * @param degree
+     * 设置View旋转角度
+     * @param rotation
      */
-    public void setRotation(int degree) {
-        if(null!=mTextureView) mTextureView.setRotation(degree);
+    public void setRotation(int rotation) {
+        if(null!= mRenderView) mRenderView.setViewRotation(rotation);
     }
 
     /**
