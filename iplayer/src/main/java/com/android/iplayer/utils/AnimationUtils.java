@@ -292,7 +292,7 @@ public class AnimationUtils {
      * @param isFillAfter 是否停留在最后一帧
      * @param listener 状态监听器
      */
-    public void startAlphaAnimatioTo(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+    public void startAlphaAnimatioTo(View view, long duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
         new AnimationTask().start(view,duration,isFillAfter,listener);
     }
@@ -305,7 +305,7 @@ public class AnimationUtils {
         private View mView;
         private OnAnimationListener mOnAnimationListener;
 
-        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+        public void start(View view, long duration, boolean isFillAfter, OnAnimationListener listener) {
             this.mView=view;
             this.mOnAnimationListener=listener;
             AlphaAnimation alphaAnim = new AlphaAnimation(1f, 0);
@@ -338,7 +338,7 @@ public class AnimationUtils {
      * @param isFillAfter 是否停留在最后一帧
      * @param listener 状态监听器
      */
-    public void startAlphaAnimatioFrom(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+    public void startAlphaAnimatioFrom(View view, long duration, boolean isFillAfter, OnAnimationListener listener) {
         if(null==view) return;
         new AnimationTaskFrom().start(view,duration,isFillAfter,listener);
     }
@@ -351,7 +351,7 @@ public class AnimationUtils {
         private View mView;
         private OnAnimationListener mOnAnimationListener;
 
-        public void start(View view, int duration, boolean isFillAfter, OnAnimationListener listener) {
+        public void start(View view, long duration, boolean isFillAfter, OnAnimationListener listener) {
             this.mView=view;
             this.mOnAnimationListener=listener;
             mView.setVisibility(View.VISIBLE);

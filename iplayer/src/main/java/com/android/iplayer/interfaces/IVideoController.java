@@ -55,6 +55,11 @@ public interface IVideoController {
      */
     int SCENE_LISTS             =4;
 
+    /**
+     * 各控制器/UI组件显示/隐藏动画持续时长，单位：时间戳
+     */
+    long MATION_DRAUTION =300;
+
 
     //=======================================生命周期及状态回调=========================================
 
@@ -164,6 +169,13 @@ public interface IVideoController {
     void removeControllerWidget(IControllerView controllerView);
 
     /**
+     * 根据组件tag标识寻找组件实例
+     * @param target 根据组件tag标识寻找组件实例,target为组件的唯一标识
+     * @return 组件实例化的对象
+     */
+    IControllerView findControlWidgetByTag(String target);
+
+    /**
      * 移除所有控制器
      */
     void removeAllControllerWidget();
@@ -254,4 +266,15 @@ public interface IVideoController {
      * @param isAnimation 请求其它所有UI组件隐藏自己的控制器,是否开启动画
      */
     void hideAllController(boolean isAnimation);
+
+    /**
+     * 设置控制器的各UI组件显示、隐藏动画持续时间戳
+     * @param animationDuration 设置控制器的各UI组件显示、隐藏动画持续时间戳，单位：毫秒
+     */
+    void setAnimationDuration(long animationDuration);
+
+    /**
+     * @return 返回控制器的各UI组件显示、隐藏动画持续时间戳，单位：毫秒
+     */
+    long getAnimationDuration();
 }

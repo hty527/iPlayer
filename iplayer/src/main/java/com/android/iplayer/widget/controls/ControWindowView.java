@@ -95,7 +95,7 @@ public class ControWindowView extends BaseControllerWidget implements View.OnCli
         if(isVisible()&&null!=mController){
             if(mController.getVisibility()!=View.VISIBLE){
                 if(isAnimation){
-                    AnimationUtils.getInstance().startAlphaAnimatioFrom(mController, MATION_DRAUTION, false, null);
+                    AnimationUtils.getInstance().startAlphaAnimatioFrom(mController, getAnimationDuration(), false, null);
                 }else{
                     mController.setVisibility(View.VISIBLE);
                 }
@@ -111,7 +111,7 @@ public class ControWindowView extends BaseControllerWidget implements View.OnCli
         if(isVisible()&&null!=mController){
             if(mController.getVisibility()!=View.GONE){
                 if(isAnimation){
-                    AnimationUtils.getInstance().startAlphaAnimatioTo(mController, MATION_DRAUTION, false, new AnimationUtils.OnAnimationListener() {
+                    AnimationUtils.getInstance().startAlphaAnimatioTo(mController, getAnimationDuration(), false, new AnimationUtils.OnAnimationListener() {
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             mController.setVisibility(View.GONE);

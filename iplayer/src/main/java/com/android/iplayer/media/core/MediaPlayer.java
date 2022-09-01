@@ -3,12 +3,10 @@ package com.android.iplayer.media.core;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.media.TimedText;
 import android.net.Uri;
 import android.os.Build;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-
 import androidx.annotation.RequiresApi;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.utils.PlayerUtils;
@@ -20,7 +18,10 @@ import java.util.Map;
  * 2022/6/28
  * Desc:默认的多媒体解码器
  */
-public class MediaPlayer extends AbstractMediaPlayer {
+public class MediaPlayer extends AbstractMediaPlayer implements android.media.MediaPlayer.OnBufferingUpdateListener,
+        android.media.MediaPlayer.OnCompletionListener,android.media.MediaPlayer.OnPreparedListener,
+        android.media.MediaPlayer.OnSeekCompleteListener, android.media.MediaPlayer.OnVideoSizeChangedListener,
+        android.media.MediaPlayer.OnInfoListener, android.media.MediaPlayer.OnErrorListener {
 
     private android.media.MediaPlayer mMediaPlayer;
     private int mBuffer;//缓冲进度
@@ -28,6 +29,13 @@ public class MediaPlayer extends AbstractMediaPlayer {
     public MediaPlayer(Context context) {
         super(context);
         mMediaPlayer=new android.media.MediaPlayer();
+        mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnBufferingUpdateListener(this);
+        mMediaPlayer.setOnSeekCompleteListener(this);
+        mMediaPlayer.setOnVideoSizeChangedListener(this);
+        mMediaPlayer.setOnInfoListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.setOnErrorListener(this);
     }
 
     @Override
@@ -214,104 +222,48 @@ public class MediaPlayer extends AbstractMediaPlayer {
                 }
             }.start();
         }
-        super.onRelease();
+        super.release();
     }
 
     @Override
-    public void setOnPreparedListener(OnPreparedListener listener) {
-        this.mOnPreparedListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnPreparedListener(new android.media.MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(android.media.MediaPlayer mediaPlayer) {
-                if(null!=mOnPreparedListener) mOnPreparedListener.onPrepared(MediaPlayer.this);
-            }
-        });
+    public void onPrepared(android.media.MediaPlayer mediaPlayer) {
+        if(null!=mListener) mListener.onPrepared(MediaPlayer.this);
     }
 
     @Override
-    public void setOnCompletionListener(OnCompletionListener listener) {
-        this.mOnCompletionListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnCompletionListener(new android.media.MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(android.media.MediaPlayer mediaPlayer) {
-                if(null!=mOnCompletionListener) mOnCompletionListener.onCompletion(MediaPlayer.this);
-            }
-        });
+    public void onBufferingUpdate(android.media.MediaPlayer mediaPlayer, int percent) {
+        mBuffer=percent;
+        if(null!=mListener) mListener.onBufferUpdate(MediaPlayer.this,percent);
     }
 
     @Override
-    public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
-        this.mOnBufferingUpdateListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnBufferingUpdateListener(new android.media.MediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(android.media.MediaPlayer mediaPlayer, int percent) {
-                mBuffer=percent;
-                if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(MediaPlayer.this,percent);
-            }
-        });
+    public void onCompletion(android.media.MediaPlayer mediaPlayer) {
+        if(null!=mListener) mListener.onCompletion(MediaPlayer.this);
     }
 
     @Override
-    public void setOnSeekCompleteListener(OnSeekCompleteListener listener) {
-        this.mOnSeekCompleteListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnSeekCompleteListener(new android.media.MediaPlayer.OnSeekCompleteListener() {
-            @Override
-            public void onSeekComplete(android.media.MediaPlayer mediaPlayer) {
-                if(null!=mOnSeekCompleteListener) mOnSeekCompleteListener.onSeekComplete(MediaPlayer.this);
-            }
-        });
+    public void onSeekComplete(android.media.MediaPlayer mediaPlayer) {
+        if(null!=mListener) mListener.onSeekComplete(MediaPlayer.this);
     }
 
     @Override
-    public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
-        this.mOnVideoSizeChangedListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnVideoSizeChangedListener(new android.media.MediaPlayer.OnVideoSizeChangedListener() {
-            @Override
-            public void onVideoSizeChanged(android.media.MediaPlayer mediaPlayer, int width, int height) {
-                if(null!=mOnVideoSizeChangedListener) mOnVideoSizeChangedListener.onVideoSizeChanged(MediaPlayer.this,width,height,0,0);
-            }
-        });
+    public void onVideoSizeChanged(android.media.MediaPlayer mediaPlayer, int width, int height) {
+        if(null!=mListener) mListener.onVideoSizeChanged(MediaPlayer.this,width,height,0,0);
     }
 
     @Override
-    public void setOnErrorListener(OnErrorListener listener) {
-        this.mOnErrorListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnErrorListener(new android.media.MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(android.media.MediaPlayer mediaPlayer, int what, int extra) {
-                if(null!=mOnErrorListener) {
-                    return mOnErrorListener.onError(MediaPlayer.this,what,extra);
-                }
-                return true;
-            }
-        });
+    public boolean onInfo(android.media.MediaPlayer mediaPlayer, int what, int extra) {
+        if(null!=mListener) {
+            return mListener.onInfo(MediaPlayer.this,what,extra);
+        }
+        return true;
     }
 
     @Override
-    public void setOnInfoListener(OnInfoListener listener) {
-        this.mOnInfoListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnInfoListener(new android.media.MediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(android.media.MediaPlayer mediaPlayer, int what, int extra) {
-                if(null!=mOnInfoListener){
-                    return  mOnInfoListener.onInfo(MediaPlayer.this,what,extra);
-                }
-                return true;
-            }
-        });
+    public boolean onError(android.media.MediaPlayer mediaPlayer, int what, int extra) {
+        if(null!=mListener){
+            return mListener.onError(MediaPlayer.this,what,extra);
+        }
+        return true;
     }
-
-    @Override
-    public void setOnTimedTextListener(OnTimedTextListener listener) {
-        this.mOnTimedTextListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnTimedTextListener(new android.media.MediaPlayer.OnTimedTextListener() {
-            @Override
-            public void onTimedText(android.media.MediaPlayer mediaPlayer, TimedText timedText) {
-                if(null!=mOnTimedTextListener) mOnTimedTextListener.onTimedText(MediaPlayer.this,null!=timedText?timedText.getText():"");
-            }
-        });
-    }
-
-    @Override
-    public void setOnMessageListener(OnMessageListener listener) {}
 }

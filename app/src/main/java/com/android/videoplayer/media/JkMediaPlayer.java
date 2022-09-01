@@ -7,21 +7,21 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.videoplayer.media.help.RawDataSourceProvider;
 import java.io.IOException;
 import java.util.Map;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkTimedText;
 
 /**
  * created by hty
  * 2022/7/1
  * Desc:IJK解码器示例
  */
-public class JkMediaPlayer extends AbstractMediaPlayer {
+public class JkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.OnPreparedListener,
+        IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnVideoSizeChangedListener,
+        IMediaPlayer.OnInfoListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener {
 
     private IjkMediaPlayer mMediaPlayer;
     private int mBuffer;//缓冲进度
@@ -30,6 +30,13 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
         super(context);
         if(null!=context){
             mMediaPlayer=new IjkMediaPlayer();
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setOnBufferingUpdateListener(this);
+            mMediaPlayer.setOnSeekCompleteListener(this);
+            mMediaPlayer.setOnVideoSizeChangedListener(this);
+            mMediaPlayer.setOnInfoListener(this);
+            mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.setOnErrorListener(this);
         }
     }
 
@@ -217,106 +224,48 @@ public class JkMediaPlayer extends AbstractMediaPlayer {
                 }
             }.start();
         }
-        super.onRelease();
+        super.release();
     }
 
     @Override
-    public void setOnPreparedListener(OnPreparedListener listener) {
-        this.mOnPreparedListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(IMediaPlayer mp) {
-                if(null!=mOnPreparedListener) mOnPreparedListener.onPrepared(JkMediaPlayer.this);
-            }
-        });
+    public void onPrepared(IMediaPlayer mp) {
+        if(null!=mListener) mListener.onPrepared(JkMediaPlayer.this);
     }
 
     @Override
-    public void setOnCompletionListener(OnCompletionListener listener) {
-        this.mOnCompletionListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(IMediaPlayer mp) {
-                if(null!=mOnCompletionListener) mOnCompletionListener.onCompletion(JkMediaPlayer.this);
-            }
-        });
+    public void onCompletion(IMediaPlayer mp) {
+        if(null!=mListener) mListener.onCompletion(JkMediaPlayer.this);
     }
 
     @Override
-    public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
-        this.mOnBufferingUpdateListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnBufferingUpdateListener(new IMediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(IMediaPlayer mp, int percent) {
-                mBuffer=percent;
-                if(null!=mOnBufferingUpdateListener) mOnBufferingUpdateListener.onBufferingUpdate(JkMediaPlayer.this,percent);
-            }
-        });
+    public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+        mBuffer=percent;
+        if(null!=mListener) mListener.onBufferUpdate(JkMediaPlayer.this,percent);
     }
 
     @Override
-    public void setOnSeekCompleteListener(OnSeekCompleteListener listener) {
-        this.mOnSeekCompleteListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnSeekCompleteListener(new IMediaPlayer.OnSeekCompleteListener() {
-            @Override
-            public void onSeekComplete(IMediaPlayer mp) {
-                if(null!=mOnSeekCompleteListener) mOnSeekCompleteListener.onSeekComplete(JkMediaPlayer.this);
-            }
-        });
+    public void onSeekComplete(IMediaPlayer mp) {
+        if(null!=mListener) mListener.onSeekComplete(JkMediaPlayer.this);
     }
 
     @Override
-    public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
-        this.mOnVideoSizeChangedListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnVideoSizeChangedListener(new IMediaPlayer.OnVideoSizeChangedListener() {
-            @Override
-            public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
-                if(null!=mOnVideoSizeChangedListener) mOnVideoSizeChangedListener.onVideoSizeChanged(JkMediaPlayer.this,width,height,sar_num,sar_den);
-            }
-        });
+    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+        if(null!=mListener) mListener.onVideoSizeChanged(JkMediaPlayer.this,width,height,sar_num,sar_den);
     }
 
     @Override
-    public void setOnErrorListener(OnErrorListener listener) {
-        this.mOnErrorListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnErrorListener(new IMediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(IMediaPlayer mp, int what, int extra) {
-                if(null!=mOnErrorListener) {
-                    return mOnErrorListener.onError(JkMediaPlayer.this,what,extra);
-                }
-                return true;
-            }
-        });
+    public boolean onError(IMediaPlayer mp, int what, int extra) {
+        if(null!=mListener) {
+            return mListener.onError(JkMediaPlayer.this,what,extra);
+        }
+        return true;
     }
 
     @Override
-    public void setOnInfoListener(OnInfoListener listener) {
-        this.mOnInfoListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnInfoListener(new IMediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-                if(null!=mOnInfoListener){
-                    return  mOnInfoListener.onInfo(JkMediaPlayer.this,what,extra);
-                }
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public void setOnTimedTextListener(OnTimedTextListener listener) {
-        this.mOnTimedTextListener=listener;
-        if(null!=mMediaPlayer) mMediaPlayer.setOnTimedTextListener(new IMediaPlayer.OnTimedTextListener() {
-            @Override
-            public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
-                if(null!=mOnTimedTextListener) mOnTimedTextListener.onTimedText(JkMediaPlayer.this,null!=text?text.getText():"");
-            }
-        });
-    }
-
-    @Override
-    public void setOnMessageListener(OnMessageListener listener) {
-
+    public boolean onInfo(IMediaPlayer mp, int what, int extra) {
+        if(null!=mListener){
+            return mListener.onInfo(JkMediaPlayer.this,what,extra);
+        }
+        return true;
     }
 }

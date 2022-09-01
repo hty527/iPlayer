@@ -25,10 +25,8 @@ import com.android.iplayer.model.PlayerState;
 public abstract class BaseControllerWidget extends FrameLayout implements IControllerView {
 
     protected static final String TAG="BaseCoustomView";
-    protected static final int MATION_DRAUTION            = 300;//控制器、控制锁等显示\隐藏过渡动画时长(毫秒)
-    private String mTarget;
-
     protected ControlWrapper mControlWrapper;//自定义组件与控制器、播放器之间的交互
+    private String mTarget;
 
     public BaseControllerWidget(Context context) {
         this(context,null);
@@ -412,6 +410,13 @@ public abstract class BaseControllerWidget extends FrameLayout implements IContr
         public BaseHandel(Looper looper){
             super(looper);
         }
+    }
+
+    protected long getAnimationDuration() {
+        if(null!=mControlWrapper){
+            return mControlWrapper.getAnimationDuration();
+        }
+        return IVideoController.MATION_DRAUTION;
     }
 
     //==================下面这些方法时不常用的，子类如果需要处理下列方法,请复写实现自己的逻辑====================
