@@ -3,6 +3,8 @@ package com.android.iplayer.interfaces;
 import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -100,10 +102,16 @@ public interface IMediaPlayer {
     void setBufferTimeMax(float timeSecond);
 
     /**
-     * 绑定画面渲染视图
+     * TextureView绑定画面渲染视图
      * @param surface 视图渲染器
      */
     void setSurface(Surface surface);
+
+    /**
+     * SurfaceView绑定画面渲染视图
+     * @param surfaceHolder
+     */
+    void setDisplay(SurfaceHolder surfaceHolder);
 
     /**
      * 设置播放地址

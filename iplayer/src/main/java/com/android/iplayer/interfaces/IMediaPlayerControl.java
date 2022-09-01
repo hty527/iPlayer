@@ -25,6 +25,12 @@ public interface IMediaPlayerControl {
     AbstractMediaPlayer getMediaPlayer();
 
     /**
+     * 返回一个实现了IRenderView接口的自定义画面渲染器
+     * @return 画面渲染器实体类
+     */
+    IVideoRenderView getRenderView();
+
+    /**
      * 宿主返回一个装载视频播放器的容器
      * @return
      */

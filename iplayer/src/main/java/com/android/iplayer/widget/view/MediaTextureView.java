@@ -2,19 +2,25 @@ package com.android.iplayer.widget.view;
 
 import android.content.Context;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
+import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
+import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.manager.IVideoManager;
-import com.android.iplayer.utils.ILogger;
 /**
  * created by hty
  * 2022/6/28
- * Desc:支持三种缩放模式\画面翻转/角度 的画面渲染
+ * Desc:SDK提供的 支持三种缩放模式\画面翻转/角度 的默认自定义画面渲染
  */
-public class MediaTextureView extends TextureView {
+public class MediaTextureView extends TextureView implements IVideoRenderView, TextureView.SurfaceTextureListener {
 
-    private static final String TAG = "MediaTextureView";
+    private AbstractMediaPlayer mMediaPlayer;
+    private Surface mSurface;
+    private SurfaceTexture mSurfaceTexture;
     private  int    mVideoWidth;
     private  int    mVideoHeight;
     private  int    mVideoSarNum;
@@ -59,6 +65,115 @@ public class MediaTextureView extends TextureView {
 
     public MediaTextureView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        //自定义解码器注意这里的设置
+        setSaveFromParentEnabled(true);
+        setDrawingCacheEnabled(false);
+        setSurfaceTextureListener(this);
+    }
+
+    //======================================自定义解码器需要关心的回调===================================
+
+    @Override
+    public void attachMediaPlayer(AbstractMediaPlayer mediaPlayer) {
+        this.mMediaPlayer=mediaPlayer;
+    }
+
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void setVideoSize(int width, int height){
+        mVideoWidth = width;
+        mVideoHeight = height;
+    }
+
+    @Override
+    public void setZoomMode(int zoomMode){
+        mScaleMode = zoomMode;
+        mUseSettingRatio = false;
+        mCurrentDispStatus = STATUS_NORMAL;
+        requestLayout();
+    }
+
+    @Override
+    public void setDegree(int degree){
+        mDegree =  degree;
+        mCurrentDispStatus = STATUS_NORMAL;
+        requestLayout();
+    }
+
+    @Override
+    public void setViewRotation(int rotation) {
+        setRotation(rotation);
+    }
+
+    @Override
+    public void setSarSize(int sarNum,int sarDen){
+        mVideoSarNum = sarNum;
+        mVideoSarDen = sarDen;
+    }
+
+    @Override
+    public boolean setMirror(boolean mirror){
+        mMirror = mirror;
+        setScaleX(mirror ? -1.0F : 1.0F);
+        return mMirror;
+    }
+
+    @Override
+    public boolean toggleMirror(){
+        mMirror = !mMirror;
+        setScaleX(mMirror ? -1.0F : 1.0F);
+        return mMirror;
+    }
+
+    @Override
+    public void requestDrawLayout() {
+        requestLayout();
+    }
+
+    @Override
+    public void release() {
+        try {
+            if(null!=mSurfaceTexture){
+                mSurfaceTexture.release();
+            }
+            if(null!=mSurface){
+                mSurface.release();
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+        }finally {
+            mSurfaceTexture=null;mSurface=null;mMediaPlayer=null;
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+//        ILogger.d(TAG,"onSurfaceTextureAvailable-->width:"+width+",height:"+height);
+        if(null==mMediaPlayer) return;
+        if(null!=mSurfaceTexture){
+            setSurfaceTexture(mSurfaceTexture);
+        }else{
+            mSurfaceTexture = surfaceTexture;
+            mSurface =new Surface(surfaceTexture);
+            mMediaPlayer.setSurface(mSurface);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {}
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+//        ILogger.d(TAG,"onSurfaceTextureUpdated");
     }
 
     private void Zoom() {
@@ -411,41 +526,6 @@ public class MediaTextureView extends TextureView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         Measure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    public void setMeasureSize(int width, int height){
-        mVideoWidth = width;
-        mVideoHeight = height;
-    }
-
-    public void setSarSize(int sarNum,int sarDen){
-        mVideoSarNum = sarNum;
-        mVideoSarDen = sarDen;
-    }
-
-    public boolean setMirror(boolean mirror){
-        mMirror = mirror;
-        setScaleX(mirror ? -1.0F : 1.0F);
-        return mMirror;
-    }
-
-    public boolean toggleMirror(){
-        mMirror = !mMirror;
-        setScaleX(mMirror ? -1.0F : 1.0F);
-        return mMirror;
-    }
-
-    public void setDegree(int degree){
-        mDegree =  degree;
-        mCurrentDispStatus = STATUS_NORMAL;
-        requestLayout();
-    }
-
-    public void setZoomMode(int zoomMode){
-        mScaleMode = zoomMode;
-        mUseSettingRatio = false;
-        mCurrentDispStatus = STATUS_NORMAL;
-        requestLayout();
     }
 
     public void setVideoScaleRatio(float ratio, float x ,float y){

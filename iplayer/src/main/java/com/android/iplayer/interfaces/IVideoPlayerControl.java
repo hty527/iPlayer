@@ -49,6 +49,12 @@ public interface IVideoPlayerControl<V extends BaseController> {
     void setZoomModel(int zoomModel);
 
     /**
+     * 设置视频旋转角度
+     * @param degree 设置视频画面旋转角度
+     */
+    void setDegree(int degree);
+
+    /**
      * 设置播放速度
      * @param speed 设置播放速度 从0.5f-2.0f
      */

@@ -15,6 +15,7 @@ import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
@@ -28,6 +29,7 @@ import com.android.iplayer.widget.controls.ControlListView;
 import com.android.iplayer.widget.controls.ControlLoadingView;
 import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.iplayer.widget.controls.ControlToolBarView;
+import com.android.iplayer.widget.view.MediaTextureView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.adapter.interfaces.OnItemChildClickListener;
@@ -420,6 +422,11 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
                     return new JkMediaPlayer(getContext());
+                }
+
+                @Override
+                public IVideoRenderView createRenderView() {
+                    return new MediaTextureView(getContext());
                 }
 
                 @Override

@@ -19,19 +19,21 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import com.android.iplayer.R;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.interfaces.IMediaPlayerControl;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.interfaces.IMediaPlayerControl;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IVideoPlayer;
 import com.android.iplayer.model.PlayerState;
-import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ILogger;
+import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.view.WindowPlayerFloatView;
 
 /**
@@ -209,6 +211,14 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         return null;
     }
 
+    @Override
+    public IVideoRenderView getRenderView() {
+        if(null!=mOnPlayerActionListener){
+            return mOnPlayerActionListener.createRenderView();
+        }
+        return null;
+    }
+
     /**
      * 播放器播放状态
      * @param state 播放器内部状态
@@ -314,6 +324,15 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             IVideoManager.getInstance().setZoomModel(scaleModel);
         }
         if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onZoomModel(scaleModel);
+    }
+
+    /**
+     * 设置视频画面旋转角度
+     * @param degree 设置视频画面旋转角度
+     */
+    @Override
+    public void setDegree(int degree) {
+        if(null!=mIVideoPlayer) mIVideoPlayer.setDegree(degree);
     }
 
     /**

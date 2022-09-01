@@ -3,6 +3,8 @@ package com.android.videoplayer.media;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.view.Surface;
+import android.view.SurfaceHolder;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.videoplayer.media.help.ExoMediaSourceHelper;
@@ -54,6 +56,16 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     @Override
     public void setSurface(Surface surface) {
         if(null!=mMediaPlayer) mMediaPlayer.setVideoSurface(surface);
+    }
+
+    @Override
+    public void setDisplay(SurfaceHolder surfaceHolder) {
+//        if(null!=mMediaPlayer) mMediaPlayer.setDisplay(surfaceHolder);
+        if(null!=surfaceHolder){
+            setSurface(surfaceHolder.getSurface());
+        }else{
+            setSurface(null);
+        }
     }
 
     @Override

@@ -191,6 +191,40 @@
     //更新播放器\控制器所在场景,调用此方法后控制器和所有UI组件都会收到onPlayerScene(int playerScene)回调
     controller.setPlayerScene(IVideoController.SCENE_NOIMAL);
 ```
+#### 6、自定义视频画面渲染器
+###### 6.1、视频渲染器自定义
+* SDK内部的视频画面渲染器使用的是TextureView,TextureView和SurfaceView推荐使用TextureView。SurfaceView在横竖屏切换时会有短暂黑屏及镜像(setScaleX)失效。
+* 自定义视频画面渲染器组件View需要实现[IVideoRenderView][19]接口并实现所有接口方法，在getView中返回你的TextureView或SurfaceView
+```
+    //1、继承TextureView并设置监听
+    setSurfaceTextureListener(this);
+    //2、绑定到播放器
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+        //ILogger.d(TAG,"onSurfaceTextureAvailable-->width:"+width+",height:"+height);
+        if(null==mMediaPlayer) return;
+        if(null!=mSurfaceTexture){
+            setSurfaceTexture(mSurfaceTexture);
+        }else{
+            mSurfaceTexture = surfaceTexture;
+            mSurface =new Surface(surfaceTexture);
+            mMediaPlayer.setSurface(mSurface);
+        }
+    }
+
+```
+###### 6.2、视频渲染器使用
+```
+        //自定义画面渲染器，在开始播放前设置监听并返回生效
+        mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+
+            @Override
+            public IVideoRenderView createRenderView() {
+                return new CoustomSurfaceView(MainActivity.this);//返回null时,SDK内部会自动使用自定义的MediaTextureView渲染器,自定义渲染器请参考Demo中CoustomSurfaceView类
+            }
+        });
+```
+
 #### 6、全屏播放
 ##### 6.1、横竖屏切换
 * 6.1.1、如需支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
@@ -452,6 +486,7 @@
 
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
 [17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
+[19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoRenderView.java "IVideoRenderView"
 ### 二、异常现象及注意点
 #### 1、网络地址无法播放
 * 请检查AndroidManifest文件中是否声明INTERNET权限

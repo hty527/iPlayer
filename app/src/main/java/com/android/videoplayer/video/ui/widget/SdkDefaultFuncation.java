@@ -20,6 +20,7 @@ public class SdkDefaultFuncation extends LinearLayout {
 
     private PlayerMenuView mMenuView;
     private int MEDIA_CORE=0;//多媒体解码器 0:系统默认 1:ijk 2:exo
+    private int RENDER_CORE=0;//画面渲染器 0:TextureView 1:SurfaceView
 
     public SdkDefaultFuncation(Context context) {
         this(context,null);
@@ -108,6 +109,35 @@ public class SdkDefaultFuncation extends LinearLayout {
                 }
             }
         });
+        //渲染器
+        View render1 = findViewById(R.id.btn_render_1);
+        render1.setSelected(true);
+        render1.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.btn_render_1).setSelected(true);
+                findViewById(R.id.btn_render_2).setSelected(false);
+                RENDER_CORE =0;
+                if(null!=mOnActionListener) {
+                    mOnActionListener.onRenderCore(RENDER_CORE);
+                    mOnActionListener.rePlay(null);
+                }
+            }
+        });
+        //渲染器
+        findViewById(R.id.btn_render_2).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.btn_render_1).setSelected(false);
+                findViewById(R.id.btn_render_2).setSelected(true);
+                RENDER_CORE =1;
+                if(null!=mOnActionListener) {
+                    mOnActionListener.onRenderCore(RENDER_CORE);
+                    mOnActionListener.rePlay(null);
+                }
+            }
+        });
+
         View touch_1 = findViewById(R.id.touch_1);
         touch_1.setSelected(true);
         touch_1.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +187,7 @@ public class SdkDefaultFuncation extends LinearLayout {
         void setCanTouchInPortrait(boolean canTouchInPortrait);
         void rePlay(String url);
         void onMediaCore(int mediaCore);
+        void onRenderCore(int renderCore);
     }
 
     private OnActionListener mOnActionListener;
