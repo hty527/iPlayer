@@ -92,7 +92,7 @@
         mVideoPlayer.onDestroy();
     }
 ```
-##### 5、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
+##### 5、常用API、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
 [3]:https://github.com/hty527/iPlayer/wiki/api "wiki"
 #### 四、遇到问题
 * 1、阅读接入文档[wiki][3]
