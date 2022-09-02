@@ -63,6 +63,17 @@
         }
     });
 ```
+* 4.2、为方便开发者和减少工作量，特意封装了ijk和exo解码器SDK：
+```
+    //ijk音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+    //exo音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
+    //exo解码器更多格式支持,根据自己需要实现
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
+    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
+```
 #### 5、自定义UI交互组件
 ##### 5.1、自定义Controller
 * 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
@@ -284,7 +295,7 @@
             //给播放器控制器绑定需要的自定义UI交互组件
             ControWindowView controWindowView=new ControWindowView(this);//加载中、开始播放
             controller.addControllerWidget(controWindowView);
-            //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
+            //播放完成时内部会关闭window，在销毁播放器时清除变量
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
          
                 @Override
@@ -382,7 +393,17 @@
     IVideoManager.getInstance().setInterceptTAudioFocus(false);
 ```
 #### 10、直播拉流
-* 10.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
+* 10.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请使用ijk或exo,或自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
+```
+    //ijk音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+    //exo音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
+    //exo解码器更多格式支持,根据自己需要实现
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
+    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
+```
 
 [11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
 [18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
