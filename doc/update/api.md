@@ -511,7 +511,7 @@
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
 [17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
 [19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoRenderView.java "IVideoRenderView"
-#### 15、本地sd卡视频播放
+#### 15、本地SD卡视频播放
 * 15.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
 ```
     //本地file需要转称file://协议
