@@ -23,7 +23,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.2.apk?version=2.0.2 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.3.apk?version=2.0.3 "下载apk"
 
 ##### 1、项目根build.gradle及模块build.gradle配置</br>
 ```
@@ -37,12 +37,12 @@
     //2.在你的模块build.gradle中添加：   
     dependencies {
         //播放器
-        implementation 'com.github.hty527.iPlayer:iplayer:2.0.2.2'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.0.3'
             
-        //可选，音视频解码器    
-        //implementation 'com.github.hty527.iPlayer:ijk:2.0.2.2'
+        //可选，ijk内核音视频解码器    
+        //implementation 'com.github.hty527.iPlayer:ijk:2.0.3'
         //可选，音视频缓存
-        //implementation 'com.github.hty527.iPlayer:videocache:2.0.2.2'
+        //implementation 'com.github.hty527.iPlayer:videocache:2.0.3'
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>

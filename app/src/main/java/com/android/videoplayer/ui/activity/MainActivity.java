@@ -14,6 +14,7 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
@@ -29,7 +30,6 @@ import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Menu;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.pager.activity.PagerPlayerActivity;
 import com.android.videoplayer.ui.adapter.MainMenuAdapter;
 import com.android.videoplayer.ui.widget.TitleView;
@@ -209,7 +209,7 @@ public class MainActivity extends BaseActivity {
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new JkMediaPlayer(MainActivity.this);
+                    return new IJkMediaPlayer(MainActivity.this);
                 }
 
                 @Override
@@ -269,7 +269,7 @@ public class MainActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return new JkMediaPlayer(MainActivity.this);
+                return new IJkMediaPlayer(MainActivity.this);
             }
 
             @Override

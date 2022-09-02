@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -18,6 +20,7 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
@@ -35,7 +38,6 @@ import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.adapter.interfaces.OnItemChildClickListener;
 import com.android.videoplayer.base.adapter.widget.OnLoadMoreListener;
 import com.android.videoplayer.manager.PlayerManager;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.net.BaseEngin;
 import com.android.videoplayer.ui.widget.ListPlayerHolder;
 import com.android.videoplayer.utils.Logger;
@@ -46,6 +48,7 @@ import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.contract.VideoListContract;
 import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerNewbieView;
+
 import java.util.List;
 
 /**
@@ -421,7 +424,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new JkMediaPlayer(getContext());
+                    return new IJkMediaPlayer(getContext());
                 }
 
                 @Override

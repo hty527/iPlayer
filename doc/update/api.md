@@ -40,9 +40,9 @@
 [2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 [3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
-* 4.1、SDK默认使用MediaPlayer解码器，Demo中示例了两套自定义解码器的使用,请参考：[JkMediaPlayer][4]和[ExoMediaPlayer][5]
+* 4.1、SDK默认使用MediaPlayer解码器，Demo中自定义解码器的使用,请参考：[ExoMediaPlayer][5]或ijk库中的[IJkMediaPlayer][4]和
 
-[4]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/JkMediaPlayer.java "JkMediaPlayer"
+[4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
 [5]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
 ```
     int MEDIA_CORE=1;
@@ -54,11 +54,11 @@
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
             if(1==MEDIA_CORE){
-                return new JkMediaPlayer(VideoPlayerActivity.this);//IJK解码器
+                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:2.0.3'
             }else if(2==MEDIA_CORE){
                 return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器
             }else{
-                return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
+                return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中ExoMediaPlayer类或ijk中的IJkMediaPlayer类
             }
         }
     });
@@ -258,23 +258,6 @@
     ControlCompletionView completionView=new ControlCompletionView(this);//播放完成、重试
     ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
     controller.addControllerWidget(toolBarView,functionBarView,statusView,gestureView,completionView,loadingView);
-
-    //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
-    videoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
-        /**
-         * 创建一个自定义的播放器,返回null,则内部自动创建一个默认的解码器
-         * @return
-         */
-        @Override
-        public AbstractMediaPlayer createMediaPlayer() {
-            return new JkMediaPlayer(MainActivity.this);
-        }
-
-        @Override
-        public void onPlayerState(PlayerState state, String message) {
-            Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
-        }
-    });
     videoPlayer.setLoop(false);
     videoPlayer.setProgressCallBackSpaceMilliss(300);
     videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
@@ -304,11 +287,6 @@
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
          
-                @Override
-                public AbstractMediaPlayer createMediaPlayer() {
-                    return new JkMediaPlayer(MainActivity.this);
-                }
-    
                 @Override
                 public void onPlayerState(PlayerState state, String message) {
                     Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
