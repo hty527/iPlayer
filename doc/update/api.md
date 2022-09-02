@@ -511,6 +511,19 @@
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
 [17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
 [19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoRenderView.java "IVideoRenderView"
+#### 15、本地sd卡视频播放
+* 15.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
+```
+    //本地file需要转称file://协议
+    File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
+    String filePath = Uri.parse("file://" + file.getAbsolutePath()).toString();
+    mVideoPlayer.setDataSource(filePath);
+```
+* 15.2、Android9及以上设备提示：Permission denied？
+```
+    //在application中加入
+    android:requestLegacyExternalStorage="true"
+```
 ### 二、异常现象及注意点
 #### 1、网络地址无法播放
 * 请检查AndroidManifest文件中是否声明INTERNET权限
