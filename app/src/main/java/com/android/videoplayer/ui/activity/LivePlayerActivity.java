@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControlLoadingView;
@@ -14,7 +15,6 @@ import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.controller.LiveController;
-import com.android.videoplayer.media.ExoMediaPlayer;
 import com.android.videoplayer.pager.widget.ControlLiveView;
 
 /**

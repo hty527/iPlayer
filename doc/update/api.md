@@ -40,7 +40,7 @@
 [2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 [3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
-* 4.1、SDK默认使用MediaPlayer解码器，Demo中自定义解码器的使用,请参考：[ExoMediaPlayer][5]或ijk库中的[IJkMediaPlayer][4]和
+* 4.1、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[ExoMediaPlayer][5]或ijk库中的[IJkMediaPlayer][4]和
 
 [4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
 [5]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
@@ -594,5 +594,17 @@
         <item name="android:windowActionBar">false</item>
     </style>
 ```
-
+### 三、混淆
+#### 1、IjkMediaPlayer
+```
+    # IjkPlayer
+    -keep class tv.danmaku.ijk.** { *; }
+    -dontwarn tv.danmaku.ijk.**
+```
+#### 2、ExoPlayer
+```
+    # ExoPlayer
+    -keep class com.google.android.exoplayer2.** { *; }
+    -dontwarn com.google.android.exoplayer2.**
+```
 #### 更多文档持续更新中...

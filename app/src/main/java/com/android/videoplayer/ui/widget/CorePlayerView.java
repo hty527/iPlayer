@@ -9,10 +9,10 @@ import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
-import com.android.videoplayer.media.ExoMediaPlayer;
 
 /**
  * created by hty
