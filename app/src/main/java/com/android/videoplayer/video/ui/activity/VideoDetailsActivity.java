@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
@@ -24,6 +25,7 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControWindowView;
@@ -39,7 +41,6 @@ import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Params;
 import com.android.videoplayer.manager.PlayerManager;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.utils.GlideModel;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;
@@ -284,7 +285,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new JkMediaPlayer(VideoDetailsActivity.this);
+                    return new IJkMediaPlayer(VideoDetailsActivity.this);
                 }
 
                 @Override

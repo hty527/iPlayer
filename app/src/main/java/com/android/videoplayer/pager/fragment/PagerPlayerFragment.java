@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
@@ -17,7 +18,6 @@ import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.cache.PreloadManager;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.pager.adapter.PagerPlayerAdapter;
 import com.android.videoplayer.pager.base.BaseViewPager;
 import com.android.videoplayer.pager.bean.VideoBean;
@@ -167,7 +167,7 @@ public class PagerPlayerFragment extends BaseFragment {
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new JkMediaPlayer(getContext());
+                    return new IJkMediaPlayer(getContext());
                 }
 
                 @Override

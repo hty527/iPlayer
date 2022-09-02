@@ -2,21 +2,19 @@ package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.videoplayer.controller.LiveController;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControlLoadingView;
 import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
+import com.android.videoplayer.controller.LiveController;
 import com.android.videoplayer.media.ExoMediaPlayer;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.pager.widget.ControlLiveView;
 
 /**
@@ -26,7 +24,7 @@ import com.android.videoplayer.pager.widget.ControlLiveView;
  */
 public class LivePlayerActivity extends BaseActivity {
 
-    private int MEDIA_CORE=2;//这里默认用ExoPlayer解码器
+    private int MEDIA_CORE=1;//这里默认用IJkMediaPlayer解码器
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +63,7 @@ public class LivePlayerActivity extends BaseActivity {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if (1 == MEDIA_CORE) {
-                    return new JkMediaPlayer(LivePlayerActivity.this);
+                    return new IJkMediaPlayer(LivePlayerActivity.this,true);
                 } else if (2 == MEDIA_CORE) {
                     return new ExoMediaPlayer(LivePlayerActivity.this);
                 } else {

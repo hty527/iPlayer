@@ -13,13 +13,13 @@ import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.media.JkMediaPlayer;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.Logger;
 
@@ -118,7 +118,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return new JkMediaPlayer(WindowGlobalPlayerActivity.this);
+                return new IJkMediaPlayer(WindowGlobalPlayerActivity.this);
             }
 
             @Override

@@ -23,3 +23,9 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     archiveClassifier = 'sources'
 }
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    //播放器
+    implementation project(':iplayer')
+}

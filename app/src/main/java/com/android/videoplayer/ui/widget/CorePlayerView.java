@@ -9,10 +9,10 @@ import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.videoplayer.R;
 import com.android.videoplayer.media.ExoMediaPlayer;
-import com.android.videoplayer.media.JkMediaPlayer;
 
 /**
  * created by hty
@@ -45,7 +45,7 @@ public class CorePlayerView extends LinearLayout {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if (1 == mCurrentMediaCore) {
-                    return new JkMediaPlayer(getContext());//IJK解码器
+                    return new IJkMediaPlayer(getContext());//IJK解码器
                 } else if (2 == mCurrentMediaCore) {
                     return new ExoMediaPlayer(getContext());//EXO解码器
                 } else {

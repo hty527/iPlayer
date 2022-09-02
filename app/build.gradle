@@ -12,7 +12,7 @@ android {
         versionName rootProject.ext.sdk.versionName
         multiDexEnabled true
         ndk {
-            //使用abiFilters筛选你需要的so
+            //ijk解码器，使用abiFilters筛选你需要的so
             abiFilters 'arm64-v8a','armeabi-v7a'
         }
     }
@@ -83,14 +83,14 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     //播放器
-//    implementation project(':iplayer')
-//    implementation project(':ijk')
-//    implementation project(':videocache')
+    implementation project(':iplayer')
+    implementation project(':ijk')
+    implementation project(':videocache')
 
     //播放器SDK
-    implementation 'com.github.hty527.iPlayer:iplayer:2.0.2.2'
+//    implementation 'com.github.hty527.iPlayer:iplayer:2.0.3'
     //音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:ijk:2.0.2.2'
+//    implementation 'com.github.hty527.iPlayer:ijk:2.0.3'
     //音视频缓存,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:videocache:2.0.2.2'
+//    implementation 'com.github.hty527.iPlayer:videocache:2.0.3'
 }
