@@ -102,7 +102,7 @@
 * 5、播放器框架结构图[点击][5]查看
 
 [4]:https://gitee.com/hty_Yuye/iPlayer "码云"
-[5]:https://www.jianshu.com/p/39d8f824c2fb "点击"
+[5]:https://github.com/hty527/iPlayer/wiki/api "点击"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screen1.jpg?q=1" width="270",height="585">
