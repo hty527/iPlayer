@@ -40,10 +40,18 @@
 [2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 [3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
-* 4.1、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
+* 4.1、为方便开发者和减少工作量，特意封装了ijk和exo第三方解码器SDK：
+```
+    //ijk音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:ijk:lastversion'
+    //exo音视频解码器,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:exo:lastversion'
+```
+* 4.2、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
 
 [4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/java/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
 [5]:https://github.com/hty527/iPlayer/blob/main/exo/src/main/java/com/android/iplayer/media/core/ExoMediaPlayer.java "ExoMediaPlayer"
+* 4.3、更换解码器或应用自定义解码器
 ```
     int MEDIA_CORE=1;
     /**
@@ -54,26 +62,16 @@
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
             if(1==MEDIA_CORE){
-                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:lastversion'
             }else if(2==MEDIA_CORE){
-                return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器，需引用库：implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
+                return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器，需引用库：implementation 'com.github.hty527.iPlayer:exo:lastversion'
             }else{
                 return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中ExoMediaPlayer类或ijk中的IJkMediaPlayer类
             }
         }
     });
 ```
-* 4.2、为方便开发者和减少工作量，特意封装了ijk和exo解码器SDK：
-```
-    //ijk音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
-    //exo音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
-    //exo解码器更多格式支持,根据自己需要实现
-    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
-    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
-    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
-```
+
 #### 5、自定义UI交互组件
 ##### 5.1、自定义Controller
 * 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
@@ -396,13 +394,25 @@
 * 10.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请使用ijk或exo,或自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
 ```
     //ijk音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+    implementation 'com.github.hty527.iPlayer:ijk:lastversion'
     //exo音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
-    //exo解码器更多格式支持,根据自己需要实现
-    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
-    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
-    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
+    implementation 'com.github.hty527.iPlayer:exo:lastversion'
+```
+* 10.2、更多格式支持：
+```
+    int MEDIA_CORE=1;
+    /**
+     * 可使用受支持的视频流格式的解码器
+     */
+    mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+
+        @Override
+        public AbstractMediaPlayer createMediaPlayer() {
+            new ExoMediaPlayer(VideoPlayerActivity.this);
+            //new IJkMediaPlayer(VideoPlayerActivity.this);
+            //或其它受支持的解码器
+        }
+    });
 ```
 
 [11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
@@ -491,6 +501,11 @@
 ###### 13.2、悬浮窗转场
 * 13.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo [WindowGlobalPlayerActivity][16]类的initPlayer方法或[VideoDetailsActivity][15]类的initPlayer方法
 #### 14、视频缓存
+* 视频缓存SDK
+```
+    //音视频缓存,根据自己需要实现
+    implementation 'com.github.hty527.iPlayer:videocache:lastversion'
+```
 * Demo的“防抖音”模块支持视频缓存和秒播，请参考[PagerPlayerAdapter][17]类的 //开始预加载 和 //结束预加载
 
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
