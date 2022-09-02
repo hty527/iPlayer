@@ -73,24 +73,25 @@ dependencies {
     //弹幕
     implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.16'
     implementation 'com.github.ctiao:ndkbitmap-armv7a:0.9.16'
-    //EXO解码器
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
-    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
-    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
-    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
     //网络数据
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     //播放器
     implementation project(':iplayer')
     implementation project(':ijk')
+    implementation project(':exo')
     implementation project(':videocache')
 
     //播放器SDK
-//    implementation 'com.github.hty527.iPlayer:iplayer:2.0.3'
-    //音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:ijk:2.0.3'
+//    implementation 'com.github.hty527.iPlayer:iplayer:2.0.3.1'
     //音视频缓存,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:videocache:2.0.3'
+//    implementation 'com.github.hty527.iPlayer:videocache:2.0.3.1'
+    //ijk音视频解码器,根据自己需要实现
+//    implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+    //exo音视频解码器,根据自己需要实现
+//    implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
+    //exo解码器更多格式支持,根据自己需要实现
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
+    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"
 }

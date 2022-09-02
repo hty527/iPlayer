@@ -46,6 +46,10 @@ public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.
         }
     }
 
+    public IjkMediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
+    }
+
     /**
      * 初始化Option设置
      * @param isLive 是否是应用于直播拉流模式

@@ -10,6 +10,7 @@ import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
@@ -23,8 +24,7 @@ import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.media.ExoMediaPlayer;
-import com.android.videoplayer.media.render.CoustomSurfaceView;
+import com.android.videoplayer.render.CoustomSurfaceView;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.video.ui.widget.SdkDefaultFuncation;
@@ -131,9 +131,9 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if(1==MEDIA_CORE){
-                    return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器
+                    return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
                 }else if(2==MEDIA_CORE){
-                    return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器
+                    return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
                 }else{
                     return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
                 }
