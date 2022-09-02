@@ -564,7 +564,7 @@
 ```
 #### 6、混合语言兼容方案
 ##### 6.1、Flutter
-* 3.1.1、将此播放器SDK应用到Android原生和Flutter混合开发使用时，会出现全屏功能、Activity级别小窗、屏幕亮度设置功能无法使用，解决办法：
+* 6.1.1、将此播放器SDK应用到Android原生和Flutter混合开发使用时，会出现全屏功能、Activity级别小窗、屏幕亮度设置功能无法使用，解决办法：
 ```
     //给播放器设置一个ParentConttext 上下文
     mVideoPlayer.setParentContext(context);上下文传递当前混合语言所在的宿主Activity Context
