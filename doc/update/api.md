@@ -1,3 +1,6 @@
+## 播放器架构图
+![iPlayer架构关系图](https://upload-images.jianshu.io/upload_images/16585967-88a8d8e402b8a252.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+* 通过架构图可以直观的看到面向用户层的都支持自定义，也包括解码器在内。
 ## 常用文档
 ### 一、常用api使用说明
 #### 1、播放器API
