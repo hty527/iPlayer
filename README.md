@@ -39,11 +39,11 @@
         //播放器
         implementation 'com.github.hty527.iPlayer:iplayer:2.0.3.2'
 
-        //ijk音视频解码器,根据自己需要实现
-        implementation 'com.github.hty527.iPlayer:ijk:2.0.3.2'
-        //exo音视频解码器,根据自己需要实现
-        implementation 'com.github.hty527.iPlayer:exo:2.0.3.2'
-        //音视频缓存,根据自己需要实现
+        //ijk音视频解码器,根据需要使用
+        //implementation 'com.github.hty527.iPlayer:ijk:2.0.3.2'
+        //exo音视频解码器,根据需要使用
+        //implementation 'com.github.hty527.iPlayer:exo:2.0.3.2'
+        //音视频缓存,根据需要使用
         //implementation 'com.github.hty527.iPlayer:videocache:2.0.3.2'
     }
 ```
