@@ -1,30 +1,37 @@
-## 播放器架构图
+## 播放器框架结构图
 ![iPlayer架构关系图](https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/iPlayer%E6%9E%B6%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE.png)
-* 通过架构图可以直观的看到面向用户层的都支持自定义，也包括解码器在内。
+* 如图所示，通过架构图可以直观的看到面向用户层的模块和交互都支持自定义，也包括视频解码器在内。
 ## 常用文档
 ### 一、常用api使用说明
 #### 1、播放器API
 * 1.1、请阅读[IVideoPlayerControl][1]
 * 1.2、常用API
 ```
-    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//居中显示,定宽等高 (更多缩放模式请参考IMediaPlayer设置)
-    mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏模式下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳
-    mVideoPlayer.setLoop(true);//是否循环播放
-    mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
-    mVideoPlayer.setSoundMute(false);//是否开启静音播放
+    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置画面缩放\裁剪模式为居中显示,定宽等高 (更多缩放模式请参考IMediaPlayer设置)，默认为IMediaPlayer.MODE_ZOOM_CROPPING
+    mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏播放下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳，默认为false
+    mVideoPlayer.setLoop(true);//是否循环播放，，默认为false
+    mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)，默认300毫秒
+    mVideoPlayer.setSoundMute(false);//是否开启静音播放，默认为false
     mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
-    mVideoPlayer.setMirror(false);//是否镜像显示
-    mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放
+    mVideoPlayer.setMirror(false);//是否镜像显示，默认为false
+    mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,如需网络提示交互需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
 ```
 #### 2、控制器API
 * 2.1、请阅读[IVideoController][2]
 * 2.2、常用API
 ```
-    mController.setTitle("测试地址播放");//视频标题(默认控制器横屏状态下可见)
-    mController.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法
+    mController.setTitle("测试地址播放");//视频标题(默认控制器横屏状态下可见),所有UI交互组件都会收到setTitle回调
+    mController.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法，启用试看流程时播放器必须设置为mVideoPlayer.setLoop(true);
     mController.setPlayerScene(IVideoController.SCENE_NOIMAL);//设置控制器应用场景
+    //默认控制器独有api
+    //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
+    //以下常用api的控制器需继承GestureController
+    //mController.setCanTouchInPortrait(true);//竖屏状态下是否开启手势交互,默认允许
+    //mController.setCanTouchPosition(true);//设置是否可以滑动调节进度，默认可以
+    //mController.setGestureEnabled(true);//是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
+    //mController.setDoubleTapTogglePlayEnabled(true);//是否开启双击播放/暂停，默认关闭
 ```
 #### 3、交互组件API
 * 3.1、请阅读[IControllerView][3]
@@ -195,8 +202,8 @@
     //更新播放器\控制器所在场景,调用此方法后控制器和所有UI组件都会收到onPlayerScene(int playerScene)回调
     controller.setPlayerScene(IVideoController.SCENE_NOIMAL);
 ```
-#### 6、自定义视频画面渲染器
-###### 6.1、视频渲染器自定义
+#### 6、自定义画面渲染器
+###### 6.1、画面渲染器自定义
 * SDK内部的视频画面渲染器使用的是TextureView,TextureView和SurfaceView推荐使用TextureView。SurfaceView在横竖屏切换时会有短暂黑屏及镜像(setScaleX)失效。
 * 自定义视频画面渲染器组件View需要实现[IVideoRenderView][19]接口并实现所有接口方法，在getView中返回你的TextureView或SurfaceView
 ```
@@ -215,20 +222,18 @@
             mMediaPlayer.setSurface(mSurface);
         }
     }
-
 ```
-###### 6.2、视频渲染器使用
+###### 6.2、应用自定义渲染器
 ```
-        //自定义画面渲染器，在开始播放前设置监听并返回生效
-        mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+    //自定义画面渲染器，在开始播放前设置监听并返回自定义画面渲染器后生效
+    mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
 
-            @Override
-            public IVideoRenderView createRenderView() {
-                return new CoustomSurfaceView(MainActivity.this);//返回null时,SDK内部会自动使用自定义的MediaTextureView渲染器,自定义渲染器请参考Demo中CoustomSurfaceView类
-            }
-        });
+        @Override
+        public IVideoRenderView createRenderView() {
+            return new CoustomSurfaceView(MainActivity.this);//返回null时,SDK内部会自动使用自定义的MediaTextureView渲染器,自定义渲染器请参考Demo中CoustomSurfaceView类
+        }
+    });
 ```
-
 #### 7、全屏播放
 ##### 7.1、横竖屏切换
 * 7.1.1、如需支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
@@ -407,9 +412,10 @@
 * 11.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
     VideoController controller = mVideoPlayer.initController();
-    //1、设置虚拟的视频总时长,即可开启试看模式
+    //1、设置虚拟的视频总时长,即可开启试看模式,试看模式下不能开启循环播放，否则无法回调试看完成状态。
     controller.setPreViewTotalDuration(DURATION+"");//注意:设置虚拟总时长(一旦设置控制器部走片段试看流程)
-    //2、添加自己的试看播放完成的交互UI组件
+    mVideoPlayer.setLoop(false);//关闭循环播放
+    //2、添加自己的试看播放完成的UI交互组件
     ControPerviewView controPerviewView=new ControPerviewView(controller.getContext());
     controPerviewView.setOnEventListener(new ControPerviewView.OnEventListener() {
         @Override
@@ -591,7 +597,7 @@
 * 在带有刘海、水滴、挖空的>=28（Android9）设备上，播放器在横屏时无法延申到状态栏，有两个解决方案：
 ##### 9.1、播放器启用沉浸模式
 
-* 给播放器设置横屏状态下允许启用全屏沉浸样式式，再配合缩放模式，全屏画面比较震撼。
+* 给播放器设置横屏状态下允许启用全屏沉浸样式式，再配合缩放模式，全屏画面比较震撼。SDK版本需>=2.0.2.2
 ```
     mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏模式下是否启用沉浸样式，在开始全屏前设置生效，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳
     //mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);//设置视频画面渲染模式为：全屏缩放模式
