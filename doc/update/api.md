@@ -40,10 +40,10 @@
 [2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 [3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
-* 4.1、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[ExoMediaPlayer][5]或ijk库中的[IJkMediaPlayer][4]和
+* 4.1、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
 
-[4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
-[5]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/media/ExoMediaPlayer.java "ExoMediaPlayer"
+[4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/java/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
+[5]:https://github.com/hty527/iPlayer/blob/main/exo/src/main/java/com/android/iplayer/media/core/ExoMediaPlayer.java "ExoMediaPlayer"
 ```
     int MEDIA_CORE=1;
     /**
@@ -54,9 +54,9 @@
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
             if(1==MEDIA_CORE){
-                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:2.0.3'
+                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
             }else if(2==MEDIA_CORE){
-                return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器
+                return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器，需引用库：implementation 'com.github.hty527.iPlayer:exo:2.0.3.1'
             }else{
                 return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中ExoMediaPlayer类或ijk中的IJkMediaPlayer类
             }
