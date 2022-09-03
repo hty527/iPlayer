@@ -23,7 +23,7 @@ import com.android.videoplayer.utils.Logger;
  */
 public class VideoCacheActivity extends BaseActivity {
 
-    public static final String CACHE_URL=MP4_URL0;
+    public static final String CACHE_URL=MP4_URL2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class VideoCacheActivity extends BaseActivity {
     }
 
     public void cacheStart(View view) {
-        VideoCache.getInstance().startPreloadTask(CACHE_URL,10*1024*1024);//预缓存10M
+        VideoCache.getInstance().startPreloadTask(CACHE_URL,50*1024*1024);//预缓存10M
     }
 
     public void cachePause(View view) {

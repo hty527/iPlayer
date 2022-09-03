@@ -308,7 +308,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     private void startPlayer(Object dataSource) {
         //检查播放地址
         if(!checkedDataSource()){
-//            ILogger.d(TAG,"startPlayer-->地址为空");
+            ILogger.d(TAG,"startPlayer-->地址为空");
             sPlayerState = PlayerState.STATE_ERROR;
             onPlayerState(sPlayerState,getString(R.string.player_media_error_path_empty,"播放地址为空,请检查!"));
             return;
@@ -317,7 +317,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         boolean hasNet = PlayerUtils.getInstance().hasNet(mDataSource,mAssetsSource);
         //检查网络链接状态
         if(hasNet&&!PlayerUtils.getInstance().isCheckNetwork()){
-//            ILogger.d(TAG,"startPlayer-->网络未连接");
+            ILogger.d(TAG,"startPlayer-->网络未连接");
             sPlayerState = PlayerState.STATE_ERROR;
             onPlayerState(sPlayerState,getString(R.string.player_media_error_net,"网络未连接"));
             return;
@@ -325,7 +325,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         //检查移动流量网络下是否允许播放
         boolean mobileNetwork = PlayerUtils.getInstance().mobileNetwork(IVideoManager.getInstance().isMobileNetwork());
         if(hasNet&&!mobileNetwork){
-//            ILogger.d(TAG,"startPlayer-->移动网络下");
+            ILogger.d(TAG,"startPlayer-->移动网络下");
             sPlayerState = PlayerState.STATE_MOBILE;
             onPlayerState(sPlayerState,getString(R.string.player_media_mobile,"移动网络播放"));
             return;
