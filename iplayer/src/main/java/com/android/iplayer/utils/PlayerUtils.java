@@ -440,6 +440,9 @@ public class PlayerUtils {
         if(dataSource.startsWith("file")||dataSource.startsWith("android")){
             return false;
         }
+        if(dataSource.contains("127.0.0.1")){
+            return false;
+        }
         return true;
     }
 

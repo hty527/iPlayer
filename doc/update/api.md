@@ -527,7 +527,7 @@
     </application>
 ```
 ##### 15.1、视频预缓存
-* 预缓存一般用于列表、类似抖音的播放场景，在渲染画面时，提前缓存好指定大小的视频文件，实现秒播的功能。参考Demo中的[PagerPlayerAdapter][17]用法
+* 预缓存一般用于列表、类似抖音的播放场景，在渲染画面时，提前缓存好指定大小的视频文件，实现秒播的功能。参考Demo中的[PagerPlayerAdapter][17]和[VideoCacheActivity][21]用法
 * 15.1.1、开始\结束预缓存
 ```
     //开始预缓存|缓存，此方法为多参方法，可选preloadLength(预缓存大小)和position(位于列表中的position)
@@ -547,7 +547,6 @@
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
 ##### 15.2、边播边存
-* 请参考Demo中的[VideoCacheActivity][21]用法
 ```
     //边播边存api非常简单，只需要传入你的地址，内部会转换为本地代理地址，播放完成后，再次播放不再消耗流量(不删除缓存情况下)
     String playUrl = VideoCache.getInstance().getPlayUrl(rawUrl);//rawUrl为你的源视频地址
