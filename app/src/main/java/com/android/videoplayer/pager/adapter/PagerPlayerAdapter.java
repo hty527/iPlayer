@@ -2,10 +2,11 @@ package com.android.videoplayer.pager.adapter;
 
 import android.view.View;
 import androidx.annotation.NonNull;
+
+import com.android.iplayer.video.cache.VideoCache;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.adapter.BaseNoimalAdapter;
 import com.android.videoplayer.base.adapter.widget.BaseViewHolder;
-import com.android.videoplayer.cache.PreloadManager;
 import com.android.videoplayer.pager.bean.VideoBean;
 import com.android.videoplayer.pager.widget.PagerVideoController;
 import com.android.videoplayer.utils.Logger;
@@ -26,7 +27,7 @@ public class PagerPlayerAdapter extends BaseNoimalAdapter<VideoBean, PagerPlayer
     protected void initItemView(VideoViewHolder viewHolder, int position, VideoBean data) {
         viewHolder.mPagerVideoController.initMediaData( getItemData(position),position);
         //开始预加载
-        PreloadManager.getInstance(viewHolder.getContext()).addPreloadTask(data.getVideoDownloadUrl(), position);
+        VideoCache.getInstance().startPreloadTask(data.getVideoDownloadUrl(), position,1024*1024);
     }
 
     public class VideoViewHolder extends BaseViewHolder{
@@ -46,7 +47,7 @@ public class PagerPlayerAdapter extends BaseNoimalAdapter<VideoBean, PagerPlayer
         if(adapterPosition>-1){
             VideoBean itemData = getItemData(adapterPosition);
             //取消预加载
-            PreloadManager.getInstance(holder.itemView.getContext()).removePreloadTask(itemData.getVideoDownloadUrl());
+            VideoCache.getInstance().removePreloadTask(itemData.getVideoDownloadUrl());
         }
         super.onViewDetachedFromWindow(holder);
     }

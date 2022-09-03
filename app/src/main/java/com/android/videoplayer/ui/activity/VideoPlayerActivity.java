@@ -174,7 +174,7 @@ public class VideoPlayerActivity extends BaseActivity {
         //mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放
         mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setDataSource(mUrl);//播放地址设置
-        mVideoPlayer.playOrPause();//开始异步准备播放
+        mVideoPlayer.prepareAsync();//开始异步准备播放
     }
 
     /**
@@ -240,7 +240,7 @@ public class VideoPlayerActivity extends BaseActivity {
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(mUrl);//播放地址设置 URL4惊奇队长
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
     }
 }

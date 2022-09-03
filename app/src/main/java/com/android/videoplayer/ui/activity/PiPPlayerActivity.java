@@ -123,7 +123,7 @@ public class PiPPlayerActivity extends BaseActivity {
         mVideoPlayer.setLoop(false);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
         mVideoPlayer.setDataSource(MP4_URL3);//播放地址设置
-        mVideoPlayer.playOrPause();//开始异步准备播放
+        mVideoPlayer.prepareAsync();//开始异步准备播放
     }
 
     /**

@@ -74,8 +74,9 @@ public class DataFactory {
         menus.add(new Menu(getString(R.string.text_item_window_goable_open,"任意界面开启全局悬浮窗播放器"),13,null,2));
         menus.add(new Menu(getString(R.string.text_item_dip,"画中画(Android8.0+)"),14,null,1));
         menus.add(new Menu(getString(R.string.text_item_dy,"仿抖音(扩展示例，支持缓存)"),15,getString(R.string.text_item_sub_expand,"扩展"),0));
-        menus.add(new Menu(getString(R.string.text_item_danmu,"自定义弹幕控制器(扩展示例)"),16,null,1));
-        menus.add(new Menu(getString(R.string.text_item_home,"项目主页"),17,getString(R.string.text_item_sub_other,"其它"),3));
+        menus.add(new Menu(getString(R.string.text_item_danmu,"自定义弹幕控制器(扩展示例)"),16,null,2));
+        menus.add(new Menu(getString(R.string.text_item_cache,"视频预缓存"),17,null,1));
+        menus.add(new Menu(getString(R.string.text_item_home,"项目主页"),18,getString(R.string.text_item_sub_other,"其它"),3));
         Menu menu = new Menu("", 101, getString(R.string.text_item_version,"版本预告"), 3, 1);
         Version version=new Version();
         version.setCode("2.0.xx");

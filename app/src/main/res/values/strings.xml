@@ -32,6 +32,7 @@
     <string name="text_item_dip">Picture in Picture(Android8.0+)</string>
     <string name="text_item_dy">Likeness TikTok(Extended examples,Support cache)</string>
     <string name="text_item_danmu">Custom danmu controller(Extended examples)</string>
+    <string name="text_item_cache">Video cache</string>
     <string name="text_item_home">Project homepage</string>
     <string name="text_item_version">Version of the trailer</string>
     <string name="text_item_time">Undetermined, please stay tuned</string>

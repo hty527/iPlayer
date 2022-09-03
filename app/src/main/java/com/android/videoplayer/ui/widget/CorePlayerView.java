@@ -105,7 +105,7 @@ public class CorePlayerView extends LinearLayout {
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(mUrl)? PATH :mUrl);//播放地址设置
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
     }
 
@@ -138,7 +138,7 @@ public class CorePlayerView extends LinearLayout {
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(url)? PATH :url);//播放地址设置
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
     }
 }

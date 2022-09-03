@@ -18,7 +18,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 /**
  * created by hty
  * 2022/7/1
- * Desc:IJK解码器示例
+ * Desc:基于ijkPlayer实现的解码器示例，原项目地址：https://github.com/bilibili/ijkplayer
  */
 public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.OnPreparedListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnVideoSizeChangedListener,

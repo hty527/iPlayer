@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import tv.danmaku.ijk.media.player.misc.IMediaDataSource;
 
-
+/**
+ * created by hty
+ * 2022/7/1
+ * Desc:本地资源地址转换处理
+ */
 public class RawDataSourceProvider implements IMediaDataSource {
     private AssetFileDescriptor mDescriptor;
 

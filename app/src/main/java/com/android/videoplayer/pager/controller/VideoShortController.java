@@ -35,7 +35,7 @@ public class VideoShortController extends BaseController {
         findViewById(R.id.controller_root_view).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(null!=mVideoPlayerControl) mVideoPlayerControl.playOrPause();
+                if(null!=mVideoPlayerControl) mVideoPlayerControl.prepareAsync();
             }
         });
         mSeekBar = (SeekBar) findViewById(R.id.video_bottom_progress);

@@ -129,7 +129,11 @@ public class MainActivity extends BaseActivity {
                             intent = new Intent(MainActivity.this, DanmuPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_danmu,"自定义弹幕控制器"));
                             break;
-                        case 17://项目主页 https://gitee.com/hty_Yuye/iPlayer
+                        case 17://预缓存
+                            intent = new Intent(MainActivity.this, VideoCacheActivity.class);
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_cache,"视频预缓存"));
+                            break;
+                        case 18://项目主页 https://gitee.com/hty_Yuye/iPlayer
                             intent = new Intent(Intent.ACTION_VIEW);
                             intent.addCategory(Intent.CATEGORY_BROWSABLE);
                             intent.setData(Uri.parse("https://github.com/hty527/iPlayer"));
@@ -185,7 +189,7 @@ public class MainActivity extends BaseActivity {
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
             IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
-            videoPlayer.playOrPause();//开始异步准备播放,注意界面关闭不要销毁播放器实例
+            videoPlayer.prepareAsync();//开始异步准备播放,注意界面关闭不要销毁播放器实例
         }
     }
 
@@ -235,7 +239,7 @@ public class MainActivity extends BaseActivity {
             float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
             //启动窗口播放
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
     }
 
@@ -282,7 +286,7 @@ public class MainActivity extends BaseActivity {
         videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         videoPlayer.setDataSource(MP4_URL2);//播放地址设置
         videoPlayer.startFullScreen();//开启全屏播放
-        videoPlayer.playOrPause();//开始异步准备播放
+        videoPlayer.prepareAsync();//开始异步准备播放
     }
 
     @Override

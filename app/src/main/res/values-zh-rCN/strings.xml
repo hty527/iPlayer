@@ -32,6 +32,7 @@
     <string name="text_item_dip">画中画(Android8.0+)</string>
     <string name="text_item_dy">仿抖音(扩展示例，支持缓存)</string>
     <string name="text_item_danmu">自定义弹幕控制器(扩展示例)</string>
+    <string name="text_item_cache">视频预缓存</string>
     <string name="text_item_home">项目主页</string>
     <string name="text_item_version">版本预告</string>
     <string name="text_item_time">待定,请持续关注</string>

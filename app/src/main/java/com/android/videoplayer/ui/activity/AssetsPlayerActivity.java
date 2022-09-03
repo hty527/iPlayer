@@ -62,7 +62,7 @@ public class AssetsPlayerActivity extends BaseActivity {
             mVideoPlayer.onReset();
             String url = "android.resource://" + getPackageName() + "/" + R.raw.test;
             mVideoPlayer.setDataSource(url);
-            mVideoPlayer.playOrPause();
+            mVideoPlayer.prepareAsync();
         }
     }
 
@@ -83,7 +83,7 @@ public class AssetsPlayerActivity extends BaseActivity {
             }
             if(null!=afd){
                 mVideoPlayer.setDataSource(afd);
-                mVideoPlayer.playOrPause();
+                mVideoPlayer.prepareAsync();
             }
         }
     }

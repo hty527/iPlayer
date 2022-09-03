@@ -9,7 +9,7 @@ import com.android.iplayer.model.PlayerState;
  * 2022/8/22
  * Desc:一个在{@link IVideoController}(BaseController)和{@link IVideoPlayerControl}(BasePlayer)之间通信交互的桥梁
  */
-public class ControlWrapper {
+public final class ControlWrapper {
 
     private IVideoController mController;//控制器
     private IVideoPlayerControl mVideoPlayer;//播放器
