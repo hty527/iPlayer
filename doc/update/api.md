@@ -547,7 +547,7 @@
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
 ##### 15.2、边播边存
-* 请参考Demo中的[VideoCacheActivity][20]用法
+* 请参考Demo中的[VideoCacheActivity][21]用法
 ```
     //边播边存api非常简单，只需要传入你的地址，内部会转换为本地代理地址，播放完成后，再次播放不再消耗流量(不删除缓存情况下)
     String playUrl = VideoCache.getInstance().getPlayUrl(rawUrl);//rawUrl为你的源视频地址
