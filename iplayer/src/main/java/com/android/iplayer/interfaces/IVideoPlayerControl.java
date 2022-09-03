@@ -2,8 +2,11 @@ package com.android.iplayer.interfaces;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.listener.OnPlayerEventListener;
+
+import java.io.File;
 
 /**
  * created by hty
@@ -41,6 +44,12 @@ public interface IVideoPlayerControl<V extends BaseController> {
      * @param dataSource 设置Assets类型的播放地址
      */
     void setDataSource(AssetFileDescriptor dataSource);
+
+    /**
+     * 设置本地File路劲的播放地址
+     * @param dataSource 设置本地File路劲的播放地址,请注意先申请"存储"权限
+     */
+    void setDataSource(File dataSource);
 
     /**
      * 设置缩放模式

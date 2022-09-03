@@ -229,7 +229,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             if(mIsChange){
                 PlayerManager.getInstance().setVideoPlayer(mVideoPlayer);
             }
-            mVideoPlayer.playOrPause();//准备播放
+            mVideoPlayer.prepareAsync();//准备播放
         }else{
             Toast.makeText(getApplicationContext(),"不正确的调用,缺少params",Toast.LENGTH_SHORT).show();
         }
@@ -349,7 +349,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
         //开始播放
         mVideoPlayer.getController().setTitle(data.getTitle());
         mVideoPlayer.setDataSource(data.getPlayUrl());
-        mVideoPlayer.playOrPause();
+        mVideoPlayer.prepareAsync();
         //获取最新的推荐数据
         if(null!=mPersenter){
             mPersenter.getVideosByVideo(mParams.getId()+"");

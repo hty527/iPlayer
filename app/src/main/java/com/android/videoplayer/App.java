@@ -3,6 +3,7 @@ package com.android.videoplayer;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
@@ -78,8 +79,15 @@ public class App extends Application {
                 IWindowManager.getInstance().quitGlobaWindow();//关闭悬浮窗播放器窗口
             }
         });
+        /**
+         * SDK内部会在使用缓存相关功能时自动初始化。如果需要自行定义缓存目录、缓存目录最大长度大小可自行调用初始化。必须在使用缓存功能之前初始化
+         */
+        //返回的路径是SD卡包名下的内部缓存路径，无需存储权限。位于/storage/emulated/0/Android/data/包名/files/video/cache下，会随着应用卸载被删除
+        //其它路径请注意申请动态权限！！！
+//        File cachePath = getExternalFilesDir("video/cache/");
+        //参数2：缓存大小(单位：字节),参数3：缓存路径,不设置默认在sd_card/Android/data/[app_package_name]/cache中
+//        VideoCache.getInstance().initCache(getApplicationContext(),1024*1024*1024,cachePath);//缓存大小为1024M，路径为SD卡下的cachePath。请注意SD卡权限状态。
     }
-
 
     public static App getInstance(){
         return mInstance;

@@ -80,7 +80,7 @@ public class WindowPlayerActivity extends BaseActivity {
         FrameLayout playerParent = (FrameLayout) findViewById(R.id.player_container_parent);
         playerParent.removeAllViews();
         playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
-        mVideoPlayer.playOrPause();//开始异步准备播放
+        mVideoPlayer.prepareAsync();//开始异步准备播放
     }
 
     /**

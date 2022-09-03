@@ -12,12 +12,12 @@ import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.video.cache.VideoCache;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseFragment;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.cache.PreloadManager;
 import com.android.videoplayer.pager.adapter.PagerPlayerAdapter;
 import com.android.videoplayer.pager.base.BaseViewPager;
 import com.android.videoplayer.pager.bean.VideoBean;
@@ -44,7 +44,6 @@ public class PagerPlayerFragment extends BaseFragment {
     private VideoPlayer mVideoPlayer;
     private ViewPagerLayoutManager mLayoutManager;
     private int mPosition;//准备待播放的角标位置
-    private PreloadManager mPreloadManager;
 
     @Override
     protected int getLayoutID() {
@@ -53,7 +52,6 @@ public class PagerPlayerFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        mPreloadManager = PreloadManager.getInstance(getContext());
         findViewById(R.id.ll_bar_margin).getLayoutParams().height= ScreenUtils.getInstance().getStatusBarHeight(getContext())+ScreenUtils.getInstance().dpToPxInt(49f);
         //视频列表适配器准备
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -228,8 +226,8 @@ public class PagerPlayerFragment extends BaseFragment {
                     PlayerUtils.getInstance().removeViewFromParent(mVideoPlayer);
                     playerContainer.addView(mVideoPlayer,new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER));
                     mVideoPlayer.getController().setTitle(videoData.getTitle());//视频标题(默认视图控制器横屏可见)
-                    mVideoPlayer.setDataSource(null!=mPreloadManager?mPreloadManager.getPlayUrl(videoData.getVideoDownloadUrl()):videoData.getVideoDownloadUrl());//播放地址设置
-                    mVideoPlayer.playOrPause();//开始异步准备播放
+                    mVideoPlayer.setDataSource(VideoCache.getInstance().getPlayPreloadUrl(videoData.getVideoDownloadUrl()));//播放地址设置
+                    mVideoPlayer.prepareAsync();//开始异步准备播放
                 }
             }
         }
@@ -329,7 +327,7 @@ public class PagerPlayerFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         Logger.d(TAG,"onDestroy");
-        if(null!=mPreloadManager) mPreloadManager.removeAllPreloadTask();
+        VideoCache.getInstance().removeAllPreloadTask();
         if(null!=mVideoPlayer) mVideoPlayer.onDestroy();
         if(null!=mAdapter){
             mAdapter.setNewData(null);

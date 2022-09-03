@@ -19,12 +19,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import com.android.iplayer.R;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IMediaPlayerControl;
-import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.interfaces.IVideoPlayerControl;
+import com.android.iplayer.interfaces.IVideoRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
@@ -34,6 +35,8 @@ import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.view.WindowPlayerFloatView;
+
+import java.io.File;
 
 /**
  * Created by hty
@@ -124,7 +127,6 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     private void hideSystemBar(ViewGroup decorView) {
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if(null!=decorView&&null!=activity&&!activity.isFinishing()){
-            ILogger.d(TAG,"hideSystemBar-->"+mLandscapeWindowTranslucent);
             //全屏模式下是否启用全屏沉浸样式，也可以给Activity的style添加沉浸属性：<item name="android:windowLayoutInDisplayCutoutMode" tools:ignore="NewApi">shortEdges</item>
             if(mLandscapeWindowTranslucent){
                 WindowManager.LayoutParams attributes = activity.getWindow().getAttributes();
@@ -198,7 +200,6 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        ILogger.d(TAG,"hasWindowFocus:"+hasWindowFocus+",mScreenOrientation:"+mScreenOrientation);
         if(hasWindowFocus&&mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
             hideSystemBar(getDecorView());
         }
@@ -317,6 +318,18 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         this.mAssetsSource=dataSource;
         this.mDataSource=null;
         if(null!=mIVideoPlayer) mIVideoPlayer.setDateSource(dataSource);
+    }
+
+    /**
+     * 设置本地File路劲的播放地址
+     * @param dataSource 设置本地File路劲的播放地址,请注意先申请"存储"权限
+     */
+    @Override
+    public void setDataSource(File dataSource) {
+        if(null!=dataSource){
+            String filePath = Uri.parse("file://" + dataSource.getAbsolutePath()).toString();
+            setDataSource(filePath);
+        }
     }
 
     /**

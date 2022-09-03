@@ -272,7 +272,7 @@
     videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
     videoPlayer.setDataSource(MP4_URL2);//播放地址设置
     videoPlayer.startFullScreen();//开启全屏播放
-    videoPlayer.playOrPause();//开始异步准备播放
+    videoPlayer.prepareAsync();//开始异步准备播放
 ```
 #### 8、窗口播放
 ##### 8.1、Activity级别悬浮窗
@@ -320,7 +320,7 @@
             //启动窗口播放
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
             //mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//也可以使用内部默认的窗口宽高和位置属性
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
     }
 ```
@@ -347,7 +347,7 @@
     boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
     if(globalWindow) {
         IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
-        videoPlayer.playOrPause();//开始异步准备播放,注意界面关闭不要销毁播放器实例
+        videoPlayer.prepareAsync();//开始异步准备播放,注意界面关闭不要销毁播放器实例
     }
 ```
 
@@ -416,7 +416,6 @@
 ```
 
 [11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
-[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
 #### 11、收费试看模式
 * 11.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
@@ -468,7 +467,7 @@
                         mVideoPlayer.onReset();
                         mVideoPlayer.setDataSource(url);
                         mPosition+=1;
-                        mVideoPlayer.playOrPause();
+                        mVideoPlayer.prepareAsync();
                     }else{
                         Logger.d(TAG,"onPlayerState-->播放到最后一个了");
                     }
@@ -500,29 +499,87 @@
 ```
 ###### 13.2、悬浮窗转场
 * 13.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo [WindowGlobalPlayerActivity][16]类的initPlayer方法或[VideoDetailsActivity][15]类的initPlayer方法
-#### 14、视频缓存
-* 视频缓存SDK
+#### 14、实现秒播功能
+* 参考"视频预缓存"相关说明实现。
+#### 15、视频本地缓存
+* 注意预缓存和边播边存api，调用不一样！！！
+* 15.1、为方便视频缓存的业务需求，已基于AndroidVideoCache封装了一个独立SDK，具体api请阅读[VideoCache][20]
 ```
-    //音视频缓存,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:videocache:lastversion'
+    //音视频预缓存+边播边存,根据需要使用
+    implementation 'com.github.hty527.iPlayer:cache:lastversion'
 ```
-* Demo的“防抖音”模块支持视频缓存和秒播，请参考[PagerPlayerAdapter][17]类的 //开始预加载 和 //结束预加载
-
+* 15.2、缓存配置,SDK内部会自动处初始化！如果需要自定义缓存大小、缓存目录，可自行调用初始化。
+```
+    /**
+     * SDK内部会在使用缓存相关功能时自动初始化。如果需要自行定义缓存目录、缓存目录最大长度大小可自行调用初始化。必须在使用缓存功能之前初始化
+     */
+    //返回的路径是SD卡包名下的内部缓存路径，无需存储权限。位于/storage/emulated/0/Android/data/包名/files/video/cache下，会随着应用卸载被删除
+    //其它路径请注意申请动态权限！！！
+    File cachePath = context.getExternalFilesDir("video/cache/");
+    //参数2：缓存大小(单位：字节),参数3：缓存路径,不设置默认在sd_card/Android/data/[app_package_name]/cache中
+    VideoCache.getInstance().initCache(context,1024*1024*1024,cachePath);//缓存大小为1024M，路径为SD卡下的cachePath。请注意SD卡权限状态。
+```
+* 15.3、targetSdk=29时Android 10及以上机型创建本地目录失败？
+```
+    //在你的AndroidManifest中添加此属性配置
+    <application
+        android:requestLegacyExternalStorage="true">
+    </application>
+```
+##### 15.1、视频预缓存
+* 预缓存一般用于列表、类似抖音的播放场景，在渲染画面时，提前缓存好指定大小的视频文件，实现秒播的功能。参考Demo中的[PagerPlayerAdapter][17]用法
+* 15.1.1、开始\结束预缓存
+```
+    //开始预缓存|缓存，此方法为多参方法，可选preloadLength(预缓存大小)和position(位于列表中的position)
+    VideoCache.getInstance().startPreloadTask(rawUrl);//rawUrl为你的源http/https视频地址
+    //暂停预缓存|缓存，此方法为多参方法，请参考方法参数注释
+    VideoCache.getInstance().pausePreload();
+    //根据原视频地址取消预缓存|缓存
+    VideoCache.getInstance().removePreloadTask(rawUrl);//rawUrl为你的源http/https视频地址
+    //取消所有预缓存任务
+    VideoCache.getInstance().removeAllPreloadTask();
+```
+* 14.1.3、使用预缓存地址播放视频
+```
+    //开始播放时使用此播放地址来播放
+    String cacheUrl = VideoPreloadManager.getInstance(getContext()).getPlayPreloadUrl(rawUrl);//rawUrl为你的源视频地址
+    mVideoPlayer.setDataSource(cacheUrl);//播放地址设置
+    mVideoPlayer.prepareAsync();//开始异步准备播放
+```
+##### 15.2、边播边存
+* 请参考Demo中的[VideoCacheActivity][20]用法
+```
+    //边播边存api非常简单，只需要传入你的地址，内部会转换为本地代理地址，播放完成后，再次播放不再消耗流量(不删除缓存情况下)
+    String playUrl = VideoCache.getInstance().getPlayUrl(rawUrl);//rawUrl为你的源视频地址
+    mVideoPlayer.setDataSource(playUrl);//播放地址设置
+    mVideoPlayer.prepareAsync();//开始异步准备播放
+```
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
 [17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
+[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
 [19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoRenderView.java "IVideoRenderView"
-#### 15、本地SD卡视频播放
-* 15.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
+[20]:https://github.com/hty527/iPlayer/tree/main/cache/src/main/java/com/android/iplayer/video/cache/VideoCache.java "VideoCache"
+[21]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoCacheActivity.java "VideoCacheActivity"
+
+#### 16、本地SD卡视频播放
+* 16.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
 ```
     //本地file需要转称file://协议
     File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
     String filePath = Uri.parse("file://" + file.getAbsolutePath()).toString();
     mVideoPlayer.setDataSource(filePath);
+    mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
-* 15.2、Android9及以上设备提示：Permission denied？
+* 16.2、Android9及以上设备提示：Permission denied？请先检查是否动态申请存储权限，若已申请添加如下配置
 ```
     //在application中加入
     android:requestLegacyExternalStorage="true"
+```
+* 16.3、或直接调用api
+```
+    File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
+    mVideoPlayer.setDataSource(file);
+    mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
 ### 二、异常现象及注意点
 #### 1、网络地址无法播放

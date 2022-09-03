@@ -23,7 +23,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.3.apk?version=2.0.3 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.4.apk?version=2.0.4 "下载apk"
 
 ##### 1、项目根build.gradle及模块build.gradle配置</br>
 ```
@@ -37,14 +37,14 @@
     //2.在你的模块build.gradle中添加：   
     dependencies {
         //播放器
-        implementation 'com.github.hty527.iPlayer:iplayer:2.0.3.2'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.0.4'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.0.3.2'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.0.4'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.0.3.2'
-        //音视频缓存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:videocache:2.0.3.2'
+        //implementation 'com.github.hty527.iPlayer:exo:2.0.4'
+        //音视频预缓存+边播边存,根据需要使用
+        //implementation 'com.github.hty527.iPlayer:cache:2.0.4'
     }
 ```
 ##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -122,3 +122,11 @@
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screen7.jpg?q=7" width="270",height="585">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screen8.jpg?q=8" width="270",height="585">
 </div>
+
+#### 六、鸣谢
+* [ijkplayer][6]
+* [ExoPlayer][7]
+* [AndroidVideoCache][8]
+[6]:https://github.com/bilibili/ijkplayer "ijkplayer"
+[7]:https://github.com/google/ExoPlayer "ExoPlayer"
+[8]:https://github.com/danikula/AndroidVideoCache "AndroidVideoCache"

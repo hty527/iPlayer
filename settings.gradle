@@ -1,4 +1,4 @@
-include ':videocache'
+include ':cache'
 include ':app'
 include ':iplayer'
 include ':ijk'

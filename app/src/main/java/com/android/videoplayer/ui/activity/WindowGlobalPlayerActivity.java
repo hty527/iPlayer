@@ -88,7 +88,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             VideoController controller = mVideoPlayer.initController();
             controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
 
-            mVideoPlayer.playOrPause();//开始异步准备播放
+            mVideoPlayer.prepareAsync();//开始异步准备播放
         }
 
         IControllerView controllerView = mVideoPlayer.getController().findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);

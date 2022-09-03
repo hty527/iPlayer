@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import com.android.iplayer.R;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**
@@ -21,7 +21,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2、当前View范围内拦截了ACTION_MOVE事件，点击事件不拦截
  * 3、内部根据activity window窗口和全局的悬浮窗窗口最了区别处理
  */
-public class WindowPlayerFloatView extends FrameLayout {
+public final class WindowPlayerFloatView extends FrameLayout {
 
     private static final String TAG="WindowPlayerFloatView";
     private int mGroupWidth,mGroupHeight;

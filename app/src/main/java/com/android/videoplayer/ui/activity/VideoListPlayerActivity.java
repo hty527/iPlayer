@@ -79,7 +79,7 @@ public class VideoListPlayerActivity extends BaseActivity {
                             mVideoPlayer.onReset();
                             mVideoPlayer.setDataSource(url);
                             mPosition+=1;
-                            mVideoPlayer.playOrPause();
+                            mVideoPlayer.prepareAsync();
                         }else{
                             Logger.d(TAG,"onPlayerState-->播放到底了");
                         }
@@ -94,7 +94,7 @@ public class VideoListPlayerActivity extends BaseActivity {
         mVideoPlayer.setContinuityPlay(true);//告诉播放器连续播放模式,此模式下播放器内部播放完成后不会自动退出全屏\小窗口\悬浮窗口等.
 //        直到播放到最后一个地址的时候，需告诉播放器关闭连续播放模式
         mPosition+=1;
-        mVideoPlayer.playOrPause();//开始异步准备播放
+        mVideoPlayer.prepareAsync();//开始异步准备播放
     }
 
     /**

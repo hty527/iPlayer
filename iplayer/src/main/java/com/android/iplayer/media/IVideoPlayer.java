@@ -255,7 +255,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
-        ILogger.d(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
+        ILogger.e(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
         if(-38==what) return true;
         stopTimer();
         sPlayerState = PlayerState.STATE_ERROR;
