@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.widget.VideoPlayer;
@@ -102,6 +103,7 @@ public class CorePlayerView extends LinearLayout {
         if (null != mVideoPlayer) {
             mVideoPlayer.onReset();
             mVideoPlayer.setLoop(false);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(mUrl)? PATH :mUrl);//播放地址设置
@@ -135,6 +137,7 @@ public class CorePlayerView extends LinearLayout {
         if (null != mVideoPlayer) {
             this.mUrl=url;
             mVideoPlayer.setLoop(false);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(TextUtils.isEmpty(url)? PATH :url);//播放地址设置

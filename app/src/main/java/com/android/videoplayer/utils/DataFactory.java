@@ -62,7 +62,7 @@ public class DataFactory {
         menus.add(new Menu(getString(R.string.text_item_sdk,"SDK默认播放器示例"),1,getString(R.string.text_item_sub_noimal,"基础"),0));
         menus.add(new Menu(getString(R.string.text_item_live,"直播拉流"),2,null,2));
         menus.add(new Menu(getString(R.string.text_item_videos,"多播放器同时播放"),3,null,2));
-        menus.add(new Menu(getString(R.string.text_item_full,"直接全屏播放"),4,null,2));
+        menus.add(new Menu(getString(R.string.text_item_full,"直接全屏播放(全屏沉浸)"),4,null,2));
         menus.add(new Menu(getString(R.string.text_item_perview,"收费试看模式"),5,null,2));
         menus.add(new Menu(getString(R.string.text_item_resouce,"Assets/Raw本地资源播放"),6,null,2));
         menus.add(new Menu(getString(R.string.text_item_continuity,"连续播放一个视频列表"),7,null,1));
