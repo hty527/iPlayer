@@ -103,7 +103,7 @@
 * 4、项目无法下载或下载缓慢请至[码云][4]下载
 * 5、播放器框架结构图[点击][5]查看
 
-[4]:https://gitee.com/hty_Yuye/iPlayer "码云"
+[4]:https://gitee.com/hty527/iPlayer "码云"
 [5]:https://github.com/hty527/iPlayer/wiki/api "点击"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
