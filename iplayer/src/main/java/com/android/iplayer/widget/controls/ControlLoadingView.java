@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 
 /**
@@ -13,7 +13,7 @@ import com.android.iplayer.model.PlayerState;
  * Desc:UI控制器-加载、暂停、初始状态
  * 1、为配合窗口样式，当播放器处于窗口样式时此空间不可见
  */
-public class ControlLoadingView extends BaseControllerWidget {
+public class ControlLoadingView extends BaseControlWidget {
 
     private ProgressBar mLoadingView;//加载中
     private View mControllerPlay;//播放按钮

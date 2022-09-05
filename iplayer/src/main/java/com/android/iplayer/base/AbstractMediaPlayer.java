@@ -1,7 +1,7 @@
 package com.android.iplayer.base;
 
 import android.content.Context;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.listener.OnMediaEventListener;
 
 /**

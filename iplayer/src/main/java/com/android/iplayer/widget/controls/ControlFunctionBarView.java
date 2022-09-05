@@ -8,9 +8,9 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.controller.ControlWrapper;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AnimationUtils;
 import com.android.iplayer.utils.PlayerUtils;
@@ -23,7 +23,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2、当单击BaseController空白区域时控制器需要处理显示\隐藏逻辑的情况下需要复写{@link #showControl(boolean)}和{@link #hideControl(boolean)}方法
  * 3、这个seekBar进度条组件还维护了底部的ProgressBar，SDK默认的UI交互是：当播放器处于列表模式时不显示，其它情况都显示
  */
-public class ControlFunctionBarView extends BaseControllerWidget implements View.OnClickListener {
+public class ControlFunctionBarView extends BaseControlWidget implements View.OnClickListener {
 
     private View mController;//控制器
     private SeekBar mSeekBar;//seek调节控制器
@@ -92,13 +92,13 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
                 //当controller_deblocking设置了点击时间，试看结束的拦截都无效
 //                ILogger.d(TAG,"onStopTrackingTouch-->,isCompletion:"+isCompletion+",preViewTotalTime:"+mPreViewTotalTime);
                 if(null!= mControlWrapper){
-                    if(mControlWrapper.isCompletion()&& mControlWrapper.getPreViewTotalTime() >0){//拦截是看结束,让用户解锁
+                    if(mControlWrapper.isCompletion()&& mControlWrapper.getPreViewTotalDuration() >0){//拦截是看结束,让用户解锁
                         if(null!= mControlWrapper) mControlWrapper.onCompletion();
                         return;
                     }
                     int seekBarProgress = seekBar.getProgress();
 //                    ILogger.d(TAG,"onStopTrackingTouch-->seekBarProgress:"+seekBarProgress+",ViewTotalTime:"+ mPreViewTotalTime +",duration:"+ mVideoPlayerControl.getDurtion()+getOrientationStr());
-                    if(mControlWrapper.getPreViewTotalTime() >0){ //跳转至某处,如果滑动的时长超过真实的试看时长,则直接播放完成需要解锁
+                    if(mControlWrapper.getPreViewTotalDuration() >0){ //跳转至某处,如果滑动的时长超过真实的试看时长,则直接播放完成需要解锁
                         long durtion = mControlWrapper.getDuration();
                         if(0==seekBarProgress){//重新从头开始播放
                             //改变UI为缓冲状态
@@ -126,7 +126,7 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
     @Override
     public void attachControlWrapper(ControlWrapper controlWrapper) {
         super.attachControlWrapper(controlWrapper);
-        if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mControlWrapper.getPreViewTotalTime()));
+        if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mControlWrapper.getPreViewTotalDuration()));
     }
 
     @Override
@@ -279,12 +279,12 @@ public class ControlFunctionBarView extends BaseControllerWidget implements View
     public void onProgress(long currentDurtion, long totalDurtion) {
         if(null!=mSeekBar&&null!=mControlWrapper){
             if(null!=mProgressBar&&mProgressBar.getMax()==0){
-                mProgressBar.setMax((int) (mControlWrapper.getPreViewTotalTime() >0? mControlWrapper.getPreViewTotalTime() :totalDurtion));
+                mProgressBar.setMax((int) (mControlWrapper.getPreViewTotalDuration() >0? mControlWrapper.getPreViewTotalDuration() :totalDurtion));
             }
             if(null!=mSeekBar){
                 if(mSeekBar.getMax()<=0){//总进度总时长只更新一次,如果是虚拟的总时长,则在setViewTotalDuration中更新总时长
-                    mSeekBar.setMax((int) (mControlWrapper.getPreViewTotalTime() >0? mControlWrapper.getPreViewTotalTime() :totalDurtion));
-                    if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mControlWrapper.getPreViewTotalTime() >0? mControlWrapper.getPreViewTotalTime() :totalDurtion));
+                    mSeekBar.setMax((int) (mControlWrapper.getPreViewTotalDuration() >0? mControlWrapper.getPreViewTotalDuration() :totalDurtion));
+                    if(null!=mTotalDuration) mTotalDuration.setText(PlayerUtils.getInstance().stringForAudioTime(mControlWrapper.getPreViewTotalDuration() >0? mControlWrapper.getPreViewTotalDuration() :totalDurtion));
                 }
                 if(!isTouchSeekBar) mSeekBar.setProgress((int) currentDurtion);
             }

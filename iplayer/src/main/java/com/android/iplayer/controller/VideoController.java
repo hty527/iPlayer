@@ -285,14 +285,6 @@ public class VideoController extends GestureController {
     }
 
     /**
-     * 设置给用户看的虚拟的视频总时长
-     * @param totalDuration 单位：毫秒
-     */
-    public void setPreViewTotalDuration(long totalDuration){
-        this.mPreViewTotalTime = totalDuration;
-    }
-
-    /**
      * 重置内部状态
      */
     private void reset(){

@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
@@ -14,7 +14,7 @@ import com.android.iplayer.widget.controls.ControlStatusView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
-import com.android.videoplayer.controller.LiveController;
+import com.android.videoplayer.controller.LiveControllerControl;
 import com.android.videoplayer.pager.widget.ControlLiveView;
 
 /**
@@ -49,9 +49,9 @@ public class LivePlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
         mVideoPlayer.setLoop(true);
-        mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置视频画面渲染模式为：全屏缩放模式
+        mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置视频画面渲染模式为：原始大小模式
         //给播放器设置一个控制器
-        LiveController controller = new LiveController(mVideoPlayer.getContext());
+        LiveControllerControl controller = new LiveControllerControl(mVideoPlayer.getContext());
         mVideoPlayer.setController(controller);
         //给控制器添加需要的UI交互组件
         ControlLoadingView controlLoadingView = new ControlLoadingView(controller.getContext());//加载中、开始播放按钮

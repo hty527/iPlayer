@@ -6,8 +6,8 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.base.BaseControlWidget;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AnimationUtils;
 import com.android.iplayer.utils.PlayerUtils;
@@ -19,7 +19,7 @@ import com.android.iplayer.widget.view.BatteryView;
  * Desc:UI控制器-标题栏，这个标题栏维护有返回按钮、电池电量(横屏)、其它功能菜单
  * 1、单击播放器空白位置时控制器需要处理显示\隐藏逻辑的需要复写{@link #showControl(boolean)}和{@link #hideControl(boolean)}方法
  */
-public class ControlToolBarView extends BaseControllerWidget implements View.OnClickListener {
+public class ControlToolBarView extends BaseControlWidget implements View.OnClickListener {
 
     private View mController;//控制器
     //记录用户的设置，是否显示返回按钮\投屏按钮\悬浮窗按钮\菜单按钮

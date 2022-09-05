@@ -1,20 +1,20 @@
 package com.android.iplayer.controller;
 
 import com.android.iplayer.interfaces.IVideoController;
-import com.android.iplayer.interfaces.IVideoPlayerControl;
+import com.android.iplayer.interfaces.IPlayerControl;
 import com.android.iplayer.model.PlayerState;
 
 /**
  * created by hty
  * 2022/8/22
- * Desc:一个在{@link IVideoController}(BaseController)和{@link IVideoPlayerControl}(BasePlayer)之间通信交互的桥梁
+ * Desc:一个在{@link IVideoController}(BaseController)和{@link IPlayerControl}(BasePlayer)之间通信交互的桥梁
  */
 public final class ControlWrapper {
 
     private IVideoController mController;//控制器
-    private IVideoPlayerControl mVideoPlayer;//播放器
+    private IPlayerControl mVideoPlayer;//播放器
 
-    public ControlWrapper(IVideoController controllerControl, IVideoPlayerControl playerControl) {
+    public ControlWrapper(IVideoController controllerControl, IPlayerControl playerControl) {
         this.mController = controllerControl;
         this.mVideoPlayer = playerControl;
     }
@@ -23,7 +23,7 @@ public final class ControlWrapper {
         return mController;
     }
 
-    public IVideoPlayerControl getVideoPlayer() {
+    public IPlayerControl getVideoPlayer() {
         return mVideoPlayer;
     }
 
@@ -77,9 +77,9 @@ public final class ControlWrapper {
      * 返回试看模式下的虚拟总时长
      * @return 单位：毫秒
      */
-    public long getPreViewTotalTime() {
+    public long getPreViewTotalDuration() {
         if(null!= mController){
-            return mController.getPreViewTotalTime();
+            return mController.getPreViewTotalDuration();
         }
         return 0;
     }

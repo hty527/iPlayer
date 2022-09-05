@@ -10,8 +10,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import androidx.annotation.NonNull;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.interfaces.IMediaPlayer;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.media.IMediaPlayer;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.manager.IVideoManager;
 
 /**
@@ -19,7 +19,7 @@ import com.android.iplayer.manager.IVideoManager;
  * 2022/9/1
  * Desc:自定义渲染器SurfaceView
  */
-public class CoustomSurfaceView extends SurfaceView implements IVideoRenderView, SurfaceHolder.Callback {
+public class CoustomSurfaceView extends SurfaceView implements IRenderView, SurfaceHolder.Callback {
 
     private AbstractMediaPlayer mMediaPlayer;
     private SurfaceHolder mSurfaceHolder;

@@ -3,7 +3,9 @@ package com.android.iplayer.interfaces;
 /**
  * created by hty
  * 2022/8/5
- * Desc:需要处理手势识别交互的组件UI请实现此接口
+ * Desc:如果你的自定义UI交互组件还需要处理手势交互，则需要实现此接口
+ * 1、你的控制器需要继承GestureController
+ * 2、你的自定义UI交互组件除了需要继承BaseControlWidget外还需要实现IGestureControl接口，你的ViewGroup才会收到此接口的回调
  */
 public interface IGestureControl {
 

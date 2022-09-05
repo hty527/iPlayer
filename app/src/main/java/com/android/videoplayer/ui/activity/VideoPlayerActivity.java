@@ -3,12 +3,13 @@ package com.android.videoplayer.ui.activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
-import com.android.iplayer.interfaces.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.core.ExoMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
@@ -142,7 +143,7 @@ public class VideoPlayerActivity extends BaseActivity {
 
             //自定义画面渲染器
             @Override
-            public IVideoRenderView createRenderView() {
+            public IRenderView createRenderView() {
                 if(1==RENDER_CORE){
                     return new CoustomSurfaceView(VideoPlayerActivity.this);//不推荐使用SurfaceView,SurfaceView在横竖屏切换时会有短暂黑屏及镜像失效
                 }else{
@@ -164,7 +165,7 @@ public class VideoPlayerActivity extends BaseActivity {
             }
         });
         mVideoPlayer.setLoop(false);//是否循环播放
-        mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);//设置视频画面渲染模式为：全屏缩放模式
+        //mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);//设置视频画面渲染模式为：全屏裁剪缩放模式
         //mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏模式下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
         mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)

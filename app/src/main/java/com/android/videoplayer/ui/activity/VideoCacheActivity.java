@@ -59,10 +59,7 @@ public class VideoCacheActivity extends BaseActivity {
                 return new IJkMediaPlayer(VideoCacheActivity.this);
             }
         });
-
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
-        //给播放器设置一个控制器
-        mVideoPlayer.initController();
     }
 
     public void cacheStart(View view) {
@@ -84,6 +81,7 @@ public class VideoCacheActivity extends BaseActivity {
     public void playerStart(View view) {
         String playUrl = VideoCache.getInstance().getPlayPreloadUrl(CACHE_URL);
         Logger.d(TAG,"getPlayPreloadUrl:"+playUrl);
+        //控制器在xml里初始化了：app:initController="true"
         mVideoPlayer.getController().setTitle("弹幕视频测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setDataSource(playUrl);//播放地址设置
         mVideoPlayer.prepareAsync();//开始异步准备播放

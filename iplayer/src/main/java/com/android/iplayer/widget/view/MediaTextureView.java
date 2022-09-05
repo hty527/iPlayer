@@ -8,15 +8,15 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.interfaces.IMediaPlayer;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.media.IMediaPlayer;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.manager.IVideoManager;
 /**
  * created by hty
  * 2022/6/28
  * Desc:SDK提供的 支持三种缩放模式\画面翻转/角度 的默认自定义画面渲染
  */
-public class MediaTextureView extends TextureView implements IVideoRenderView, TextureView.SurfaceTextureListener {
+public class MediaTextureView extends TextureView implements IRenderView, TextureView.SurfaceTextureListener {
 
     private AbstractMediaPlayer mMediaPlayer;
     private Surface mSurface;
