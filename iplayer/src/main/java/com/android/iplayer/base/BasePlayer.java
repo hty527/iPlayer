@@ -341,8 +341,6 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         if(null!=mIVideoPlayer){
             mIVideoPlayer.setZoomModel(scaleModel);
             if(null!=mController) mController.onZoomModel(scaleModel);
-        }else{
-            IVideoManager.getInstance().setZoomModel(scaleModel);
         }
         if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onZoomModel(scaleModel);
     }

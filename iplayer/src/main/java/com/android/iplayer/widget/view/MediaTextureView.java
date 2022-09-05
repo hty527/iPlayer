@@ -8,9 +8,8 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.interfaces.IRenderView;
-import com.android.iplayer.manager.IVideoManager;
+import com.android.iplayer.media.IMediaPlayer;
 /**
  * created by hty
  * 2022/6/28
@@ -27,7 +26,7 @@ public class MediaTextureView extends TextureView implements IRenderView, Textur
     private  int    mVideoSarDen;
     private  int    mMeasureWidth;
     private  int    mMeasureHeight;
-    protected int mScaleMode = IVideoManager.getInstance().getZoomModel();//默认是缩放裁剪铺满全屏模式
+    protected int mScaleMode = IMediaPlayer.MODE_NOZOOM_TO_FIT;//默认是原始大小
     private  int    mDegree;
     private  boolean mMirror = false;
     private  boolean mVerticalOrientation;

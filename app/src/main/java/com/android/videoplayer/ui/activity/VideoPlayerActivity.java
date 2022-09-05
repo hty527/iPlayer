@@ -237,7 +237,6 @@ public class VideoPlayerActivity extends BaseActivity {
     private void reStartPlay() {
         if(null!=mVideoPlayer){
             mVideoPlayer.onReset();
-            mVideoPlayer.setLoop(false);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(mUrl);//播放地址设置 URL4惊奇队长

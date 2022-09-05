@@ -1,7 +1,5 @@
 package com.android.iplayer.manager;
 
-import com.android.iplayer.media.IMediaPlayer;
-
 /**
  * created by hty
  * 2022/7/3
@@ -12,8 +10,6 @@ public final class IVideoManager {
     private volatile static IVideoManager mInstance;
     //是否支持在4G环境下播放
     private boolean mIsMobileNetwork;
-    //默认缩放模式(原始大小填充模式,在视频宽高比例与手机宽高比例不一致时,播放可能留有黑边)
-    private int mZoomModel = IMediaPlayer.MODE_ZOOM_TO_FIT;
     //是否监听并处理音频焦点事件？
     private boolean mInterceptTAudioFocus;//true:拦截，并在收到音频焦点失去后暂停播放 false:什么也不处理
 
@@ -25,19 +21,6 @@ public final class IVideoManager {
             }
         }
         return mInstance;
-    }
-
-    /**
-     * 设置缩放模式
-     * @param zoomModel 请适用IMediaPlayer类中定义的常量值
-     */
-    public IVideoManager setZoomModel(int zoomModel) {
-        mZoomModel = zoomModel;
-        return mInstance;
-    }
-
-    public int getZoomModel() {
-        return mZoomModel;
     }
 
     /**
