@@ -245,12 +245,23 @@
 ```
 #### 7、全屏播放
 ##### 7.1、横竖屏切换
-* 7.1.1、如需支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
+* 7.1.1、全屏播放api
+```
+    mVideoPlayer.startFullScreen();//开启全屏播放
+```
+* 7.1.2、如需支持横竖屏切换播放，需在AndroidManifest中所在的Activity申明如下属性：
 ```
     android:configChanges="orientation|screenSize"
 ```
+* 7.1.3、SDK支持全屏播放下全屏幕沉浸效果
+```
+    //全屏沉浸样式
+    mVideoPlayer.setLandscapeWindowTranslucent(true);
+    //设置缩放模式为裁剪缩放铺满全屏
+    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
+```
 ##### 7.2、直接启动全屏播放
-* 7.2.1、SDK支持在任意位置直接启动全屏播放,如：
+* 7.2.1、SDK支持在任意位置直接启动全屏播放：
 ```
     VideoPlayer videoPlayer = new VideoPlayer(this);
     videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
