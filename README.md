@@ -127,6 +127,7 @@
 * [ijkplayer][6]
 * [ExoPlayer][7]
 * [AndroidVideoCache][8]
+* Demo演示视频列表模块api使用的是开眼api，本项目只做学习使用。禁止任何人应用于任何商业用途，由此带来的法律风险由应用于商业用途的一方承担！
 
 [6]:https://github.com/bilibili/ijkplayer "ijkplayer"
 [7]:https://github.com/google/ExoPlayer "ExoPlayer"
