@@ -14,6 +14,7 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
@@ -181,6 +182,7 @@ public class MainActivity extends BaseActivity {
     private void startGlobalWindowPlayer() {
         VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
         videoPlayer.setLoop(false);
+        videoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
         videoPlayer.setDataSource(MP4_URL2);//播放地址设置
         VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
@@ -225,6 +227,7 @@ public class MainActivity extends BaseActivity {
                 }
             });
             mVideoPlayer.setLoop(false);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
@@ -281,6 +284,8 @@ public class MainActivity extends BaseActivity {
                 Logger.d(TAG,"onPlayerState-->state:"+state+",message:"+message);
             }
         });
+        videoPlayer.setLandscapeWindowTranslucent(true);//全屏沉浸样式
+        videoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
         videoPlayer.setLoop(false);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
         videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)

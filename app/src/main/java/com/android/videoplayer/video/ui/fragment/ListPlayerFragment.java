@@ -16,10 +16,11 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
-import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IRenderView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
@@ -442,6 +443,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
             });
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setLandscapeWindowTranslucent(true);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
         }
     }

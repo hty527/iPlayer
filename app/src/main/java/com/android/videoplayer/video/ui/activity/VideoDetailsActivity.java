@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,10 +22,11 @@ import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
-import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IRenderView;
+import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
@@ -53,6 +55,7 @@ import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerMenuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.util.List;
 
 /**
@@ -245,6 +248,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.setLandscapeWindowTranslucent(true);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
             //为播放器添加控制器
             VideoController controller=new VideoController(mVideoPlayer.getContext());
             mVideoPlayer.setController(controller);

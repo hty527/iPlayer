@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.core.IJkMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
@@ -157,6 +158,7 @@ public class PagerPlayerFragment extends BaseFragment {
             controller.addControllerWidget(new ControlStatusView(getContext()));
             mVideoPlayer.setLoop(true);
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
+            mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
             //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
             mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
                 /**

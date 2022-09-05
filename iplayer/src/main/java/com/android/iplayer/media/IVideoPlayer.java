@@ -39,8 +39,10 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     private AudioFocus mAudioFocusManager;//多媒体焦点监听,失去焦点暂停播放
     //内部播放器状态,初始为默认/重置状态
     private PlayerState sPlayerState = PlayerState.STATE_RESET;
-    //是否循环播放/是否静音
-    private boolean mLoop=false,mSoundMute=false;
+    //是否循环播放/是否静音/是否镜像
+    private boolean mLoop=false,mSoundMute=false,mMirrors=false;
+    //裁剪缩放模式，默认为原始大小，定宽等高，可能高度会留有黑边
+    private int mZoomMode=IMediaPlayer.MODE_ZOOM_TO_FIT;
     //远程资源地址
     private String mDataSource;
     private AssetFileDescriptor mAssetsSource;//Assetss资产目录下的文件地址
@@ -54,7 +56,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     private long mSeekDuration;
     //视频宽、高
     private int mVideoWidth,mVideoHeight;
-    //播放超时\读取视频流超时时长
+    //链接视频源超时时长\读取视频流超时时长
     private int mPrepareTimeout=10,mReadTimeout=15;
 
     /**
@@ -136,7 +138,6 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         if(null==context) return;
         mRenderView = newInstanceRenderView(context);
         ILogger.d(TAG,getString(R.string.player_render_name,"渲染器内核：")+mRenderView.getClass().getSimpleName());
-        mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
     }
 
     //释放解码器\移除画面组件
@@ -200,7 +201,8 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         this.mVideoHeight=height;
         if(null!= mRenderView){
             mRenderView.setVideoSize(width,height);
-            mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
+            mRenderView.setZoomMode(mZoomMode);
+            mRenderView.setMirror(mMirrors);
             mRenderView.setSarSize(sar_num,sar_den);
         }
         if(null!= mBasePlayer) mBasePlayer.onVideoSizeChanged(width,height);
@@ -578,7 +580,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @param zoomModel 请适用IMediaPlayer类中定义的常量值
      */
     public void setZoomModel(int zoomModel) {
-        IVideoManager.getInstance().setZoomModel(zoomModel);
+        this.mZoomMode=zoomModel;
         if(null!= mRenderView) mRenderView.setZoomMode(zoomModel);
     }
 
@@ -604,6 +606,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @return true:镜像 false:正常
      */
     public boolean setMirror(boolean mirror) {
+        this.mMirrors=mirror;
         if(null!= mRenderView){
             return mRenderView.setMirror(mirror);
         }
@@ -615,10 +618,8 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @return true:镜像 false:正常
      */
     public boolean toggleMirror() {
-        if(null!= mRenderView){
-            return mRenderView.toggleMirror();
-        }
-        return false;
+        boolean isMirrors = ! mMirrors;
+        return setMirror(isMirrors);
     }
 
     /**
@@ -928,8 +929,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             mAudioFocusManager.onDestroy();
             mAudioFocusManager=null;
         }
-        mLoop=false;mSoundMute=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;
-        IVideoManager.getInstance().setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
+        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;
         mBasePlayer =null;mDataSource=null;mAssetsSource=null;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;
     }

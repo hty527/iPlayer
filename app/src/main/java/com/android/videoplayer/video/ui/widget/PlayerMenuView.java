@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
-import com.android.videoplayer.video.listener.OnMenuActionListener;
-import com.android.iplayer.manager.IVideoManager;
+
 import com.android.videoplayer.R;
+import com.android.videoplayer.video.listener.OnMenuActionListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,9 +76,10 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
         View menu_degree_2 = findViewById(R.id.menu_degree_2);
         menu_degree_1.setOnClickListener(this);menu_degree_2.setOnClickListener(this);
         mMenuMirrors.add(menu_degree_1);mMenuMirrors.add(menu_degree_2);
-
-        onReset();
         selectedMuteIndex(1,false);//是否静音
+        selectedZoomIndex(0);
+        selectedMirrorsIndex(1);//是否镜像
+        onReset();
     }
 
     @Override
@@ -236,8 +239,6 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
      * 重置
      */
     public void onReset(){
-        selectedMirrorsIndex(1);//是否镜像
-        selectedZoomIndex(IVideoManager.getInstance().getZoomModel());//缩放模式,取全局的初始设置
         selectedSpeedIndex(2);//播放倍速
         selectedScaleIndex(0);//画面显示比例
     }
