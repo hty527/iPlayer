@@ -3,7 +3,7 @@ package com.android.videoplayer.pager.widget;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 import com.android.videoplayer.R;
 
@@ -12,7 +12,7 @@ import com.android.videoplayer.R;
  * 2022/8/25
  * Desc:自定义组件-直播交互UI组件
  */
-public class ControlLiveView extends BaseControllerWidget implements View.OnClickListener{
+public class ControlLiveView extends BaseControlWidget implements View.OnClickListener{
 
     public ControlLiveView(Context context) {
         super(context);

@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.android.iplayer.controller.ControlWrapper;
 import com.android.iplayer.interfaces.IControllerView;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.interfaces.IVideoController;
-import com.android.iplayer.interfaces.IVideoPlayerControl;
+import com.android.iplayer.interfaces.IPlayerControl;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.controls.ControWindowView;
@@ -37,13 +37,13 @@ import java.util.LinkedList;
 public abstract class BaseController extends FrameLayout implements IVideoController {
 
     protected static final String TAG = BaseController.class.getSimpleName();
-    protected IVideoPlayerControl mVideoPlayerControl;//播放器代理人
-    protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT,mPlayerScene=IVideoController.SCENE_NOIMAL;//当前控制器(播放器)方向\当前控制器(播放器)场景
+    protected IPlayerControl mVideoPlayerControl;//播放器
+    protected int mScreenOrientation= IMediaPlayer.ORIENTATION_PORTRAIT,mPlayerScene= IVideoController.SCENE_NOIMAL;//当前控制器(播放器)方向\当前控制器(播放器)场景
     protected LinkedList<IControllerView> mIControllerViews =new LinkedList<>();//所有自定义UI控制器组件
     private ControlWrapper mControlWrapper;
-    protected long mAnimationDuration=MATION_DRAUTION;
+    protected long mAnimationDuration=MATION_DRAUTION;//控制交互组件显示|隐藏的动画时长
     protected boolean isCompletion;//是否播放(试看)完成
-    protected long mPreViewTotalTime;//试看模式下总时长
+    protected long mPreViewTotalDuration;//试看模式下总时长
 
 
     protected class ExHandel extends Handler{
@@ -78,7 +78,7 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * 提供给播放器解码器来绑定播放器代理人
      * @param playerControl
      */
-    protected void attachedPlayer(IVideoPlayerControl playerControl) {
+    protected void attachedPlayer(IPlayerControl playerControl) {
         this.mVideoPlayerControl =playerControl;
     }
 
@@ -479,8 +479,8 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
      * @return
      */
     @Override
-    public long getPreViewTotalTime() {
-        return mPreViewTotalTime;
+    public long getPreViewTotalDuration() {
+        return mPreViewTotalDuration;
     }
 
     protected Activity getActivity() {
@@ -728,6 +728,16 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected String getString(int resId){
         return getContext().getResources().getString(resId);
     }
+
+    /**
+     * 设置给用户看的虚拟的视频总时长
+     * @param preTotalDuration 单位：毫秒
+     */
+    @Override
+    public void setPreViewTotalDuration(long preTotalDuration) {
+        this.mPreViewTotalDuration = preTotalDuration;
+    }
+
 
     //==================下面这些方法时不常用的，子类如果需要处理下列方法,请复写实现自己的逻辑====================
 

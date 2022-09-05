@@ -3,7 +3,7 @@ package com.android.iplayer.widget.controls;
 import android.content.Context;
 import android.view.View;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 
 /**
@@ -11,7 +11,7 @@ import com.android.iplayer.model.PlayerState;
  * 2022/8/22
  * Desc:UI控制器-播放完成
  */
-public class ControlCompletionView extends BaseControllerWidget {
+public class ControlCompletionView extends BaseControlWidget {
 
     public ControlCompletionView(Context context) {
         super(context);

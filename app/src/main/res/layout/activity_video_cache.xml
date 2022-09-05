@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
     <com.android.videoplayer.ui.widget.TitleView
         android:id="@+id/title_view"
@@ -23,6 +23,7 @@
             android:id="@+id/video_player"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:initController="true"
             android:background="#000000"/>
     </FrameLayout>
     <TextView

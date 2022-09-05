@@ -2,7 +2,7 @@ package com.android.videoplayer.video.ui.widget;
 
 import android.content.Context;
 import android.view.View;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 import com.android.videoplayer.R;
 
@@ -11,7 +11,7 @@ import com.android.videoplayer.R;
  * 2022/8/25
  * Desc:自定义试看完成UI交互组件
  */
-public class ControPerviewView extends BaseControllerWidget implements View.OnClickListener {
+public class ControPerviewView extends BaseControlWidget implements View.OnClickListener {
 
     public ControPerviewView(Context context) {
         super(context);

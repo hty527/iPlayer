@@ -5,8 +5,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.base.BaseControlWidget;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 
@@ -15,7 +15,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2022/8/22
  * Desc:UI控制器-列表播放器场景定制UI
  */
-public class ControlListView extends BaseControllerWidget implements View.OnClickListener {
+public class ControlListView extends BaseControlWidget implements View.OnClickListener {
 
     private TextView mSurplusDuration;//剩余时间
 

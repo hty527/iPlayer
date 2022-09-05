@@ -4,10 +4,10 @@
 ## 常用文档
 ### 一、常用api使用说明
 #### 1、播放器API
-* 1.1、请阅读[IVideoPlayerControl][1]
+* 1.1、请阅读[IPlayerControl][1]
 * 1.2、常用API
 ```
-    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置画面缩放\裁剪模式为居中显示,定宽等高 (更多缩放模式请参考IMediaPlayer设置)，默认为IMediaPlayer.MODE_ZOOM_CROPPING
+    mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置画面缩放|裁剪模式为居中显示(原始大小),定宽等高 (更多缩放模式请参考IMediaPlayer设置)，默认为IMediaPlayer.MODE_ZOOM_TO_FIT
     mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏播放下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳，默认为false
     mVideoPlayer.setLoop(true);//是否循环播放，，默认为false
     mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)，默认300毫秒
@@ -36,7 +36,7 @@
 #### 3、交互组件API
 * 3.1、请阅读[IControllerView][3]
 
-[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoPlayerControl.java "IVideoPlayerControl"
+[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IPlayerControl.java "IPlayerControl"
 [2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 [3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
@@ -89,9 +89,9 @@
 * 5.2.1、为什么有自定义Controller还要整个"自定义UI交互组件"出来？<br>
 因为Controller在处理交互比较复杂或功能比较多的场景下耦合性太高，于是Controller就拓展了自定义UI交互组件能力，可根据需要来添加自己的UI交互组件和任意自定义单个交互模块的UI组件。
 * 5.2.2、SDK提供了一套标题栏、底部控制栏、播放器状态(网络提示、播放失败)、播放完成、手势交互相应处理、Window窗口、列表模式 等UI交互组件。Controller的任意UI交互组件均支持自定义。
-* 5.2.3、自定义UI交互组件需要继承[BaseControllerWidget][8]，参考[IControllerView][9]接口回调来实现自己的交互：
+* 5.2.3、自定义UI交互组件需要继承[BaseControlWidget][8]，参考[IControllerView][9]接口回调来实现自己的交互：
 
-[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControllerWidget.java "BaseControllerWidget"
+[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControlWidget.java "BaseControlWidget"
 [9]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 ```
     /**
@@ -214,7 +214,7 @@
 #### 6、自定义画面渲染器
 ###### 6.1、画面渲染器自定义
 * SDK内部的视频画面渲染器使用的是TextureView,TextureView和SurfaceView推荐使用TextureView。SurfaceView在横竖屏切换时会有短暂黑屏及镜像(setScaleX)失效。
-* 自定义视频画面渲染器组件View需要实现[IVideoRenderView][19]接口并实现所有接口方法，在getView中返回你的TextureView或SurfaceView
+* 自定义视频画面渲染器组件View需要实现[IRenderView][19]接口并实现所有接口方法，在getView中返回你的TextureView或SurfaceView
 ```
     //1、继承TextureView并设置监听
     setSurfaceTextureListener(this);
@@ -238,7 +238,7 @@
     mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
 
         @Override
-        public IVideoRenderView createRenderView() {
+        public IRenderView createRenderView() {
             return new CoustomSurfaceView(MainActivity.this);//返回null时,SDK内部会自动使用自定义的MediaTextureView渲染器,自定义渲染器请参考Demo中CoustomSurfaceView类
         }
     });
@@ -556,7 +556,7 @@
 [16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
 [17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
 [18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
-[19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoRenderView.java "IVideoRenderView"
+[19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IRenderView.java "IRenderView"
 [20]:https://github.com/hty527/iPlayer/tree/main/cache/src/main/java/com/android/iplayer/video/cache/VideoCache.java "VideoCache"
 [21]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoCacheActivity.java "VideoCacheActivity"
 

@@ -7,7 +7,7 @@ import com.android.iplayer.model.PlayerState;
 /**
  * created by hty
  * 2022/8/22
- * Desc:控制器的所有自定义UI组件都必须实现的接口
+ * Desc:控制器的所有自定义UI组件都必须实现的接口,可根据此接口的回调来实现自己的UI交互
  */
 public interface IControllerView {
 

@@ -8,9 +8,8 @@ import android.widget.FrameLayout;
 import com.android.iplayer.R;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
-import com.android.iplayer.interfaces.IMediaPlayer;
-import com.android.iplayer.interfaces.IMediaPlayerControl;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.interfaces.IBasePlayer;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnMediaEventListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.media.core.MediaPlayer;
@@ -33,10 +32,10 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 
     private static final String TAG = IVideoPlayer.class.getSimpleName();
     //播放器容器与播放器管理者绑定关系的监听器，必须实现监听
-    private IMediaPlayerControl mIMediaPlayerControl;
+    private IBasePlayer mBasePlayer;
     //播放器画面渲染核心
     private AbstractMediaPlayer mMediaPlayer;//视频格式文件解码器
-    private IVideoRenderView mRenderView;//画面渲染
+    private IRenderView mRenderView;//画面渲染
     private AudioFocus mAudioFocusManager;//多媒体焦点监听,失去焦点暂停播放
     //内部播放器状态,初始为默认/重置状态
     private PlayerState sPlayerState = PlayerState.STATE_RESET;
@@ -65,7 +64,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      */
     private void onPlayerState(PlayerState playerState, String message) {
         ILogger.d(TAG,"onPlayerState-->playerState:"+playerState+",message:"+message);
-        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onPlayerState(playerState,message);
+        if(null!= mBasePlayer) mBasePlayer.onPlayerState(playerState,message);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @param duration 总时长 毫秒
      */
     private void onProgress(long currentPosition, long duration) {
-        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onProgress(currentPosition,duration);
+        if(null!= mBasePlayer) mBasePlayer.onProgress(currentPosition,duration);
     }
 
     //===========================================视频播放逻辑=========================================
@@ -85,9 +84,9 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      */
     private AbstractMediaPlayer newInstanceMediaPlayer() {
         AbstractMediaPlayer mediaPlayer;
-        mediaPlayer = mIMediaPlayerControl.getMediaPlayer();
+        mediaPlayer = mBasePlayer.getMediaPlayer();
         if(null==mediaPlayer){
-            Context context = mIMediaPlayerControl.getVideoPlayer().getContext();
+            Context context = mBasePlayer.getVideoPlayer().getContext();
             mediaPlayer=new MediaPlayer(context);
         }
         return mediaPlayer;
@@ -98,9 +97,9 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @param context 上下文
      * @return 返回一个自定义的VideoRenderView
      */
-    private IVideoRenderView newInstanceRenderView(Context context) {
-        IVideoRenderView renderView;
-        renderView = mIMediaPlayerControl.getRenderView();
+    private IRenderView newInstanceRenderView(Context context) {
+        IRenderView renderView;
+        renderView = mBasePlayer.getRenderView();
         if(null==renderView){
             renderView=new MediaTextureView(context);
         }
@@ -112,9 +111,9 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * 创建播放器
      */
     private boolean initMediaPlayer(){
-        if(null!= mIMediaPlayerControl){
+        if(null!= mBasePlayer){
             mMediaPlayer = newInstanceMediaPlayer();
-            BasePlayer videoPlayer = mIMediaPlayerControl.getVideoPlayer();
+            BasePlayer videoPlayer = mBasePlayer.getVideoPlayer();
             ILogger.d(TAG,getString(R.string.player_core_name,"解码器内核：")+mMediaPlayer.getClass().getSimpleName());
             mMediaPlayer.setMediaEventListener(this);
             mMediaPlayer.setLooping(mLoop);
@@ -182,7 +181,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     @Override
     public void onBufferUpdate(IMediaPlayer mp, int percent) {
 //        ILogger.d(TAG,"onBufferingUpdate-->percent:"+percent);
-        if(null!= mIMediaPlayerControl) mIMediaPlayerControl.onBuffer(percent);
+        if(null!= mBasePlayer) mBasePlayer.onBuffer(percent);
     }
 
     @Override
@@ -204,7 +203,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             mRenderView.setZoomMode(IVideoManager.getInstance().getZoomModel());
             mRenderView.setSarSize(sar_num,sar_den);
         }
-        if(null!=mIMediaPlayerControl) mIMediaPlayerControl.onVideoSizeChanged(width,height);
+        if(null!= mBasePlayer) mBasePlayer.onVideoSizeChanged(width,height);
     }
 
     /**
@@ -500,10 +499,10 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 
     /**
      * 注册播放器监听器 必须实现
-     * @param listener
+     * @param iBasePlayer
      */
-    public void setIMediaPlayerControl(IMediaPlayerControl listener) {
-        this.mIMediaPlayerControl =listener;
+    public void attachPlayer(IBasePlayer iBasePlayer) {
+        this.mBasePlayer =iBasePlayer;
     }
 
     /**
@@ -931,7 +930,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         }
         mLoop=false;mSoundMute=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;
         IVideoManager.getInstance().setZoomModel(IMediaPlayer.MODE_ZOOM_CROPPING);
-        mIMediaPlayerControl =null;mDataSource=null;mAssetsSource=null;
+        mBasePlayer =null;mDataSource=null;mAssetsSource=null;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;
     }
 }

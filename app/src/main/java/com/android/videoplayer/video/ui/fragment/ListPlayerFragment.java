@@ -17,7 +17,7 @@ import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.core.IJkMediaPlayer;
@@ -428,7 +428,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                 }
 
                 @Override
-                public IVideoRenderView createRenderView() {
+                public IRenderView createRenderView() {
                     return new MediaTextureView(getContext());
                 }
 

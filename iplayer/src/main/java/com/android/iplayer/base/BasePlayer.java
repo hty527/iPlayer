@@ -19,13 +19,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import com.android.iplayer.R;
 import com.android.iplayer.controller.VideoController;
-import com.android.iplayer.interfaces.IMediaPlayer;
-import com.android.iplayer.interfaces.IMediaPlayerControl;
-import com.android.iplayer.interfaces.IVideoPlayerControl;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.media.IMediaPlayer;
+import com.android.iplayer.interfaces.IBasePlayer;
+import com.android.iplayer.interfaces.IPlayerControl;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
@@ -35,7 +34,6 @@ import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.view.WindowPlayerFloatView;
-
 import java.io.File;
 
 /**
@@ -45,12 +43,12 @@ import java.io.File;
  * 1、自定义属性：initController:true:内部初始化一个默认的控制器交互组件 flase:不初始化默认的控制器组件
  * 2、可调用{@link #setController(BaseController)}来绑定一个UI视图交互控制器
  * 3、如需实现自定义视频解码器，则需注册{@link #setOnPlayerActionListener(OnPlayerEventListener)}监听器，实现createMediaPlayer方法来创建一个解码器。每个视频播放任务都将实例化一个createMediaPlayer解码器
- * 4、播放器支持在任意界面和位置直接开启全屏、Activity级别悬浮窗、全局悬浮窗 播放，请阅读IVideoPlayerControl接口内的方法实现
+ * 4、播放器支持在任意界面和位置直接开启全屏、Activity级别悬浮窗、全局悬浮窗 播放，请阅读IPlayerControl接口内的方法实现
  * 5、如需支持多播放器同时播放，则需要在开始播放前调用IVideoManager.getInstance().setInterceptTAudioFocus(true);
  * 6、特别注意：mParentContext：为什么会有这个变量？当播放从一个Activity跳转到另一个Activity转场衔接播放、从全局悬浮窗到Activity转场衔接播放时，播放器的宿主Activity发生了变化。此时播放器内部的startFullScreen和手势缩放控制屏幕亮度等或其它和Activity相关功能都将会失效。
  *    所以需要在转场后调用{@link #setParentContext(Context)}(context传入当前Activity的上下文)、恢复转场时来调用setParentContext(null)置空临时上下文。
  */
-public abstract class BasePlayer extends FrameLayout implements IVideoPlayerControl, IMediaPlayerControl {
+public abstract class BasePlayer extends FrameLayout implements IPlayerControl, IBasePlayer {
 
     protected static final String TAG = BasePlayer.class.getSimpleName();
     private BaseController mController;//视图控制器
@@ -77,16 +75,18 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
         View.inflate(context,R.layout.player_base_video,this);
         if(null!=attrs){
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BasePlayer);
-            //是否创建默认的控制器
+            //是否创建默认的控制器+UI交互组件
             boolean createController = typedArray.getBoolean(R.styleable.BasePlayer_initController, false);
             if(createController){
-                setController(new VideoController(context));
+                VideoController controller = new VideoController(context);
+                setController(controller);
+                controller.initControlComponents();
             }
             typedArray.recycle();
         }
-        //将自己与播放器解码绑定
+        //将自己与播放器解码模块绑定
         mIVideoPlayer = new IVideoPlayer();
-        mIVideoPlayer.setIMediaPlayerControl(this);
+        mIVideoPlayer.attachPlayer(this);
         initViews();
     }
 
@@ -221,7 +221,7 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
     }
 
     @Override
-    public IVideoRenderView getRenderView() {
+    public IRenderView getRenderView() {
         if(null!=mOnPlayerActionListener){
             return mOnPlayerActionListener.createRenderView();
         }
@@ -576,9 +576,10 @@ public abstract class BasePlayer extends FrameLayout implements IVideoPlayerCont
             //2.改变屏幕方向为横屏状态,播放器所在的Activity需要添加属性：android:configChanges="orientation|screenSize"
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_LANDSCAPE);//更新控制器方向状态
-            findViewById(R.id.player_surface).setBackgroundColor(bgColor!=0?bgColor:Color.parseColor("#000000"));//设置一个背景颜色
             //3.隐藏NavigationBar和StatusBar
             hideSystemBar(viewGroup);
+            //给播放器添加一个背景颜色
+            findViewById(R.id.player_surface).setBackgroundColor(bgColor!=0?bgColor:Color.parseColor("#000000"));//设置一个背景颜色
             //4.添加到此播放器宿主context的window中
             viewGroup.addView(this, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }

@@ -1,6 +1,6 @@
 package com.android.iplayer.listener;
 
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 
 /**
  * created by hty

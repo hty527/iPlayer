@@ -44,13 +44,12 @@ public class VideoPlayer extends BasePlayer {
         return initController(showBackBtn,true);
     }
 
-
     /**
      * 绑定默认的控制器到播放器
      * @param showBackBtn 是否显示返回按钮
      * @param addWindowWidget 是否添加悬浮窗口交互UI组件
      */
-    public VideoController initController(boolean showBackBtn,boolean addWindowWidget){
+    public VideoController initController(boolean showBackBtn, boolean addWindowWidget){
         //绑定控制器
         VideoController controller = new VideoController(getContext());
         setController(controller);

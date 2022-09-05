@@ -22,7 +22,7 @@ import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
-import com.android.iplayer.interfaces.IVideoRenderView;
+import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.core.IJkMediaPlayer;
@@ -289,7 +289,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 }
 
                 @Override
-                public IVideoRenderView createRenderView() {
+                public IRenderView createRenderView() {
                     return new MediaTextureView(VideoDetailsActivity.this);
                 }
 

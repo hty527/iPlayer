@@ -42,7 +42,6 @@ import java.util.Locale;
  */
 public class PlayerUtils {
 
-    private static final String TAG = "PlayerUtils";
     private static PlayerUtils mInstance;
 
     public static synchronized PlayerUtils getInstance() {
@@ -525,7 +524,7 @@ public class PlayerUtils {
      */
     public boolean isEdge(Context context, MotionEvent e) {
         float edgeSize = dpToPx(context, 40);
-        ILogger.d(TAG,"isEdge-->eX:"+e.getRawX()+",eY:"+e.getRawY()+",screenWidt:"+getScreenWidth(context));
+//        ILogger.d(TAG,"isEdge-->eX:"+e.getRawX()+",eY:"+e.getRawY()+",screenWidt:"+getScreenWidth(context));
         return e.getRawX() < edgeSize
                 || e.getRawX() > getScreenWidth(context) - edgeSize
                 || e.getRawY() < edgeSize

@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
@@ -18,7 +18,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2022/6/30
  * Desc:播放器试看结束\移动网络提示\播放失败提示
  */
-public class ControlStatusView extends BaseControllerWidget {
+public class ControlStatusView extends BaseControlWidget {
 
     public static final int SCENE_MOBILE                = 1;//移动网络播放提示
     public static final int SCENE_COMPLETION            = 2;//试看结束

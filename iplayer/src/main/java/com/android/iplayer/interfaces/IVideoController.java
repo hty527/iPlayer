@@ -5,7 +5,7 @@ import com.android.iplayer.model.PlayerState;
 /**
  * created by hty
  * 2022/7/3
- * Desc:自定义Controller必须要要实现的基础接口.提供给BasePlayer或BaseController调用
+ * Desc:Controller控制器拓展接口
  */
 public interface IVideoController {
 
@@ -226,10 +226,16 @@ public interface IVideoController {
     int getPlayerScene();
 
     /**
+     * 设置试看|收费模式下的虚拟总时长
+     * @return 设置试看|收费模式下的虚拟总时长，单位：毫秒
+     */
+    void setPreViewTotalDuration(long preTotalDuration);
+
+    /**
      * 返回试看模式下的试看时长
      * @return 返回试看模式下的试看时长，单位：毫秒
      */
-    long getPreViewTotalTime();
+    long getPreViewTotalDuration();
 
     /**
      * 设置控制器为列表模式

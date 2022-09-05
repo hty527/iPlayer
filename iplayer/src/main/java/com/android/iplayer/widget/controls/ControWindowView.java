@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.model.PlayerState;
@@ -20,7 +20,7 @@ import com.android.iplayer.utils.AnimationUtils;
  * 2022/8/22
  * Desc:UI控制器-窗口交互控制器,由于窗口有拖拽手势原因，窗口交互时独立的一套UI。其它例如加载中、网络提示、播放失败等会和这个组件排斥。
  */
-public class ControWindowView extends BaseControllerWidget implements View.OnClickListener {
+public class ControWindowView extends BaseControlWidget implements View.OnClickListener {
 
     private static final int MESSAGE_HIDE_CONTROLLER       = 20;//隐藏控制器
     private static final int DELAYED_INVISIBLE             = 3000;//延时隐藏锁时长
@@ -188,7 +188,7 @@ public class ControWindowView extends BaseControllerWidget implements View.OnCli
     public void onProgress(long currentDurtion, long totalDurtion) {
         if(null!=mProgressBar){
             if(mProgressBar.getMax()==0){
-                mProgressBar.setMax((int) (isPreViewScene()? mControlWrapper.getPreViewTotalTime() :totalDurtion));
+                mProgressBar.setMax((int) (isPreViewScene()? mControlWrapper.getPreViewTotalDuration() :totalDurtion));
             }
             mProgressBar.setProgress((int) currentDurtion);
         }

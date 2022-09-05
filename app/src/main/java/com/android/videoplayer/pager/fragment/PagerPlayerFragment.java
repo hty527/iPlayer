@@ -21,7 +21,7 @@ import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.pager.adapter.PagerPlayerAdapter;
 import com.android.videoplayer.pager.base.BaseViewPager;
 import com.android.videoplayer.pager.bean.VideoBean;
-import com.android.videoplayer.pager.controller.VideoShortController;
+import com.android.videoplayer.pager.controller.ShortControllerControl;
 import com.android.videoplayer.pager.interfaces.OnViewPagerListener;
 import com.android.videoplayer.pager.widget.PagerVideoController;
 import com.android.videoplayer.pager.widget.ViewPagerLayoutManager;
@@ -151,7 +151,7 @@ public class PagerPlayerFragment extends BaseFragment {
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(getContext());
             //给播放器设置一个控制器
-            VideoShortController controller = new VideoShortController(getContext());
+            ShortControllerControl controller = new ShortControllerControl(getContext());
             mVideoPlayer.setController(controller);
             //给控制器添加需要的UI交互组件
             controller.addControllerWidget(new ControlStatusView(getContext()));

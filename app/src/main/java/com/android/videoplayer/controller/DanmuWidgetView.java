@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 import com.android.videoplayer.R;
 import com.android.videoplayer.danmu.DanmuPaserView;
@@ -17,7 +17,7 @@ import java.util.List;
  * 2022/7/3
  * Desc:弹幕功能交互的控制器
  */
-public class DanmuWidgetView extends BaseControllerWidget {
+public class DanmuWidgetView extends BaseControlWidget {
 
     private DanmuPaserView mDanmuPaserView;//全局的弹幕
 

@@ -10,9 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.android.iplayer.R;
-import com.android.iplayer.base.BaseControllerWidget;
+import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.interfaces.IGestureControl;
-import com.android.iplayer.interfaces.IMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
@@ -22,7 +22,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * 2022/8/6
  * Desc:手势交互声音、亮度、快进、快退等UI交互
  */
-public class ControlGestureView extends BaseControllerWidget implements IGestureControl {
+public class ControlGestureView extends BaseControlWidget implements IGestureControl {
 
     private View mController;//UI交互区域
     private ImageView mPresentIcon;//ICON
