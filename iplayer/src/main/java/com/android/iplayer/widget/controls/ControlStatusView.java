@@ -192,12 +192,16 @@ public class ControlStatusView extends BaseControlWidget {
                 }
                 break;
             case STATE_MOBILE://移动网络播放(如果设置允许4G播放则播放器内部不会回调此状态)
-                show();
-                setScene(SCENE_MOBILE);
+                if(!isWindowScene()){
+                    show();
+                    setScene(SCENE_MOBILE);
+                }
                 break;
             case STATE_ERROR://播放失败
-                setScene(SCENE_ERROR,message);
-                show();
+                if(!isWindowScene()){
+                    setScene(SCENE_ERROR,message);
+                    show();
+                }
                 break;
             default:
                 hide();
