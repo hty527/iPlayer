@@ -42,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:maxHeight="2dp"
+            android:minHeight="2dp"
             android:paddingStart="0dp"
             android:paddingEnd="0dp"
             android:splitTrack="false"
