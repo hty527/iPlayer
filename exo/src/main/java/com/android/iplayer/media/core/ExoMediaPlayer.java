@@ -87,7 +87,7 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
     }
 
     @Override
-    public void setTimeout(int prepareTimeout, int readTimeout) {
+    public void setTimeout(long prepareTimeout, long readTimeout) {
         //不支持
     }
 

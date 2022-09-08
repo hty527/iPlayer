@@ -3,7 +3,6 @@ package com.android.iplayer.media.core;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Surface;
@@ -58,18 +57,17 @@ public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.
     private void setOption(boolean isLive) {
         //解决seek跳转时，可能出现跳转的位置和自己选择的进度不一致，是因为seek只支持关键帧，视频的关键帧比较少导致的。
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+        // 播放前的探测Size，默认是1M, 改小一点会出画面更快
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 512); //1024L)
         //默认关闭硬件解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 0);
-        // 播放前的探测Size，默认是1M, 改小一点会出画面更快
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 100); //1024L)
         //播放重连次数
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"reconnect",5);
-        //跳帧处理,放CPU处理较慢时，进行跳帧处理，保证播放流程，画面和声音同步
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5);
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"reconnect",30);
         if(isLive){
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            //跳帧处理,放CPU处理较慢时，进行跳帧处理，保证播放流程，画面和声音同步
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 5);
             mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_transport", "tcp");
             mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "rtsp_flags", "prefer_tcp");
             mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "http-detect-range-support", 0);
@@ -141,10 +139,12 @@ public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.
      * @param hardwareDeCode true:开启硬件解码 false:关闭硬件解码
      */
     public void setHardwareDeCode(boolean hardwareDeCode){
-        //开启硬解码 硬解码失败 再自动切换到软解码
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", hardwareDeCode?1:0);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", hardwareDeCode?1:0);
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", hardwareDeCode?1:0);
+        if(null!=mMediaPlayer){
+            //开启硬解码 硬解码失败 再自动切换到软解码
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", hardwareDeCode?1:0);
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", hardwareDeCode?1:0);
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", hardwareDeCode?1:0);
+        }
     }
 
     @Override
@@ -217,10 +217,12 @@ public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.
     }
 
     @Override
-    public void setTimeout(int prepareTimeout, int readTimeout) {
+    public void setTimeout(long prepareTimeout, long readTimeout) {
         //超时时间，timeout参数只对http设置有效。若果你用rtmp设置timeout，ijkplayer内部会忽略timeout参数。rtmp的timeout参数含义和http的不一样。
-        if(null!=mMediaPlayer) mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", readTimeout);
-        if(null!=mMediaPlayer) mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", readTimeout);
+        if(null!=mMediaPlayer) {
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", readTimeout);
+            mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "timeout", prepareTimeout);
+        }
     }
 
     @Override

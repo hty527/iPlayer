@@ -147,10 +147,10 @@ public interface IMediaPlayer {
 
     /**
      * 设置准备和读数据超时阈值,需在{@link #prepareAsync()}之前调用方可生效
-     * @param prepareTimeout 准备超时阈值,即播放器在建立链接、解析流媒体信息的超时阈值
-     * @param readTimeout    读数据超时阈值
+     * @param prepareTimeout 准备超时阈值,即播放器在建立链接、解析流媒体信息的超时阈值,单位：毫秒
+     * @param readTimeout    读数据超时阈值,单位：毫秒
      */
-    void setTimeout(int prepareTimeout, int readTimeout);
+    void setTimeout(long prepareTimeout, long readTimeout);
 
     /**
      * 设置播放速度 从0.5f-2.0f

@@ -77,7 +77,7 @@ public class PlayerMenuView extends LinearLayout implements View.OnClickListener
         menu_degree_1.setOnClickListener(this);menu_degree_2.setOnClickListener(this);
         mMenuMirrors.add(menu_degree_1);mMenuMirrors.add(menu_degree_2);
         selectedMuteIndex(1,false);//是否静音
-        selectedZoomIndex(0);
+        selectedZoomIndex(1);//播放器默认原始大小，单Demo演示用到的这个自定义组件默认是缩放裁剪铺满全屏
         selectedMirrorsIndex(1);//是否镜像
         onReset();
     }

@@ -121,6 +121,12 @@ public interface IPlayerControl<V extends BaseController> {
     void setInterceptTAudioFocus(boolean interceptTAudioFocus);
 
     /**
+     * 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     * @param reCatenationCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     */
+    void setReCatenationCount(int reCatenationCount);
+
+    /**
      * 驾驶异步准备播放
      */
     void prepareAsync();

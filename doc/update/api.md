@@ -550,7 +550,7 @@
     //取消所有预缓存任务
     VideoCache.getInstance().removeAllPreloadTask();
 ```
-* 14.1.3、使用预缓存地址播放视频
+* 15.1.2、使用预缓存地址播放视频
 ```
     //开始播放时使用此播放地址来播放
     String cacheUrl = VideoPreloadManager.getInstance(getContext()).getPlayPreloadUrl(rawUrl);//rawUrl为你的源视频地址
@@ -590,6 +590,10 @@
     File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
     mVideoPlayer.setDataSource(file);
     mVideoPlayer.prepareAsync();//开始异步准备播放
+```
+#### 17、Log日志
+```
+    ILogger.DEBUG=true;//或 ILogger.setDebug(true);
 ```
 ### 二、异常现象及注意点
 #### 1、网络地址无法播放
