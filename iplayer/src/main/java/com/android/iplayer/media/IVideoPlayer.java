@@ -57,7 +57,10 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     //视频宽、高
     private int mVideoWidth,mVideoHeight;
     //链接视频源超时时长\读取视频流超时时长
-    private int mPrepareTimeout=10,mReadTimeout=15;
+    private int mPrepareTimeout=10*1000,mReadTimeout=15*1000;
+    //链接视频文件发生错误的重试次数
+    private int mReCatenationCount=3;
+    private int RE_COUNT;//重试的次数
 
     /**
      * 播放状态,回调给播放控制器宿主
@@ -65,7 +68,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * @param message 描述信息
      */
     private void onPlayerState(PlayerState playerState, String message) {
-        ILogger.d(TAG,"onPlayerState-->playerState:"+playerState+",message:"+message);
+//        ILogger.d(TAG,"onPlayerState-->playerState:"+playerState+",message:"+message);
         if(null!= mBasePlayer) mBasePlayer.onPlayerState(playerState,message);
     }
 
@@ -171,6 +174,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     @Override
     public void onPrepared(IMediaPlayer mp) {
         ILogger.d(TAG,"onPrepared-->seek:"+mSeekDuration);
+        RE_COUNT=0;//重置重试次数
         if(null!=mMediaPlayer){
             mp.start();
         }else{
@@ -216,7 +220,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      */
     @Override
     public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-        ILogger.d(TAG,"onInfo-->what:"+what+",extra:"+extra);
+//        ILogger.d(TAG,"onInfo-->what:"+what+",extra:"+extra);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START://开始首帧渲染
                 sPlayerState = PlayerState.STATE_START;
@@ -256,12 +260,25 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
-        ILogger.e(TAG,"onError,what:"+what+",extra:"+extra);//直播拉流会有-38的错误
+        ILogger.e(TAG,"onError,what:"+what+",extra:"+extra+",reCount:"+RE_COUNT);//直播拉流会有-38的错误
         if(-38==what) return true;
+        if(-10000==what&&RE_COUNT<mReCatenationCount&&null!=mMediaPlayer){
+            reCatenation();
+            return true;
+        }
         stopTimer();
         sPlayerState = PlayerState.STATE_ERROR;
         onPlayerState(sPlayerState,getErrorMessage(what));
         return true;
+    }
+
+    /**
+     * 内部重试
+     */
+    private void reCatenation() {
+        ILogger.d(TAG,"reCatenation");
+        RE_COUNT+=1;
+        startPlayer(getDataSource());
     }
 
     /**
@@ -601,6 +618,13 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     }
 
     /**
+     * @param reCatenationCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     */
+    public void setReCatenationCount(int reCatenationCount) {
+        this.mReCatenationCount = reCatenationCount;
+    }
+
+    /**
      * 设置画面渲染是否镜像
      * @param mirror true:镜像 false:正常
      * @return true:镜像 false:正常
@@ -911,7 +935,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     public void onReset() {
         stopTimer();
         releaseTextureView();
-        mDataSource=null;mAssetsSource=null;mVideoWidth=0;mVideoHeight=0;
+        mDataSource=null;mAssetsSource=null;mVideoWidth=0;mVideoHeight=0;RE_COUNT=0;
         sPlayerState = PlayerState.STATE_RESET;
         onPlayerState(sPlayerState,getString(R.string.player_media_reset,"结束播放并重置"));
     }
@@ -929,7 +953,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             mAudioFocusManager.onDestroy();
             mAudioFocusManager=null;
         }
-        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;
+        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;RE_COUNT=0;
         mBasePlayer =null;mDataSource=null;mAssetsSource=null;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;
     }

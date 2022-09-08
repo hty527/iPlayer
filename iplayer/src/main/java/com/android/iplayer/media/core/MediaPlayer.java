@@ -100,7 +100,7 @@ public class MediaPlayer extends AbstractMediaPlayer implements android.media.Me
     }
 
     @Override
-    public void setTimeout(int prepareTimeout, int readTimeout) {
+    public void setTimeout(long prepareTimeout, long readTimeout) {
 //        if(null!=mMediaPlayer) mMediaPlayer.setTimeout(prepareTimeout,readTimeout);
     }
 

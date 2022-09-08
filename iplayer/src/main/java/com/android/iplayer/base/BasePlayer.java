@@ -473,6 +473,16 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     }
 
     /**
+     * @param reCatenationCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     */
+    @Override
+    public void setReCatenationCount(int reCatenationCount) {
+        if(null!=mIVideoPlayer){
+            mIVideoPlayer.setReCatenationCount(reCatenationCount);
+        }
+    }
+
+    /**
      * 开异步播放
      */
     @Override
