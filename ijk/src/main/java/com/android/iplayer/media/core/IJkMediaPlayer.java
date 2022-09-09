@@ -58,7 +58,7 @@ public class IJkMediaPlayer extends AbstractMediaPlayer implements IMediaPlayer.
         //解决seek跳转时，可能出现跳转的位置和自己选择的进度不一致，是因为seek只支持关键帧，视频的关键帧比较少导致的。
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
         // 播放前的探测Size，默认是1M, 改小一点会出画面更快
-        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 512); //1024L)
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 200); //1024L)
         //默认关闭硬件解码
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 0);
         mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 0);

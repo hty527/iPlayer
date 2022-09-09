@@ -83,12 +83,12 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
 
     @Override
     public void setDataSource(AssetFileDescriptor dataSource) throws IOException, IllegalArgumentException, IllegalStateException {
-        //不支持
+        //Exo不支持
     }
 
     @Override
     public void setTimeout(long prepareTimeout, long readTimeout) {
-        //不支持
+        //Exo不支持
     }
 
     @Override

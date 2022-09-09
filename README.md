@@ -18,23 +18,23 @@
 * Demo：Android8.0+画中画示例</br>
 
 #### 二、[历史版本][1]
-[1]:https://github.com/hty527/iPlayer/wiki/Version "历史版本"
+[1]:https://gitee.com/hty527/iPlayer/wiki/Version "历史版本"
 
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
 [2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.5.apk?version=2.0.5 "下载apk"
 
-##### 1、项目根build.gradle及模块build.gradle配置</br>
+##### 1、项目根build.gradle配置</br>
 ```
-    //1.在你的根build.gradle中添加：
     allprojects {
         repositories {
             maven { url 'https://jitpack.io' }
         }
     }
-
-    //2.在你的模块build.gradle中添加：   
+```
+##### 2、模块build.gradle配置</br>
+```
     dependencies {
         //播放器
         implementation 'com.github.hty527.iPlayer:iplayer:2.0.5.3'
@@ -47,14 +47,14 @@
         //implementation 'com.github.hty527.iPlayer:cache:2.0.5.3'
     }
 ```
-##### 2、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
+##### 3、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
 ```
     <com.android.iplayer.widget.VideoPlayer
         android:id="@+id/video_player"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 ```
-##### 3、播放器准备及开始播放</br>
+##### 4、播放器准备及开始播放</br>
 ```
     mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
     mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//固定播放器高度，或高度设置为:match_parent
@@ -67,7 +67,7 @@
     //异步开始准备播放
     mVideoPlayer.prepareAsync();
 ```
-##### 4、生命周期处理</br>
+##### 5、生命周期处理</br>
 ```
     @Override
     protected void onResume() {
@@ -94,8 +94,8 @@
         mVideoPlayer.onDestroy();
     }
 ```
-##### 5、常用API、更换解码器、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
-[3]:https://github.com/hty527/iPlayer/wiki/api "wiki"
+##### 6、常用API、更换解码器、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
+[3]:https://gitee.com/hty527/iPlayer/wiki/api "wiki"
 #### 四、遇到问题
 * 1、阅读接入文档[wiki][3]
 * 2、提交 [issue](https://github.com/hty527/iPlayer/issues)
@@ -104,7 +104,7 @@
 * 5、播放器框架结构图[点击][5]查看
 
 [4]:https://gitee.com/hty527/iPlayer "码云"
-[5]:https://github.com/hty527/iPlayer/wiki/api "点击"
+[5]:https://gitee.com/hty527/iPlayer/wiki/api "点击"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot1.jpg?q=1" width="270",height="585">

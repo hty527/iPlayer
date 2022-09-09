@@ -19,6 +19,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * created by hty
  * 2022/8/5
  * Desc:带有手势交互的基础控制器,需要实现手势交互的控制器可继承此类
+ * 1、如果需要自定义处理手势交互改变屏幕亮度、系统音量、快进、快退等UI交互，请实现{@link IGestureControl}接口
  */
 public abstract class GestureController extends BaseController implements View.OnTouchListener {//GestureDetector.OnGestureListener
 
