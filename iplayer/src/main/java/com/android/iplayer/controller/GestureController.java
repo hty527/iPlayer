@@ -101,8 +101,6 @@ public abstract class GestureController extends BaseController implements View.O
      */
     private class SimpleOnGesture extends GestureDetector.SimpleOnGestureListener{
 
-        private boolean isDoubleTap=false;
-
         @Override
         public boolean onDown(MotionEvent e) {
             boolean edge = PlayerUtils.getInstance().isEdge(getParentContext(), e);
@@ -132,11 +130,6 @@ public abstract class GestureController extends BaseController implements View.O
          */
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            if(isDoubleTap){//如果刚刚响应了双击事件，则放弃此次单击事件
-                isDoubleTap=false;
-                return true;
-            }
-//            ILogger.d(TAG,"onSingleTapConfirmed");
             onSingleTap();
             return true;
         }
@@ -148,8 +141,6 @@ public abstract class GestureController extends BaseController implements View.O
          */
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-//            ILogger.d(TAG,"onDoubleTap");
-            isDoubleTap=true;
             if(mIsDoubleTapTogglePlayEnabled){
                 GestureController.this.onDoubleTap();
             }
