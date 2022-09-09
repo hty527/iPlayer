@@ -36,7 +36,7 @@
     <string name="text_item_home">项目主页</string>
     <string name="text_item_version">版本预告</string>
     <string name="text_item_time">待定,请持续关注</string>
-    <string name="text_item_desc">1、新增重力旋转功能，支持重力旋转开关及阻尼设置</string>
+    <string name="text_item_desc">1、播放器默认UI交互抽离独立封装成库，优化播放器SDK大小\n2、新增重力旋转功能，支持重力旋转开关及阻尼设置</string>
     <string name="text_item_sub_noimal">基础</string>
     <string name="text_item_sub_list">列表</string>
     <string name="text_item_sub_window">窗口</string>
