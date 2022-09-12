@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--播放完成,重新播放-->
+    <ImageView
+        android:layout_width="@dimen/player_play_width"
+        android:layout_height="@dimen/player_play_width"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/ic_player_replay"
+        android:layout_gravity="center" />
+</FrameLayout>

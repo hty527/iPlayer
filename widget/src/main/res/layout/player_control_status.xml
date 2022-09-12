@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:gravity="center"
+    android:background="#99000000"
+    android:clickable="true">
+    <TextView
+        android:id="@+id/player_status_tips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:lineSpacingMultiplier="1.2"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:shadowColor="#26000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:textSize="15dp"/>
+    <TextView
+        android:id="@+id/player_status_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginTop="18dp"
+        android:paddingLeft="22dp"
+        android:paddingRight="22dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:background="@drawable/player_bg_btn_continue_play"
+        android:textColor="#FFFFFF"
+        android:textSize="15dp" />
+</LinearLayout>

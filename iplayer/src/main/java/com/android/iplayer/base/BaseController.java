@@ -16,13 +16,6 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IPlayerControl;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
-import com.android.iplayer.widget.controls.ControWindowView;
-import com.android.iplayer.widget.controls.ControlCompletionView;
-import com.android.iplayer.widget.controls.ControlFunctionBarView;
-import com.android.iplayer.widget.controls.ControlGestureView;
-import com.android.iplayer.widget.controls.ControlLoadingView;
-import com.android.iplayer.widget.controls.ControlStatusView;
-import com.android.iplayer.widget.controls.ControlToolBarView;
 import java.util.LinkedList;
 
 /**
@@ -265,58 +258,64 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     //===================================控制器提供给宿主或子类调用======================================
 
     /**
+     * 此方法已从2.0.6版本起失效
      * 使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
      */
+    @Deprecated
     public void initControlComponents() {
         initControlComponents(false);
     }
 
     /**
+     * 此方法已从2.0.6版本起失效
      * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
      * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
      * @param showBack 是否显示返回按钮
      */
+    @Deprecated
     public void initControlComponents(boolean showBack) {
         initControlComponents(showBack,true);
 
     }
 
     /**
+     * 此方法已从2.0.6版本起失效
      * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
      * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
      * @param showBack 是否显示返回按钮
      * @param addWindowWidget 是否添加悬浮窗口交互UI组件
      */
+    @Deprecated
     public void initControlComponents(boolean showBack,boolean addWindowWidget) {
-        //顶部标题栏
-        ControlToolBarView toolBarView=new ControlToolBarView(getContext());
-        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
-        toolBarView.showBack(showBack);
-        //底部播放时间进度、progressBar、seekBae、静音、全屏等功能栏
-        ControlFunctionBarView functionBarView=new ControlFunctionBarView(getContext());
-        functionBarView.setTarget(IVideoController.TARGET_CONTROL_FUNCTION);
-        //手势控制屏幕亮度、系统音量、快进、快退UI交互
-        ControlGestureView gestureView=new ControlGestureView(getContext());
-        gestureView.setTarget(IVideoController.TARGET_CONTROL_GESTURE);
-        //播放完成、重试
-        ControlCompletionView completionView=new ControlCompletionView(getContext());
-        completionView.setTarget(IVideoController.TARGET_CONTROL_COMPLETION);
-        //移动网络播放提示、播放失败、试看完成
-        ControlStatusView statusView=new ControlStatusView(getContext());
-        statusView.setTarget(IVideoController.TARGET_CONTROL_STATUS);
-        //加载中、开始播放
-        ControlLoadingView loadingView=new ControlLoadingView(getContext());
-        loadingView.setTarget(IVideoController.TARGET_CONTROL_LOADING);
-        //悬浮窗窗口播放器的窗口样式
-        if(addWindowWidget){
-            ControWindowView windowView=new ControWindowView(getContext());
-            windowView.setTarget(IVideoController.TARGET_CONTROL_WINDOW);
-            //将所有UI组件添加到控制器
-            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
-        }else{
-            //将所有UI组件添加到控制器
-            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView);
-        }
+//        //顶部标题栏
+//        ControlToolBarView toolBarView=new ControlToolBarView(getContext());
+//        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
+//        toolBarView.showBack(showBack);
+//        //底部播放时间进度、progressBar、seekBae、静音、全屏等功能栏
+//        ControlFunctionBarView functionBarView=new ControlFunctionBarView(getContext());
+//        functionBarView.setTarget(IVideoController.TARGET_CONTROL_FUNCTION);
+//        //手势控制屏幕亮度、系统音量、快进、快退UI交互
+//        ControlGestureView gestureView=new ControlGestureView(getContext());
+//        gestureView.setTarget(IVideoController.TARGET_CONTROL_GESTURE);
+//        //播放完成、重试
+//        ControlCompletionView completionView=new ControlCompletionView(getContext());
+//        completionView.setTarget(IVideoController.TARGET_CONTROL_COMPLETION);
+//        //移动网络播放提示、播放失败、试看完成
+//        ControlStatusView statusView=new ControlStatusView(getContext());
+//        statusView.setTarget(IVideoController.TARGET_CONTROL_STATUS);
+//        //加载中、开始播放
+//        ControlLoadingView loadingView=new ControlLoadingView(getContext());
+//        loadingView.setTarget(IVideoController.TARGET_CONTROL_LOADING);
+//        //悬浮窗窗口播放器的窗口样式
+//        if(addWindowWidget){
+//            ControWindowView windowView=new ControWindowView(getContext());
+//            windowView.setTarget(IVideoController.TARGET_CONTROL_WINDOW);
+//            //将所有UI组件添加到控制器
+//            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
+//        }else{
+//            //将所有UI组件添加到控制器
+//            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView);
+//        }
     }
 
     /**

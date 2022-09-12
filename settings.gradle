@@ -5,3 +5,4 @@ include ':ijk'
 
 rootProject.name = "iPlayer"
 include ':exo'
+include ':widget'

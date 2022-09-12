@@ -99,6 +99,12 @@ public interface IPlayerControl<V extends BaseController> {
     boolean toggleMirror();
 
     /**
+     * 设置媒体源的播放类型
+     * @param playType 设置媒体源的播放类型 0：视频 1：音频
+     */
+    void setPlayType(int playType);
+
+    /**
      * @param restoreDirection 设置当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态,true:自动还原到竖屏 false:保留当前屏幕方向状态
      */
     void setPlayCompletionRestoreDirection(boolean restoreDirection);

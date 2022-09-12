@@ -22,11 +22,16 @@ public interface IMediaPlayer {
 
     //画面渲染填充方式
     /** 原始大小填充模式,在视频宽高比例与手机宽高比例不一致时,播放可能留有黑边 */
-    int MODE_ZOOM_TO_FIT = 0;
+    int MODE_ZOOM_TO_FIT    = 0;
     /** 视频裁剪缩放模式,裁剪铺满全屏模式 */
-    int MODE_ZOOM_CROPPING = 1;
+    int MODE_ZOOM_CROPPING  = 1;
     /** 拉伸铺满屏幕模式,视频完全填满显示窗口,视频与窗口比例不匹配画面会有变形 */
-    int MODE_NOZOOM_TO_FIT = 2;
+    int MODE_NOZOOM_TO_FIT  = 2;
+
+    /** 播放媒体类型-视频 */
+    int PLAYER_TYPE_VIDEO   =0;
+    /** 播放媒体类型-音频 */
+    int PLAYER_TYPE_MUSIC   =1;
 
     /** 音视频开始渲染 */
     int MEDIA_INFO_VIDEO_RENDERING_START    = 3;

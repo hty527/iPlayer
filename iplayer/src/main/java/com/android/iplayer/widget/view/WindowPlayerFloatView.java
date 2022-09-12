@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import com.android.iplayer.R;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;

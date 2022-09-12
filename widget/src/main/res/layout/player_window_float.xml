@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--这一层是activity级别的Window悬浮窗口播放器手势拖拽View的,全局悬浮窗窗口不使用这个View拖拽-->
+    <FrameLayout
+        android:id="@+id/player_window_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <!--播放器父容器-->
+        <FrameLayout
+            android:id="@+id/player_window_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <!--已废弃:覆盖在播放器之上的activity级别的Window悬浮窗口手势拖拽View-->
+<!--        <TextView-->
+<!--            android:id="@+id/player_window_handel"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
+        <!--悬浮窗的关闭按钮-->
+        <ImageView
+            android:id="@+id/player_window_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:layout_gravity="right"
+            android:src="@mipmap/ic_player_window_close"/>
+    </FrameLayout>
+</FrameLayout>

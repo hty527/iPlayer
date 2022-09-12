@@ -395,6 +395,10 @@
     3、点击悬浮窗的全屏按钮后会回调至第1步的onClick中。
 ```
 * 8.2.2.2、如果设置了setOnWindowActionListener需要在收到onClose回调后关闭悬浮窗，未设置SDK内部会自定关闭。
+* 8.2.2.3、自定义悬浮窗UI交互组件全屏点击事件请回调至播放器！！！
+```
+    IWindowManager.getInstance().onClickWindow();
+```
 #### 9、多播放器同时播放
 * 9.1、SDK内部默认不支持并发播放，如需支持多播放器同时工作，需要设置允许播放器同时播放。
 ```

@@ -1,5 +1,0 @@
-<resources>
-    <declare-styleable name="BasePlayer">
-        <attr name="initController" format="boolean"/>
-    </declare-styleable>
-</resources>

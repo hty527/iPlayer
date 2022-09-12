@@ -18,7 +18,7 @@ import com.android.iplayer.utils.PlayerUtils;
  * Desc:默认的视频交互UI控制器，自定义控制器请继承{@link GestureController}或BaseController实现自己的视频UI交互控制器
  * 1、此控制器支持手势识别交互，如需自定义控制器请继承{@link GestureController}或BaseController
  * 2、此控制器只维护屏幕锁功能、点击事件传递
- * 3、内部封装并提供一键使用SDK内部UI交互组件的方法，如需一键使用SDK内部提供的UI组件，请调用：{@link #initControlComponents()}
+ * 3、如需自定义UI交互组件，请参照{@link #addControllerWidget(IControllerView)}
  */
 public class VideoController extends GestureController {
 

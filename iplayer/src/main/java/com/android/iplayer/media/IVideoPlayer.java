@@ -60,7 +60,9 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     private int mPrepareTimeout=10*1000,mReadTimeout=15*1000;
     //链接视频文件发生错误的重试次数
     private int mReCatenationCount=3;
-    private int RE_COUNT;//重试的次数
+    private int mReCount;//重试的次数
+    //播放的多媒体类型，默认为视频
+    private int mPlayType=IMediaPlayer.PLAYER_TYPE_VIDEO;
 
     /**
      * 播放状态,回调给播放控制器宿主
@@ -171,12 +173,27 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         if(null!=mRenderView) mRenderView.release();
     }
 
+    private void firstPlay() {
+        sPlayerState = PlayerState.STATE_START;
+        onPlayerState(sPlayerState,getString(R.string.player_media_start,"首帧渲染"));
+        startTimer();
+        if(mSeekDuration>0){
+            long seekDuration =mSeekDuration;
+            mSeekDuration=0;
+            seekTo(seekDuration);
+        }
+        listenerAudioFocus();
+    }
+
     @Override
     public void onPrepared(IMediaPlayer mp) {
         ILogger.d(TAG,"onPrepared-->seek:"+mSeekDuration);
-        RE_COUNT=0;//重置重试次数
+        mReCount =0;//重置重试次数
         if(null!=mMediaPlayer){
             mp.start();
+            if(IMediaPlayer.PLAYER_TYPE_MUSIC==mPlayType){
+                firstPlay();
+            }
         }else{
             mSeekDuration=0;
             onError(null,0,0);
@@ -223,15 +240,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 //        ILogger.d(TAG,"onInfo-->what:"+what+",extra:"+extra);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START://开始首帧渲染
-                sPlayerState = PlayerState.STATE_START;
-                onPlayerState(sPlayerState,getString(R.string.player_media_start,"首帧渲染"));
-                startTimer();
-                if(mSeekDuration>0){
-                    long seekDuration =mSeekDuration;
-                    mSeekDuration=0;
-                    seekTo(seekDuration);
-                }
-                listenerAudioFocus();
+                firstPlay();
                 break;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START://缓冲开始
                 sPlayerState = PlayerState.STATE_BUFFER;
@@ -260,9 +269,9 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
-        ILogger.e(TAG,"onError,what:"+what+",extra:"+extra+",reCount:"+RE_COUNT);//直播拉流会有-38的错误
+        ILogger.e(TAG,"onError,what:"+what+",extra:"+extra+",reCount:"+ mReCount);//直播拉流会有-38的错误
         if(-38==what) return true;
-        if(-10000==what&&RE_COUNT<mReCatenationCount&&null!=mMediaPlayer){
+        if(-10000==what&& mReCount <mReCatenationCount&&null!=mMediaPlayer){
             reCatenation();
             return true;
         }
@@ -276,8 +285,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * 内部重试
      */
     private void reCatenation() {
-        ILogger.d(TAG,"reCatenation");
-        RE_COUNT+=1;
+        mReCount +=1;
         startPlayer(getDataSource());
     }
 
@@ -647,6 +655,14 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     }
 
     /**
+     * 设置媒体源的播放类型
+     * @param playType 设置媒体源的播放类型 0：视频 1：音频
+     */
+    public void setPlayType(int playType) {
+        this.mPlayType=playType;
+    }
+
+    /**
      * 设置倍速播放
      * @param speed
      */
@@ -935,7 +951,8 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     public void onReset() {
         stopTimer();
         releaseTextureView();
-        mDataSource=null;mAssetsSource=null;mVideoWidth=0;mVideoHeight=0;RE_COUNT=0;
+        mDataSource=null;mAssetsSource=null;mVideoWidth=0;mVideoHeight=0;
+        mReCount =0;
         sPlayerState = PlayerState.STATE_RESET;
         onPlayerState(sPlayerState,getString(R.string.player_media_reset,"结束播放并重置"));
     }
@@ -953,7 +970,8 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             mAudioFocusManager.onDestroy();
             mAudioFocusManager=null;
         }
-        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;RE_COUNT=0;
+        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;mPlayType=0;
+        mReCount =0;
         mBasePlayer =null;mDataSource=null;mAssetsSource=null;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;
     }

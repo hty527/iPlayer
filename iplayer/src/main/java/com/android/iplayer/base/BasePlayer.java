@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -20,8 +19,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.android.iplayer.R;
-import com.android.iplayer.controller.VideoController;
-import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.interfaces.IBasePlayer;
 import com.android.iplayer.interfaces.IPlayerControl;
 import com.android.iplayer.interfaces.IRenderView;
@@ -29,6 +26,7 @@ import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.media.IVideoPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
@@ -73,17 +71,6 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     public BasePlayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context,R.layout.player_base_video,this);
-        if(null!=attrs){
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.BasePlayer);
-            //是否创建默认的控制器+UI交互组件
-            boolean createController = typedArray.getBoolean(R.styleable.BasePlayer_initController, false);
-            if(createController){
-                VideoController controller = new VideoController(context);
-                setController(controller);
-                controller.initControlComponents();
-            }
-            typedArray.recycle();
-        }
         //将自己与播放器解码模块绑定
         mIVideoPlayer = new IVideoPlayer();
         mIVideoPlayer.attachPlayer(this);
@@ -432,6 +419,15 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             return isMirror;
         }
         return false;
+    }
+
+    /**
+     * 设置媒体源的播放类型
+     * @param playType 设置媒体源的播放类型 0：视频 1：音频
+     */
+    @Override
+    public void setPlayType(int playType) {
+        if(null!=mIVideoPlayer) mIVideoPlayer.setPlayType(playType);
     }
 
     /**
