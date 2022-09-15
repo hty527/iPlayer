@@ -1,0 +1,10 @@
+<resources>
+    <string name="player_tips_mobile">将使用流量播放,是否继续?</string>
+    <string name="player_btn_continue_play">继续播放</string>
+    <string name="player_tips_preview_finish">试看结束</string>
+    <string name="player_btn_yes">知道了</string>
+    <string name="player_tips_play_error">播放失败,点击重试播放</string>
+    <string name="player_btn_try">重试</string>
+    <string name="player_tips_unknown">未知原因</string>
+    <string name="player_btn_unknown">未知</string>
+</resources>

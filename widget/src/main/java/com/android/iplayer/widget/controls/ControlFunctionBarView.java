@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.android.iplayer.R;
+import com.android.iplayer.widget.R;
 import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.controller.ControlWrapper;
 import com.android.iplayer.media.IMediaPlayer;

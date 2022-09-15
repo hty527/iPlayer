@@ -1,0 +1,10 @@
+<resources>
+    <string name="player_tips_mobile">Try to play with traffic. Is it allowed?</string>
+    <string name="player_btn_continue_play">Allow to play</string>
+    <string name="player_tips_preview_finish">Try to finish</string>
+    <string name="player_btn_yes">got it</string>
+    <string name="player_tips_play_error">Play failed, click Retry to play</string>
+    <string name="player_btn_try">retry</string>
+    <string name="player_tips_unknown">Unknown reason</string>
+    <string name="player_btn_unknown">unknown</string>
+</resources>

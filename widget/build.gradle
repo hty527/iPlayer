@@ -27,8 +27,6 @@ task sourcesJar(type: Jar) {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    //基础
-    implementation 'com.android.support:support-compat:+'
     //播放器
     implementation project(':iplayer')
 }

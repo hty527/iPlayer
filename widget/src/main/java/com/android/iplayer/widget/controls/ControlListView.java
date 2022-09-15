@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.iplayer.R;
+import com.android.iplayer.widget.R;
 import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;

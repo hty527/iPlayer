@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="player_style">#1DBA5B</color>
+    <color name="player_style_pre">#CC1DBA5B</color>
+    <color name="transparent">#00000000</color>
+    <color name="player_transparent">#00000000</color>
+    <color name="player_white">#FFFFFF</color>
+    <color name="player_surplus">#66000000</color>
+    <color name="player_seek_thumb">#FFFFFF</color>
+    <color name="player_gesture_background">#33FFFFFF</color>
+    <color name="player_progress_start">#37CAF9</color>
+    <color name="player_progress_end">@color/player_style</color>
+</resources>

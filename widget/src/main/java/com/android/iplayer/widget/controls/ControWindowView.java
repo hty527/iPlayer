@@ -8,7 +8,7 @@ import android.view.animation.Animation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import com.android.iplayer.R;
+import com.android.iplayer.widget.R;
 import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.manager.IVideoManager;
 import com.android.iplayer.manager.IWindowManager;

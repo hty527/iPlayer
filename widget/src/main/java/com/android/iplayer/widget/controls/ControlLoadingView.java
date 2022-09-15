@@ -3,7 +3,7 @@ package com.android.iplayer.widget.controls;
 import android.content.Context;
 import android.view.View;
 import android.widget.ProgressBar;
-import com.android.iplayer.R;
+import com.android.iplayer.widget.R;
 import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.model.PlayerState;
 

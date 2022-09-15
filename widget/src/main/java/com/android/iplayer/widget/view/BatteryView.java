@@ -11,8 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.annotation.Nullable;
-import com.android.iplayer.R;
+import com.android.iplayer.widget.R;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**
@@ -30,11 +29,11 @@ public class BatteryView extends LinearLayout {
         this(context,null);
     }
 
-    public BatteryView(Context context, @Nullable AttributeSet attrs) {
+    public BatteryView(Context context, AttributeSet attrs) {
         this(context, attrs,0);
     }
 
-    public BatteryView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public BatteryView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View.inflate(context, R.layout.player_battery_view,this);
         mBatteryText = (TextView) findViewById(R.id.battery_text);
