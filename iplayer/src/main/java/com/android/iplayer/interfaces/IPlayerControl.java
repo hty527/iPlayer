@@ -56,6 +56,12 @@ public interface IPlayerControl<V extends BaseController> {
     void setZoomModel(int zoomModel);
 
     /**
+     * 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     * @param enable 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     */
+    void setAutoChangeOrientation(boolean enable);
+
+    /**
      * 设置视频旋转角度
      * @param degree 设置视频画面旋转角度
      */

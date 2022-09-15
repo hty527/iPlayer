@@ -5,7 +5,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
@@ -13,9 +15,10 @@ import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.iplayer.widget.controls.ControlToolBarView;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
@@ -85,7 +88,8 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
 
             //为播放器添加控制器和Ui交互组件
-            VideoController controller = mVideoPlayer.initController();
+            VideoController controller = mVideoPlayer.createController();
+            WidgetFactory.bindDefaultControls(controller,false,true);
             controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
 
             mVideoPlayer.prepareAsync();//开始异步准备播放
@@ -118,7 +122,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return new IJkMediaPlayer(WindowGlobalPlayerActivity.this);
+                return IjkPlayerFactory.create().createPlayer(WindowGlobalPlayerActivity.this);
             }
 
             @Override

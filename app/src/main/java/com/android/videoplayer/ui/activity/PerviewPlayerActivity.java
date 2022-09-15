@@ -5,11 +5,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -51,7 +53,8 @@ public class PerviewPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
 //        mVideoPlayer.setPlayCompletionRestoreDirection(false);
-        VideoController controller = mVideoPlayer.initController();
+        VideoController controller = mVideoPlayer.createController();
+        WidgetFactory.bindDefaultControls(controller);
         //1、试看需要现设置虚拟总时长
         controller.setPreViewTotalDuration(DURATION+"");//注意:设置虚拟总时长(一旦设置控制器部走片段试看流程)
         //2、添加自己的试看播放完成的交互UI组件

@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -47,7 +48,11 @@ public class AssetsPlayerActivity extends BaseActivity {
     private void init() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-        VideoController controller = mVideoPlayer.initController(false,false);//绑定默认的控制器
+
+        VideoController controller = new VideoController(mVideoPlayer.getContext());//创建一个默认控制器
+        mVideoPlayer.setController(controller);//将播放器绑定到控制器
+        WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器
+
         mVideoPlayer.setLoop(false);
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);
         mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)

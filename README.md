@@ -23,7 +23,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.0.5.apk?version=2.0.5 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.0.apk?version=2.1.0 "下载apk"
 
 ##### 1、项目根build.gradle配置</br>
 ```
@@ -36,15 +36,17 @@
 ##### 2、模块build.gradle配置</br>
 ```
     dependencies {
-        //播放器
-        implementation 'com.github.hty527.iPlayer:iplayer:2.0.5.3'
+        //播放器(无UI交互)
+        implementation 'com.github.hty527.iPlayer:iplayer:2.1.0'
+        //UI交互组件,可根据需要使用
+        implementation 'com.github.hty527.iPlayer:widget:2.1.0'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.0.5.3'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.1.0'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.0.5.3'
+        //implementation 'com.github.hty527.iPlayer:exo:2.1.0'
         //音视频预缓存+边播边存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:cache:2.0.5.3'
+        //implementation 'com.github.hty527.iPlayer:cache:2.1.0'
     }
 ```
 ##### 3、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -59,7 +61,9 @@
     mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
     mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//固定播放器高度，或高度设置为:match_parent
     //使用SDK自带控制器+各UI交互组件
-    VideoController controller = mVideoPlayer.initController();
+    VideoController controller = new VideoController(mVideoPlayer.getContext());//创建一个默认控制器
+    mVideoPlayer.setController(controller);//将播放器绑定到控制器
+    WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器(需集成：implementation 'com.github.hty527.iPlayer:widget:lastversion')
     //设置视频标题(仅横屏状态可见)
     controller.setTitle("测试地址播放");
     //设置播放源

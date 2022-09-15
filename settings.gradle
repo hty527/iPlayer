@@ -2,7 +2,7 @@ include ':cache'
 include ':app'
 include ':iplayer'
 include ':ijk'
-
-rootProject.name = "iPlayer"
 include ':exo'
 include ':widget'
+rootProject.name = "iPlayer"
+

@@ -6,6 +6,47 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="播放地址"
+        android:textColor="@color/menu_sub_title_color"
+        android:textStyle="bold"
+        android:textSize="15dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="10dp">
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="请粘贴或输入视频地址"
+            android:textColorHint="#666666"
+            android:textColor="#333333"
+            android:textSize="14dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/input_bg"/>
+        <TextView
+            android:id="@+id/play"
+            android:layout_width="68dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:textColor="#FFFFFF"
+            android:textSize="16dp"
+            android:text="播放"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_play"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="12dp"
         android:text="视频解码器"
@@ -128,46 +169,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:text="测试播放地址"
-        android:textColor="@color/menu_sub_title_color"
-        android:textStyle="bold"
-        android:textSize="15dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="10dp">
-        <EditText
-            android:id="@+id/input"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="请粘贴或输入视频地址"
-            android:textColorHint="#666666"
-            android:textColor="#333333"
-            android:textSize="14dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/input_bg"/>
-        <TextView
-            android:id="@+id/play"
-            android:layout_width="68dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp"
-            android:text="播放"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/bg_play"/>
-    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="50dp"/>

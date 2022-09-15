@@ -17,6 +17,7 @@
     mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,如需网络提示交互需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
+    mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
 ```
 #### 2、控制器API
 * 2.1、请阅读[IVideoController][2]
@@ -25,6 +26,7 @@
     mController.setTitle("测试地址播放");//视频标题(默认控制器横屏状态下可见),所有UI交互组件都会收到setTitle回调
     mController.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法，启用试看流程时播放器必须设置为mVideoPlayer.setLoop(true);
     mController.setPlayerScene(IVideoController.SCENE_NOIMAL);//设置控制器应用场景
+    mController.addControllerWidget(IControllerView controllerView);//给控制器添加UI交互组件
     //默认控制器独有api
     //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
     //以下常用api的控制器需继承GestureController
@@ -62,9 +64,9 @@
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
             if(1==MEDIA_CORE){
-                return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:lastversion'
+                return IjkPlayerFactory.create().createPlayer(VideoPlayerActivity.this);//IJK解码器，需引用库：implementation 'com.github.hty527.iPlayer:ijk:lastversion'
             }else if(2==MEDIA_CORE){
-                return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器，需引用库：implementation 'com.github.hty527.iPlayer:exo:lastversion'
+                return ExoPlayerFactory.create().createPlayer(VideoPlayerActivity.this);//EXO解码器，需引用库：implementation 'com.github.hty527.iPlayer:exo:lastversion'
             }else{
                 return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中ExoMediaPlayer类或ijk中的IJkMediaPlayer类
             }
@@ -72,7 +74,7 @@
     });
 ```
 
-#### 5、自定义UI交互组件
+#### 5、自定义UI交互
 ##### 5.1、自定义Controller
 * 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
 * 5.1.2、设置控制器到播放器
@@ -83,7 +85,7 @@
     VideoController controller=new VideoController(videoPlayer.getContext());
     mVideoPlayer.setController(controller);//将控制器绑定到播放器
     //或使用SDK内置的
-    mVideoPlayer.initController();
+    mVideoPlayer.createController();
 ```
 ##### 5.2、自定义UI交互组件
 * 5.2.1、为什么有自定义Controller还要整个"自定义UI交互组件"出来？<br>
@@ -176,12 +178,32 @@
         });
     }
 ```
-##### 5.4、使用SDK默认组件对象
-* 5.4.1、使用默认Controller+自定义交互组件时，SDK内部会为添加的每一个自定义UI组件绑定一个target，默认target请阅读[IVideoController][10]类。
-* 根据默认target寻找组件：
+##### 5.4、使用SDK默认UI组件
+* 5.4.1、为方便开发者快速实现完整的播放器交互功能，特针对播放器封装UI交互组件SDK，请集成：
+```
+    //UI交互组件,可根据需要使用
+    implementation 'implementation 'com.github.hty527.iPlayer:widget:lastversion'
+```
+* 5.4.2、使用UI交互组件
+```
+    //创建一个默认控制器
+    VideoController controller = new VideoController(mVideoPlayer.getContext());
+    //将播放器绑定到控制器
+    mVideoPlayer.setController(controller);
+    //一键使用默认UI交互组件绑定到控制器
+    WidgetFactory.bindDefaultControls(controller);
+```
+* 5.4.3、UI交互SDK支持一句话为播放器设置默认控制器和UI交互组件
+```
+    //创建一个控制器绑定到播放器，然后将所有UI交互组件绑定到控制器
+    WidgetFactory.bindDefaultControls(mVideoPlayer.createController());
+```
+* 5.4.4、使用默认Controller+自定义交互组件时，SDK内部会为添加的每一个自定义UI组件绑定一个target，默认target请阅读[IVideoController][10]类。
+* 根据默认target寻找组件示例：
 
 [10]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 ```
+    //这里以标题栏为示例
     IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
     if(null!=controllerView&&controllerView instanceof ControlToolBarView){
         ControlToolBarView controlToolBarView= (ControlToolBarView) controllerView;
@@ -353,7 +375,10 @@
     videoPlayer.setLoop(false);
     videoPlayer.setProgressCallBackSpaceMilliss(300);
     videoPlayer.setDataSource(MP4_URL2);//播放地址设置
-    VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+    //初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+    VideoController controller = new VideoController(mVideoPlayer.getContext());
+    mVideoPlayer.setController(controller);
+    WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器
     controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
     boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
     if(globalWindow) {
@@ -423,8 +448,9 @@
 
         @Override
         public AbstractMediaPlayer createMediaPlayer() {
-            new ExoMediaPlayer(VideoPlayerActivity.this);
-            //new IJkMediaPlayer(VideoPlayerActivity.this);
+            return IjkPlayerFactory.create().createPlayer(VideoPlayerActivity.this);
+            //return MediaPlayerFactory.create().createPlayer(VideoPlayerActivity.this);
+            //return ExoPlayerFactory.create().createPlayer(VideoPlayerActivity.this);
             //或其它受支持的解码器
         }
     });
@@ -434,7 +460,8 @@
 #### 11、收费试看模式
 * 11.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
-    VideoController controller = mVideoPlayer.initController();
+    VideoController controller = new VideoController(mVideoPlayer.getContext());//创建一个默认控制器
+    WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器
     //1、设置虚拟的视频总时长,即可开启试看模式,试看模式下不能开启循环播放，否则无法回调试看完成状态。
     controller.setPreViewTotalDuration(DURATION+"");//注意:设置虚拟总时长(一旦设置控制器部走片段试看流程)
     mVideoPlayer.setLoop(false);//关闭循环播放

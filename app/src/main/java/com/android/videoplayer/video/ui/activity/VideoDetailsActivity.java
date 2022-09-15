@@ -27,7 +27,7 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControWindowView;
@@ -289,7 +289,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new IJkMediaPlayer(VideoDetailsActivity.this);
+                    return IjkPlayerFactory.create().createPlayer(VideoDetailsActivity.this);
                 }
 
                 @Override

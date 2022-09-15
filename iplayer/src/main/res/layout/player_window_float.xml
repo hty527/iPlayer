@@ -13,11 +13,6 @@
             android:id="@+id/player_window_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <!--已废弃:覆盖在播放器之上的activity级别的Window悬浮窗口手势拖拽View-->
-<!--        <TextView-->
-<!--            android:id="@+id/player_window_handel"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"/>-->
         <!--悬浮窗的关闭按钮-->
         <ImageView
             android:id="@+id/player_window_close"

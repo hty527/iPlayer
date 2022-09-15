@@ -31,6 +31,7 @@ import com.android.iplayer.media.IVideoPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.view.ScreenOrientationListener;
 import com.android.iplayer.widget.view.WindowPlayerFloatView;
 import java.io.File;
 
@@ -38,15 +39,14 @@ import java.io.File;
  * Created by hty
  * 2022/6/28
  * Desc:一个默认没有UI交互的播放器基类
- * 1、自定义属性：initController:true:内部初始化一个默认的控制器交互组件 flase:不初始化默认的控制器组件
- * 2、可调用{@link #setController(BaseController)}来绑定一个UI视图交互控制器
- * 3、如需实现自定义视频解码器，则需注册{@link #setOnPlayerActionListener(OnPlayerEventListener)}监听器，实现createMediaPlayer方法来创建一个解码器。每个视频播放任务都将实例化一个createMediaPlayer解码器
- * 4、播放器支持在任意界面和位置直接开启全屏、Activity级别悬浮窗、全局悬浮窗 播放，请阅读IPlayerControl接口内的方法实现
- * 5、如需支持多播放器同时播放，则需要在开始播放前调用IVideoManager.getInstance().setInterceptTAudioFocus(true);
- * 6、特别注意：mParentContext：为什么会有这个变量？当播放从一个Activity跳转到另一个Activity转场衔接播放、从全局悬浮窗到Activity转场衔接播放时，播放器的宿主Activity发生了变化。此时播放器内部的startFullScreen和手势缩放控制屏幕亮度等或其它和Activity相关功能都将会失效。
+ * 1、可调用{@link #setController(BaseController)}来绑定一个UI视图交互控制器
+ * 2、如需实现自定义视频解码器，则需注册{@link #setOnPlayerActionListener(OnPlayerEventListener)}监听器，实现createMediaPlayer方法来创建一个解码器。每个视频播放任务都将实例化一个createMediaPlayer解码器
+ * 3、播放器支持在任意界面和位置直接开启全屏、Activity级别悬浮窗、全局悬浮窗 播放，请阅读IPlayerControl接口内的方法实现
+ * 4、如需支持多播放器同时播放，则需要在开始播放前调用IVideoManager.getInstance().setInterceptTAudioFocus(true);
+ * 5、特别注意：mParentContext：为什么会有这个变量？当播放从一个Activity跳转到另一个Activity转场衔接播放、从全局悬浮窗到Activity转场衔接播放时，播放器的宿主Activity发生了变化。此时播放器内部的startFullScreen和手势缩放控制屏幕亮度等或其它和Activity相关功能都将会失效。
  *    所以需要在转场后调用{@link #setParentContext(Context)}(context传入当前Activity的上下文)、恢复转场时来调用setParentContext(null)置空临时上下文。
  */
-public abstract class BasePlayer extends FrameLayout implements IPlayerControl, IBasePlayer {
+public abstract class BasePlayer extends FrameLayout implements IPlayerControl, IBasePlayer, ScreenOrientationListener.OnDisplayOrientationChangedListener {
 
     protected static final String TAG = BasePlayer.class.getSimpleName();
     private BaseController mController;//视图控制器
@@ -59,6 +59,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     private IVideoPlayer mIVideoPlayer;
     private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true,mLandscapeWindowTranslucent;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态\横屏状态下是否启用沉浸式全屏
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
+    private ScreenOrientationListener mOrientationListener;//屏幕方向监听
 
     public BasePlayer(Context context) {
         this(context,null);
@@ -75,6 +76,9 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         mIVideoPlayer = new IVideoPlayer();
         mIVideoPlayer.attachPlayer(this);
         initViews();
+        mOrientationListener = new ScreenOrientationListener(getTargetContext());
+        mOrientationListener.setOnDisplayOrientationChangedListener(this);
+        mOrientationListener.disable();//默认关闭屏幕角度变化监听
     }
 
     protected abstract void initViews();
@@ -257,6 +261,34 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     //=========================来自控制器的回调事件,也提供给外界调用的公开方法============================
 
     /**
+     * 设置视图控制器
+     * @param controller 继承VideoBaseController的控制器
+     */
+    @Override
+    public void setController(BaseController controller) {
+        PlayerUtils.getInstance().removeViewFromParent(mController);
+        this.mController=controller;
+        PlayerUtils.getInstance().removeViewFromParent(controller);
+        FrameLayout controllerView = (FrameLayout) findViewById(R.id.player_controller);
+        if(null!=controllerView){
+            controllerView.removeAllViews();
+            if(null!= mController){
+                mController.attachedPlayer(this);//绑定播放器代理人
+                controllerView.addView(mController,new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));//添加到播放器窗口
+                mController.onCreate();//初始化
+            }
+        }
+    }
+
+    /**
+     * 返回播放器控制器
+     * @return
+     */
+    public BaseController getController() {
+        return mController;
+    }
+
+    /**
      * 设置是否循环播放
      * @param loop 设置是否循环播放 true:循环播放 flase:禁止循环播放
      */
@@ -330,6 +362,21 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             if(null!=mController) mController.onZoomModel(scaleModel);
         }
         if(null!=mOnPlayerActionListener) mOnPlayerActionListener.onZoomModel(scaleModel);
+    }
+
+    /**
+     * 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     * @param enable 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     */
+    @Override
+    public void setAutoChangeOrientation(boolean enable) {
+        if(null!=mOrientationListener){
+            if(enable){
+                mOrientationListener.enable();
+            }else{
+                mOrientationListener.disable();
+            }
+        }
     }
 
     /**
@@ -1183,36 +1230,6 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         return mParentContext;
     }
 
-    //=================================提供给控制器或外界调用的公开方法=================================
-
-    /**
-     * 设置视图控制器
-     * @param controller 继承VideoBaseController的控制器
-     */
-    @Override
-    public void setController(BaseController controller) {
-        PlayerUtils.getInstance().removeViewFromParent(mController);
-        this.mController=controller;
-        PlayerUtils.getInstance().removeViewFromParent(controller);
-        FrameLayout controllerView = (FrameLayout) findViewById(R.id.player_controller);
-        if(null!=controllerView){
-            controllerView.removeAllViews();
-            if(null!= mController){
-                mController.attachedPlayer(this);//绑定播放器代理人
-                controllerView.addView(mController,new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));//添加到播放器窗口
-                mController.onCreate();//初始化
-            }
-        }
-    }
-
-    /**
-     * 返回播放器控制器
-     * @return
-     */
-    public BaseController getController() {
-        return mController;
-    }
-
     /**
      * 是否允许返回(横屏时先退出横屏)
      * @return
@@ -1287,6 +1304,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      */
     @Override
     public void onDestroy(){
+        if(null!= mOrientationListener) mOrientationListener.onReset();
         if(null!=mController) mController.onDestroy();
         if(null!=mIVideoPlayer){
             mIVideoPlayer.onDestroy();
@@ -1298,5 +1316,15 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         }
         mIsActivityWindow =false;mContinuityPlay=false;mDataSource=null;mAssetsSource=null;
         mOnPlayerActionListener=null;mScreenOrientation=IMediaPlayer.ORIENTATION_PORTRAIT;
+    }
+
+    /**
+     * 设备方向角度变化
+     * @param angle 0、90、180、270
+     */
+    @Override
+    public void onAngleChanged(int angle) {
+        ILogger.d(TAG,"onAngleChanged-->angle:"+angle);
+        
     }
 }

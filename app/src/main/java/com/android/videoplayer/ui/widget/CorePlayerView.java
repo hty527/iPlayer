@@ -5,14 +5,16 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.ExoMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.ExoPlayerFactory;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.videoplayer.R;
 
 /**
@@ -41,14 +43,14 @@ public class CorePlayerView extends LinearLayout {
         View.inflate(context, R.layout.view_player_core, this);
         mVideoPlayer = findViewById(R.id.view_video_player);
         findViewById(R.id.view_player_container).getLayoutParams().height = getResources().getDisplayMetrics().widthPixels * 9 / 16;//给播放器固定一个高度
-        VideoController controller = mVideoPlayer.initController(false,false);//不显示返回按钮\不添加悬浮窗窗口交互UI组件
+        WidgetFactory.bindDefaultControls(mVideoPlayer.createController());//不显示返回按钮\不添加悬浮窗窗口交互UI组件
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if (1 == mCurrentMediaCore) {
-                    return new IJkMediaPlayer(getContext());//IJK解码器
+                    return IjkPlayerFactory.create().createPlayer(getContext());//IJK解码器
                 } else if (2 == mCurrentMediaCore) {
-                    return new ExoMediaPlayer(getContext());//EXO解码器
+                    return ExoPlayerFactory.create().createPlayer(getContext());//EXO解码器
                 } else {
                     return null;//播放器内部默认的
                 }

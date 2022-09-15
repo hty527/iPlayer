@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--全屏容器-->
+    <!--window窗口播放器，当前Activity只允许存在一个-->
     <item name="player_window" type="id"></item>
 </resources>

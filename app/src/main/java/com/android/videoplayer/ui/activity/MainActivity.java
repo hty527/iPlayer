@@ -8,17 +8,20 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.iplayer.widget.controls.ControWindowView;
 import com.android.iplayer.widget.controls.ControlCompletionView;
 import com.android.iplayer.widget.controls.ControlFunctionBarView;
@@ -185,7 +188,8 @@ public class MainActivity extends BaseActivity {
         videoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);
         videoPlayer.setProgressCallBackSpaceMilliss(300);
         videoPlayer.setDataSource(MP4_URL2);//播放地址设置
-        VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+        VideoController controller = videoPlayer.createController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+        WidgetFactory.bindDefaultControls(controller,false,true);
         controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
         boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
@@ -215,7 +219,7 @@ public class MainActivity extends BaseActivity {
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new IJkMediaPlayer(MainActivity.this);
+                    return IjkPlayerFactory.create().createPlayer(MainActivity.this);
                 }
 
                 @Override
@@ -276,7 +280,7 @@ public class MainActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return new IJkMediaPlayer(MainActivity.this);
+                return IjkPlayerFactory.create().createPlayer(MainActivity.this);
             }
 
             @Override

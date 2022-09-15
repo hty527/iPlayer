@@ -3,17 +3,15 @@ package com.android.videoplayer.ui.activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.ExoMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.ExoPlayerFactory;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControWindowView;
@@ -78,7 +76,6 @@ public class VideoPlayerActivity extends BaseActivity {
         //mController.setCanTouchInPortrait(false);//竖屏状态下是否开启手势交互,内部默认允许
         //mController.showLocker(true);//横屏状态下是否启用屏幕锁功能,默认开启
         mVideoPlayer.setController(mController);//绑定控制器到播放器
-
         /**
          * 给控制器添加各UI交互组件
          */
@@ -134,9 +131,9 @@ public class VideoPlayerActivity extends BaseActivity {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if(1==MEDIA_CORE){
-                    return new IJkMediaPlayer(VideoPlayerActivity.this);//IJK解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+                    return IjkPlayerFactory.create().createPlayer(VideoPlayerActivity.this);//IJK解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
                 }else if(2==MEDIA_CORE){
-                    return new ExoMediaPlayer(VideoPlayerActivity.this);//EXO解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
+                    return ExoPlayerFactory.create().createPlayer(VideoPlayerActivity.this);//EXO解码器,需引用implementation 'com.github.hty527.iPlayer:ijk:2.0.3.1'
                 }else{
                     return null;//返回null时,SDK内部会自动使用系统MediaPlayer解码器,自定义解码器请参考Demo中的JkMediaPlayer或ExoMediaPlayer类
                 }
@@ -171,6 +168,7 @@ public class VideoPlayerActivity extends BaseActivity {
         mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)
         mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
         mVideoPlayer.setMirror(false);//是否镜像显示
+        mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
         //mVideoPlayer.setPlayCompletionRestoreDirection(true);//播放器在横屏状态下播放完成是否自动还原到竖屏状态,默认自动还原到竖屏
         //mVideoPlayer.setMobileNetwork(true);//移动网络下是否允许播放网络视频,需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
         //mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放

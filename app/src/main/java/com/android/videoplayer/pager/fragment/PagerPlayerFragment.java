@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.video.cache.VideoCache;
@@ -31,6 +33,7 @@ import com.android.videoplayer.utils.Logger;
 import com.android.videoplayer.utils.ScreenUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.util.List;
 
 /**
@@ -167,7 +170,7 @@ public class PagerPlayerFragment extends BaseFragment {
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return new IJkMediaPlayer(getContext());
+                    return IjkPlayerFactory.create().createPlayer(getContext());
                 }
 
                 @Override

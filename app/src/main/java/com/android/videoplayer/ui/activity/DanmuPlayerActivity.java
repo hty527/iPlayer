@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -53,7 +54,8 @@ public class DanmuPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
         //给播放器设置一个控制器
-        VideoController controller = mVideoPlayer.initController();
+        VideoController controller = mVideoPlayer.createController();
+        WidgetFactory.bindDefaultControls(controller);
         mDanmuWidgetView = new DanmuWidgetView(controller.getContext());
         //将弹幕组件添加到控制器最底层
         controller.addControllerWidget(mDanmuWidgetView,0);

@@ -11,9 +11,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.android.iplayer.controller.ControlWrapper;
 import com.android.iplayer.interfaces.IControllerView;
-import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.interfaces.IPlayerControl;
+import com.android.iplayer.interfaces.IVideoController;
+import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import java.util.LinkedList;
@@ -22,7 +22,7 @@ import java.util.LinkedList;
  * Created by hty
  * 2022/6/28
  * desc: 视频播放器UI控制器交互基类
- * 1、此控制器维护所有UI组件，负责传达和处理播放器以及UI组件的事件
+ * 1、此控制器维护所有自定义UI组件，负责传达和处理播放器以及UI组件的事件
  * 2、控制器的所有UI组件都支持自定义，调用{@link #addControllerWidget(IControllerView)}添加你的自定义UI组件
  * 3、播放器只能有一个控制器，但一个控制器可以有多个UI交互组件
  * 4、这个基类封装了一些播放器常用的功能方法，请阅读此类的method
@@ -37,7 +37,6 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     protected long mAnimationDuration=MATION_DRAUTION;//控制交互组件显示|隐藏的动画时长
     protected boolean isCompletion;//是否播放(试看)完成
     protected long mPreViewTotalDuration;//试看模式下总时长
-
 
     protected class ExHandel extends Handler{
         public ExHandel(Looper looper){
@@ -256,67 +255,6 @@ public abstract class BaseController extends FrameLayout implements IVideoContro
     }
 
     //===================================控制器提供给宿主或子类调用======================================
-
-    /**
-     * 此方法已从2.0.6版本起失效
-     * 使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
-     */
-    @Deprecated
-    public void initControlComponents() {
-        initControlComponents(false);
-    }
-
-    /**
-     * 此方法已从2.0.6版本起失效
-     * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
-     * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
-     * @param showBack 是否显示返回按钮
-     */
-    @Deprecated
-    public void initControlComponents(boolean showBack) {
-        initControlComponents(showBack,true);
-
-    }
-
-    /**
-     * 此方法已从2.0.6版本起失效
-     * 1、使用默认播放器的全部UI样式，可调用此方法，如需局部组件或全部组件自定义，请调用addControllerWidget(IControllerView)添加你的UI组件
-     * 2、这里为控制器添加UI组件时，每个UI组件都绑定了一个setTarget，方便在转场播放或其它场景调用findControlWidgetByTag(String)找到此组件
-     * @param showBack 是否显示返回按钮
-     * @param addWindowWidget 是否添加悬浮窗口交互UI组件
-     */
-    @Deprecated
-    public void initControlComponents(boolean showBack,boolean addWindowWidget) {
-//        //顶部标题栏
-//        ControlToolBarView toolBarView=new ControlToolBarView(getContext());
-//        toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);
-//        toolBarView.showBack(showBack);
-//        //底部播放时间进度、progressBar、seekBae、静音、全屏等功能栏
-//        ControlFunctionBarView functionBarView=new ControlFunctionBarView(getContext());
-//        functionBarView.setTarget(IVideoController.TARGET_CONTROL_FUNCTION);
-//        //手势控制屏幕亮度、系统音量、快进、快退UI交互
-//        ControlGestureView gestureView=new ControlGestureView(getContext());
-//        gestureView.setTarget(IVideoController.TARGET_CONTROL_GESTURE);
-//        //播放完成、重试
-//        ControlCompletionView completionView=new ControlCompletionView(getContext());
-//        completionView.setTarget(IVideoController.TARGET_CONTROL_COMPLETION);
-//        //移动网络播放提示、播放失败、试看完成
-//        ControlStatusView statusView=new ControlStatusView(getContext());
-//        statusView.setTarget(IVideoController.TARGET_CONTROL_STATUS);
-//        //加载中、开始播放
-//        ControlLoadingView loadingView=new ControlLoadingView(getContext());
-//        loadingView.setTarget(IVideoController.TARGET_CONTROL_LOADING);
-//        //悬浮窗窗口播放器的窗口样式
-//        if(addWindowWidget){
-//            ControWindowView windowView=new ControWindowView(getContext());
-//            windowView.setTarget(IVideoController.TARGET_CONTROL_WINDOW);
-//            //将所有UI组件添加到控制器
-//            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView,windowView);
-//        }else{
-//            //将所有UI组件添加到控制器
-//            addControllerWidget(toolBarView,functionBarView,gestureView,completionView,statusView,loadingView);
-//        }
-    }
 
     /**
      * 向视频播放器控制器添加自定义UI组件

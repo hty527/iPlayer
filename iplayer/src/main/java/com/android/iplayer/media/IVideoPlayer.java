@@ -5,6 +5,7 @@ import android.content.res.AssetFileDescriptor;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
 import com.android.iplayer.R;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
@@ -12,13 +13,14 @@ import com.android.iplayer.interfaces.IBasePlayer;
 import com.android.iplayer.interfaces.IRenderView;
 import com.android.iplayer.listener.OnMediaEventListener;
 import com.android.iplayer.manager.IVideoManager;
-import com.android.iplayer.media.core.MediaPlayer;
+import com.android.iplayer.media.core.MediaPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.AudioFocus;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ThreadPool;
 import com.android.iplayer.widget.view.MediaTextureView;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -94,7 +96,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         mediaPlayer = mBasePlayer.getMediaPlayer();
         if(null==mediaPlayer){
             Context context = mBasePlayer.getVideoPlayer().getContext();
-            mediaPlayer=new MediaPlayer(context);
+            mediaPlayer= MediaPlayerFactory.create().createPlayer(context);
         }
         return mediaPlayer;
     }

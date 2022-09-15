@@ -3,12 +3,15 @@ package com.android.videoplayer.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
+
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.video.cache.VideoCache;
 import com.android.iplayer.widget.VideoPlayer;
+import com.android.iplayer.widget.WidgetFactory;
 import com.android.videoplayer.R;
 import com.android.videoplayer.base.BaseActivity;
 import com.android.videoplayer.base.BasePresenter;
@@ -52,11 +55,12 @@ public class VideoCacheActivity extends BaseActivity {
     private void initPlayer() {
         //播放器播放之前准备工作
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
+        WidgetFactory.bindDefaultControls(mVideoPlayer.createController());//使用默认的UI交互
         mVideoPlayer.setLandscapeWindowTranslucent(true);
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return new IJkMediaPlayer(VideoCacheActivity.this);
+                return IjkPlayerFactory.create().createPlayer(VideoCacheActivity.this);
             }
         });
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
@@ -81,7 +85,6 @@ public class VideoCacheActivity extends BaseActivity {
     public void playerStart(View view) {
         String playUrl = VideoCache.getInstance().getPlayPreloadUrl(CACHE_URL);
         Logger.d(TAG,"getPlayPreloadUrl:"+playUrl);
-        //控制器在xml里初始化了：app:initController="true"
         mVideoPlayer.getController().setTitle("弹幕视频测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setDataSource(playUrl);//播放地址设置
         mVideoPlayer.prepareAsync();//开始异步准备播放

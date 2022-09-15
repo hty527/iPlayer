@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.view.View;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
-import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.media.core.ExoMediaPlayer;
-import com.android.iplayer.media.core.IJkMediaPlayer;
+import com.android.iplayer.media.IMediaPlayer;
+import com.android.iplayer.media.core.ExoPlayerFactory;
+import com.android.iplayer.media.core.IjkPlayerFactory;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControlLoadingView;
 import com.android.iplayer.widget.controls.ControlStatusView;
@@ -63,9 +63,9 @@ public class LivePlayerActivity extends BaseActivity {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
                 if (1 == MEDIA_CORE) {
-                    return new IJkMediaPlayer(LivePlayerActivity.this,true);
+                    return IjkPlayerFactory.create(true).createPlayer(LivePlayerActivity.this);
                 } else if (2 == MEDIA_CORE) {
-                    return new ExoMediaPlayer(LivePlayerActivity.this);
+                    return ExoPlayerFactory.create().createPlayer(LivePlayerActivity.this);
                 } else {
                     return null;
                 }

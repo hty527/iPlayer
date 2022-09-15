@@ -36,7 +36,8 @@
             android:name="com.android.videoplayer.ui.activity.VideoPlayerActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
         <!--直播拉流-->
         <activity
