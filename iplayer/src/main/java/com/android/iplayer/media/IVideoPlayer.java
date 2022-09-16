@@ -5,7 +5,6 @@ import android.content.res.AssetFileDescriptor;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import com.android.iplayer.R;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
@@ -20,7 +19,6 @@ import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.utils.ThreadPool;
 import com.android.iplayer.widget.view.MediaTextureView;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,8 +61,6 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     //链接视频文件发生错误的重试次数
     private int mReCatenationCount=3;
     private int mReCount;//重试的次数
-    //播放的多媒体类型，默认为视频
-    private int mPlayType=IMediaPlayer.PLAYER_TYPE_VIDEO;
 
     /**
      * 播放状态,回调给播放控制器宿主
@@ -193,9 +189,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         mReCount =0;//重置重试次数
         if(null!=mMediaPlayer){
             mp.start();
-            if(IMediaPlayer.PLAYER_TYPE_MUSIC==mPlayType){
-                firstPlay();
-            }
+            firstPlay();
         }else{
             mSeekDuration=0;
             onError(null,0,0);
@@ -242,7 +236,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
 //        ILogger.d(TAG,"onInfo-->what:"+what+",extra:"+extra);
         switch (what) {
             case IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START://开始首帧渲染
-                firstPlay();
+
                 break;
             case IMediaPlayer.MEDIA_INFO_BUFFERING_START://缓冲开始
                 sPlayerState = PlayerState.STATE_BUFFER;
@@ -657,14 +651,6 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     }
 
     /**
-     * 设置媒体源的播放类型
-     * @param playType 设置媒体源的播放类型 0：视频 1：音频
-     */
-    public void setPlayType(int playType) {
-        this.mPlayType=playType;
-    }
-
-    /**
      * 设置倍速播放
      * @param speed
      */
@@ -972,7 +958,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             mAudioFocusManager.onDestroy();
             mAudioFocusManager=null;
         }
-        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;mPlayType=0;
+        mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;
         mReCount =0;
         mBasePlayer =null;mDataSource=null;mAssetsSource=null;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;

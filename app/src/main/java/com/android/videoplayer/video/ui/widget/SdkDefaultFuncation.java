@@ -137,7 +137,7 @@ public class SdkDefaultFuncation extends LinearLayout {
                 }
             }
         });
-
+        //手势交互
         View touch_1 = findViewById(R.id.touch_1);
         touch_1.setSelected(true);
         touch_1.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +156,26 @@ public class SdkDefaultFuncation extends LinearLayout {
                 if(null!=mOnActionListener) mOnActionListener.setCanTouchInPortrait(false);
             }
         });
-
+        //重力旋转
+        View orientation_1 = findViewById(R.id.orientation_1);
+        orientation_1.setSelected(true);
+        orientation_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.orientation_1).setSelected(true);
+                findViewById(R.id.orientation_2).setSelected(false);
+                if(null!=mOnActionListener) mOnActionListener.onChangeOrientation(true);
+            }
+        });
+        findViewById(R.id.orientation_2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.orientation_1).setSelected(false);
+                findViewById(R.id.orientation_2).setSelected(true);
+                if(null!=mOnActionListener) mOnActionListener.onChangeOrientation(false);
+            }
+        });
+        //测试地址播放
         findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,6 +204,7 @@ public class SdkDefaultFuncation extends LinearLayout {
         void setSoundMute(boolean mute);
         void setMirror(boolean mirror);
         void setCanTouchInPortrait(boolean canTouchInPortrait);
+        void onChangeOrientation(boolean changeOrientation);
         void rePlay(String url);
         void onMediaCore(int mediaCore);
         void onRenderCore(int renderCore);

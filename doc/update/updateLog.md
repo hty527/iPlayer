@@ -1,13 +1,14 @@
 历史版本
 
-###  2.0.6
-**更新日期：** 2022-9-9<br/>
+###  2.1.0
+**更新日期：** 2022-9-16<br/>
 **更新内容：**<br/>
->1. 自2.1.0版本起，播放器与默认的UI交互组件已分离，需额外集成widget SDK才能使用默认交互组件<br/>
->2. 播放器取消initController自定义属性及initController()初始化控制交互组件方法<br/>
->3. 控制器取消initControlComponents方法<br/>
->4. 解码器通过Factory构建<br/>
->4. 播放器新增setAutoChangeOrientation(boolean enable);设置播放器是否跟随屏幕方向旋转角度<br/>
+>1. 全新widget交互组件SDK发布<br/>
+>2. 播放器新增重力横竖屏旋转<br/>
+>3. 播放器去除默认UI交互，需额外集成widget SDK才能使用默认交互组件<br/>
+>4. 播放器取消initController自定义属性及initController()初始化控制交互组件方法<br/>
+>5. 控制器取消initControlComponents方法<br/>
+>6. 解码器通过Factory构建<br/>
 ___
 ###  2.0.5.3
 **更新日期：** 2022-9-9<br/>

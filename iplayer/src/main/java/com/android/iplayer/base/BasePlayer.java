@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -31,7 +32,7 @@ import com.android.iplayer.media.IVideoPlayer;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
-import com.android.iplayer.widget.view.ScreenOrientationListener;
+import com.android.iplayer.widget.view.ScreenOrientationRotate;
 import com.android.iplayer.widget.view.WindowPlayerFloatView;
 import java.io.File;
 
@@ -46,7 +47,7 @@ import java.io.File;
  * 5、特别注意：mParentContext：为什么会有这个变量？当播放从一个Activity跳转到另一个Activity转场衔接播放、从全局悬浮窗到Activity转场衔接播放时，播放器的宿主Activity发生了变化。此时播放器内部的startFullScreen和手势缩放控制屏幕亮度等或其它和Activity相关功能都将会失效。
  *    所以需要在转场后调用{@link #setParentContext(Context)}(context传入当前Activity的上下文)、恢复转场时来调用setParentContext(null)置空临时上下文。
  */
-public abstract class BasePlayer extends FrameLayout implements IPlayerControl, IBasePlayer, ScreenOrientationListener.OnDisplayOrientationChangedListener {
+public abstract class BasePlayer extends FrameLayout implements IPlayerControl, IBasePlayer, ScreenOrientationRotate.OnDisplayOrientationListener {
 
     protected static final String TAG = BasePlayer.class.getSimpleName();
     private BaseController mController;//视图控制器
@@ -59,7 +60,8 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     private IVideoPlayer mIVideoPlayer;
     private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true,mLandscapeWindowTranslucent;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态\横屏状态下是否启用沉浸式全屏
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
-    private ScreenOrientationListener mOrientationListener;//屏幕方向监听
+    private ScreenOrientationRotate mOrientationRotate;//屏幕方向监听
+    private int mDisplayLastOrientation;//设备最近一次的屏幕方向
 
     public BasePlayer(Context context) {
         this(context,null);
@@ -76,9 +78,9 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         mIVideoPlayer = new IVideoPlayer();
         mIVideoPlayer.attachPlayer(this);
         initViews();
-        mOrientationListener = new ScreenOrientationListener(getTargetContext());
-        mOrientationListener.setOnDisplayOrientationChangedListener(this);
-        mOrientationListener.disable();//默认关闭屏幕角度变化监听
+        mOrientationRotate = new ScreenOrientationRotate(getTargetContext());
+        mOrientationRotate.setOnDisplayOrientationListener(this);
+        mOrientationRotate.disable();//默认关闭屏幕角度变化监听
     }
 
     protected abstract void initViews();
@@ -182,6 +184,100 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             return mAssetsSource;
         }
         return null;
+    }
+
+    /**
+     * 用户竖屏垂直0°拿着手机，竖屏
+     * @param activity
+     */
+    private void onOrientationPortrait(Activity activity) {
+        ILogger.d(TAG,"orientation:0");
+        if(mScreenOrientation!=IMediaPlayer.ORIENTATION_PORTRAIT){
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            quitFullScreen();
+        }
+    }
+
+    /**
+     * 用户朝左270°拿着手机，横屏
+     * @param activity
+     */
+    private void onOrientationLandscape(Activity activity) {
+        int autoRevolve=1;
+        try {
+            autoRevolve = Settings.System.getInt(getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }finally {
+            ILogger.d(TAG,"orientation:270,autoRevolve:"+autoRevolve);
+            if(1==autoRevolve){
+                if(isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    startFullScreen();
+                }
+            }
+        }
+    }
+
+    /**
+     * 用户朝右90°拿着手机，反向横屏,仅当系统开启自动旋转+正在播放生效
+     * @param activity
+     */
+    private void onOrientationReverseLandscape(Activity activity) {
+        int autoRevolve=1;
+        try {
+            autoRevolve = Settings.System.getInt(getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }finally {
+            ILogger.d(TAG,"orientation:90,autoRevolve:"+autoRevolve);
+            if(1==autoRevolve){
+                if(isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    startFullScreen();
+                }
+            }
+        }
+    }
+
+    /**
+     * 屏幕方向变化
+     * @param orientation 0、90、180、270
+     */
+    @Override
+    public void onOrientationChanged(int orientation) {
+        Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
+        ILogger.d(TAG,"onOrientationChanged-->screenOrientation:"+orientation+",activity:"+activity+",isFinish:"+(null!=activity?activity.isFinishing():true));
+        if (activity == null || activity.isFinishing()) return;
+        //记录用户手机上一次放置的位置
+        int lastOrientation = mDisplayLastOrientation;
+        if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            //手机平放时，重置为原始位置 -1
+            mDisplayLastOrientation = -1;
+            return;
+        }
+        if (orientation > 350 || orientation < 10) {
+            int o = activity.getRequestedOrientation();
+            if (o == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE && lastOrientation == 0) return;
+            if (mDisplayLastOrientation == 0) return;
+            //0度，用户竖直拿着手机
+            mDisplayLastOrientation = 0;
+            onOrientationPortrait(activity);
+        } else if (orientation > 80 && orientation < 100) {
+            int o = activity.getRequestedOrientation();
+            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 90) return;
+            if (mDisplayLastOrientation == 90) return;
+            //90度，用户右侧横屏拿着手机
+            mDisplayLastOrientation = 90;
+            onOrientationReverseLandscape(activity);
+        } else if (orientation > 260 && orientation < 280) {
+            int o = activity.getRequestedOrientation();
+            if (o == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT && lastOrientation == 270) return;
+            if (mDisplayLastOrientation == 270) return;
+            //270度，用户左侧横屏拿着手机
+            mDisplayLastOrientation = 270;
+            onOrientationLandscape(activity);
+        }
     }
 
     /**
@@ -365,16 +461,16 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     }
 
     /**
-     * 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
-     * @param enable 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     * 是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
+     * @param enable 是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
      */
     @Override
     public void setAutoChangeOrientation(boolean enable) {
-        if(null!=mOrientationListener){
+        if(null!= mOrientationRotate){
             if(enable){
-                mOrientationListener.enable();
+                mOrientationRotate.enable();
             }else{
-                mOrientationListener.disable();
+                mOrientationRotate.disable();
             }
         }
     }
@@ -466,15 +562,6 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             return isMirror;
         }
         return false;
-    }
-
-    /**
-     * 设置媒体源的播放类型
-     * @param playType 设置媒体源的播放类型 0：视频 1：音频
-     */
-    @Override
-    public void setPlayType(int playType) {
-        if(null!=mIVideoPlayer) mIVideoPlayer.setPlayType(playType);
     }
 
     /**
@@ -1304,7 +1391,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      */
     @Override
     public void onDestroy(){
-        if(null!= mOrientationListener) mOrientationListener.onReset();
+        if(null!= mOrientationRotate) mOrientationRotate.onReset();
         if(null!=mController) mController.onDestroy();
         if(null!=mIVideoPlayer){
             mIVideoPlayer.onDestroy();
@@ -1316,15 +1403,5 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         }
         mIsActivityWindow =false;mContinuityPlay=false;mDataSource=null;mAssetsSource=null;
         mOnPlayerActionListener=null;mScreenOrientation=IMediaPlayer.ORIENTATION_PORTRAIT;
-    }
-
-    /**
-     * 设备方向角度变化
-     * @param angle 0、90、180、270
-     */
-    @Override
-    public void onAngleChanged(int angle) {
-        ILogger.d(TAG,"onAngleChanged-->angle:"+angle);
-        
     }
 }

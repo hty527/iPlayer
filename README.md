@@ -1,11 +1,12 @@
 # **iPlayer**
 
 #### 一、SDK基础功能
-* 支持网络地址、直播流、本地Assets和Raw资源文件播放</br>
+* 支持网络地址、直播流、本地Assets和Raw音视频资源文件播放</br>
 * 支持播放倍速、缩放模式、静音、镜像等功能设置</br>
 * 支持自定义视频解码器、控制器、UI交互组件、视频画面渲染器</br>
 * 支持多播放器同时播放</br>
 * SDK默认控制器(局部UI交互可自定义)支持手势控制、付费试看等交互</br>
+* 支持重力感应横竖屏旋转及开关设置</br>
 * 支持任意位置启动Activity级别悬浮窗口播放</br>
 * 支持任意位置启动全局悬浮窗口播放</br>
 * 支持任意位置直接启动全屏播放</br>
@@ -111,20 +112,20 @@
 [5]:https://github.com/hty527/iPlayer/wiki/api "点击"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot1.jpg?q=1" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot2.jpg?q=2" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src1.jpg?q=1" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src2.jpg?q=2" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot3.jpg?q=3" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot4.jpg?q=4" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src3.jpg?q=3" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src4.jpg?q=4" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot5.jpg?q=5" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot6.jpg?q=6" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src5.jpg?q=5" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src6.jpg?q=6" width="270",height="585">
 </div>
 <div align="center">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot7.jpg?q=7" width="270",height="585">
-    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/screenshot8.jpg?q=8" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src7.jpg?q=7" width="270",height="585">
+    <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src8.jpg?q=8" width="270",height="585">
 </div>
 
 #### 六、鸣谢

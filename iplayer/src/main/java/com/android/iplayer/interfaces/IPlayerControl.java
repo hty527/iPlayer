@@ -56,8 +56,8 @@ public interface IPlayerControl<V extends BaseController> {
     void setZoomModel(int zoomModel);
 
     /**
-     * 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
-     * @param enable 是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+     * 是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
+     * @param enable 是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
      */
     void setAutoChangeOrientation(boolean enable);
 
@@ -103,12 +103,6 @@ public interface IPlayerControl<V extends BaseController> {
      * @return 是否镜像,true:镜像音 false:正常
      */
     boolean toggleMirror();
-
-    /**
-     * 设置媒体源的播放类型
-     * @param playType 设置媒体源的播放类型 0：视频 1：音频
-     */
-    void setPlayType(int playType);
 
     /**
      * @param restoreDirection 设置当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态,true:自动还原到竖屏 false:保留当前屏幕方向状态

@@ -36,6 +36,8 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     public static final String MP4_URL3          ="http://cdnxdc.tanzi88.com/XDC/dvideo/2017/11/29/15f22f48466180232ca50ec25b0711a7.mp4";//网络视频-七舅脑爷
     public static final String MP4_URL4          ="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_30mb.mp4";//国外CDN-熊,慢
     public static final String FLV_URL1          ="https://sf1-hscdn-tos.pstatp.com/obj/media-fe/xgplayer_doc_video/flv/xgplayer-demo-360p.flv";//FLV格式测试流
+    public static final String MP3               ="http://mpge.5nd.com/2022/2022-8-22/3277829/1.mp3";//FLV格式测试流
+    public static final String WMV               ="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/video/ts_1080.ts";//FLV格式测试流
 
     /**
      * 直播测试流
@@ -43,7 +45,6 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     public static final String LIVE_M3U8_APPLE   ="http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/gear2/prog_index.m3u8";//苹果计时器
     public static final String LIVE_M3U8_TIME    ="http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8";//计时器
 
-    public static final String LIVE_M3U8_WS      ="http://219.151.31.38/liveplay-kk.rtxapp.com/live/program/live/hnwshd/4000000/mnf.m3u8";//央视、cctv8、各大卫视，每次重启APP后随机 (MediaPlayer(支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTSP         ="rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4";//动画视频 (MediaPlayer(支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP1        ="rtmp://ns8.indexforce.com/home/mystream";//伊拉克 Al Sharqiya 电视台 (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP2        ="rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp";//韩国GOOD TV  (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))

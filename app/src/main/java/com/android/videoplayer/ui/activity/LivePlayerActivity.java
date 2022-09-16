@@ -24,7 +24,7 @@ import com.android.videoplayer.pager.widget.ControlLiveView;
  */
 public class LivePlayerActivity extends BaseActivity {
 
-    private int MEDIA_CORE=1;//这里用IJkMediaPlayer作为初始解码器
+    private int MEDIA_CORE=2;//这里用IJkMediaPlayer作为初始解码器
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

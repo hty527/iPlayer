@@ -17,7 +17,7 @@
     mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,如需网络提示交互需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
-    mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。仅竖屏/横屏之间切换，仅正在播放中生效
+    mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
 ```
 #### 2、控制器API
 * 2.1、请阅读[IVideoController][2]

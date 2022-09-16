@@ -222,7 +222,14 @@ public class ExoMediaPlayer extends AbstractMediaPlayer implements Player.Listen
                 break;
             case Player.STATE_READY:
                 if(null!=mMediaPlayer) mMediaPlayer.setPlayWhenReady(true);
-                if(null!=mListener) mListener.onInfo(this, isPlaying ? IMediaPlayer.MEDIA_INFO_BUFFERING_END : IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
+                if(null!=mListener){
+                    if(isPlaying){
+                        mListener.onInfo(this, IMediaPlayer.MEDIA_INFO_BUFFERING_END,0);//如果还未进行过播放,则被认为是首帧播放
+                    }else{
+                        mListener.onPrepared(this);
+                        mListener.onInfo(this, IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START,0);//如果还未进行过播放,则被认为是首帧播放
+                    }
+                }
                 isPlaying=true;
                 break;
             case Player.STATE_ENDED:

@@ -79,9 +79,9 @@ public class DataFactory {
         menus.add(new Menu(getString(R.string.text_item_home,"项目主页"),18,getString(R.string.text_item_sub_other,"其它"),3));
         Menu menu = new Menu("", 101, getString(R.string.text_item_version,"版本预告"), 3, 1);
         Version version=new Version();
-        version.setCode("2.0.xx");
+        version.setCode("2.1.xx");
         version.setTime(getString(R.string.text_item_time,"待定,请持续关注"));
-        version.setDescript(getString(R.string.text_item_desc,"1、新增重力旋转功能，支持重力旋转开关及阻尼设置"));
+        version.setDescript(getString(R.string.text_item_desc,"1、播放器新增支持上一集、下一集、选集播放、清晰度功能"));
         menu.setVersion(version);
         menus.add(menu);
         return menus;
