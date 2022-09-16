@@ -4,5 +4,6 @@
     <dimen name="player_btn_width">36dp</dimen>
     <dimen name="player_btn_width_toolbar">38dp</dimen>
     <dimen name="player_window_width">38dp</dimen>
-    <dimen name="player_bar_height">46dp</dimen>
+    <dimen name="player_bar_height">48dp</dimen>
+    <dimen name="player_bar_shadow_height">69dp</dimen>
 </resources>

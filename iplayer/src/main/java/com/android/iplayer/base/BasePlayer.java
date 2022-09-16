@@ -187,12 +187,25 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     }
 
     /**
+     * 用户是否开启了“自动旋转”
+     * @return true:开启 false:已禁止
+     */
+    private boolean isRevolveSetting(){
+        int autoRevolve=1;
+        try {
+            autoRevolve = Settings.System.getInt(getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return 1==autoRevolve;
+    }
+
+    /**
      * 用户竖屏垂直0°拿着手机，竖屏
      * @param activity
      */
     private void onOrientationPortrait(Activity activity) {
-        ILogger.d(TAG,"orientation:0");
-        if(mScreenOrientation!=IMediaPlayer.ORIENTATION_PORTRAIT){
+        if(isRevolveSetting()&&isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_PORTRAIT){
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             quitFullScreen();
         }
@@ -203,19 +216,9 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * @param activity
      */
     private void onOrientationLandscape(Activity activity) {
-        int autoRevolve=1;
-        try {
-            autoRevolve = Settings.System.getInt(getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }finally {
-            ILogger.d(TAG,"orientation:270,autoRevolve:"+autoRevolve);
-            if(1==autoRevolve){
-                if(isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    startFullScreen();
-                }
-            }
+        if(isRevolveSetting()&&isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            startFullScreen();
         }
     }
 
@@ -224,19 +227,9 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * @param activity
      */
     private void onOrientationReverseLandscape(Activity activity) {
-        int autoRevolve=1;
-        try {
-            autoRevolve = Settings.System.getInt(getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }finally {
-            ILogger.d(TAG,"orientation:90,autoRevolve:"+autoRevolve);
-            if(1==autoRevolve){
-                if(isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
-                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-                    startFullScreen();
-                }
-            }
+        if(isRevolveSetting()&&isPlaying()&&mScreenOrientation!=IMediaPlayer.ORIENTATION_LANDSCAPE){
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            startFullScreen();
         }
     }
 
@@ -247,7 +240,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     @Override
     public void onOrientationChanged(int orientation) {
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
-        ILogger.d(TAG,"onOrientationChanged-->screenOrientation:"+orientation+",activity:"+activity+",isFinish:"+(null!=activity?activity.isFinishing():true));
+//        ILogger.d(TAG,"onOrientationChanged-->screenOrientation:"+orientation+",activity:"+activity+",isFinish:"+(null!=activity?activity.isFinishing():true));
         if (activity == null || activity.isFinishing()) return;
         //记录用户手机上一次放置的位置
         int lastOrientation = mDisplayLastOrientation;

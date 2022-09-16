@@ -7,13 +7,13 @@
     <LinearLayout
         android:id="@+id/controller_title_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/player_bar_height"
+        android:layout_height="@dimen/player_bar_shadow_height"
         android:orientation="horizontal"
         android:visibility="gone"
-        android:background="@drawable/player_bg_top_controller">
+        android:background="@mipmap/ic_player_shadow_top">
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/player_bar_height"
             android:orientation="horizontal"
             android:layout_weight="1">
             <ImageView
@@ -43,34 +43,43 @@
                 android:textColor="#FFFFFF"
                 android:visibility="gone"/>
         </LinearLayout>
-        <ImageView
-            android:id="@+id/controller_title_tv"
-            android:layout_width="@dimen/player_btn_width_toolbar"
-            android:layout_height="@dimen/player_btn_width_toolbar"
-            android:scaleType="center"
-            android:layout_gravity="center_vertical"
-            android:src="@mipmap/ic_player_menu_dlna"
-            android:visibility="gone"/>
-        <ImageView
-            android:id="@+id/controller_title_window"
-            android:layout_width="@dimen/player_btn_width_toolbar"
-            android:layout_height="@dimen/player_btn_width_toolbar"
-            android:scaleType="center"
-            android:layout_gravity="center_vertical"
-            android:src="@mipmap/ic_player_menu_window"
-            android:visibility="gone"/>
-        <ImageView
-            android:id="@+id/controller_title_menu"
-            android:layout_width="@dimen/player_btn_width_toolbar"
-            android:layout_height="@dimen/player_btn_width_toolbar"
-            android:scaleType="center"
-            android:src="@mipmap/ic_player_menu"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone"/>
+        <LinearLayout
+            android:id="@+id/controller_menus"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/player_bar_height"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/controller_title_tv"
+                android:layout_width="@dimen/player_btn_width_toolbar"
+                android:layout_height="@dimen/player_btn_width_toolbar"
+                android:scaleType="center"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_player_menu_dlna"
+                android:visibility="gone"
+                android:layout_marginRight="6dp"/>
+            <ImageView
+                android:id="@+id/controller_title_window"
+                android:layout_width="@dimen/player_btn_width_toolbar"
+                android:layout_height="@dimen/player_btn_width_toolbar"
+                android:scaleType="center"
+                android:layout_gravity="center_vertical"
+                android:src="@mipmap/ic_player_menu_window"
+                android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/controller_title_menu"
+                android:layout_width="@dimen/player_btn_width_toolbar"
+                android:layout_height="@dimen/player_btn_width_toolbar"
+                android:scaleType="center"
+                android:layout_marginRight="5dp"
+                android:src="@mipmap/ic_player_menu"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"/>
+        </LinearLayout>
         <FrameLayout
             android:id="@+id/controller_battery"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/player_bar_height"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:visibility="gone"/>

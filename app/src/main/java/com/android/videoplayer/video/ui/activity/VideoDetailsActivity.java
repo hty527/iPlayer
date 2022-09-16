@@ -311,7 +311,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                 IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
                 if(null!=controllerView&&controllerView instanceof ControlToolBarView){
                     ControlToolBarView controlToolBarView= (ControlToolBarView) controllerView;
-                    controlToolBarView.showMenus(true,true,true);
+                    controlToolBarView.showMenus(false,true,true);
                     controlToolBarView.setOnToolBarActionListener(new ControlToolBarView.OnToolBarActionListener() {
                         @Override
                         public void onWindow() {
