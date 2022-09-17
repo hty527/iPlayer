@@ -57,8 +57,9 @@ public class IWindowManager {
      * @param startY 窗口位于屏幕中的Y轴起始位置
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘
      */
-    public boolean addGolbalWindow(Context context, BasePlayer basePlayer, int width, int height, float startX, float startY, float radius, int bgColor) {
+    public boolean addGolbalWindow(Context context, BasePlayer basePlayer, int width, int height, float startX, float startY, float radius, int bgColor,boolean isAutoSorption) {
         quitGlobaWindow();//清除可能存在的窗口播放器
         try {
             //悬浮窗口准备
@@ -91,7 +92,9 @@ public class IWindowManager {
                 public void onMovie(float x, float y) {
                     if(null!=mLayoutParams){
                         mLayoutParams.x= (int) x;
-                        mLayoutParams.y= (int) y;
+                        if(-1!=y){//过滤自动吸附事件
+                            mLayoutParams.y= (int) y;
+                        }
                         getWindowManager().updateViewLayout(mPlayerContainer,mLayoutParams);
                     }
                 }
@@ -113,7 +116,7 @@ public class IWindowManager {
                     }
                 }
             });
-            mPlayerContainer.addPlayerView(basePlayer,width,height,radius,bgColor);//先将播放器包装到可托拽的容器中
+            mPlayerContainer.addPlayerView(basePlayer,width,height,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
             windowManager.addView(mPlayerContainer, mLayoutParams);
             return true;
         }catch (Throwable e){

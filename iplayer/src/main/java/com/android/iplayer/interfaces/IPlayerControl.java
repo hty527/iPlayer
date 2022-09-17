@@ -191,6 +191,15 @@ public interface IPlayerControl<V extends BaseController> {
     void startWindow();
 
     /**
+     * 开启可拖拽的窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     */
+    void startWindow(boolean isAutoSorption);
+
+    /**
      * @param radius 窗口的圆角 单位:像素
      * 开启可拖拽的窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
@@ -199,6 +208,17 @@ public interface IPlayerControl<V extends BaseController> {
      * @param bgColor 窗口的背景颜色
      */
     void startWindow(float radius,int bgColor);
+
+    /**
+     * @param radius 窗口的圆角 单位:像素
+     * 开启可拖拽的窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启
+     * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     */
+    void startWindow(float radius,int bgColor,boolean isAutoSorption);
 
     /**
      * @param width 窗口播放器的宽,当小于=0时用默认
@@ -216,7 +236,21 @@ public interface IPlayerControl<V extends BaseController> {
     /**
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     */
+    void startWindow(int width,int height,float startX,float startY,boolean isAutoSorption);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启
      * @param height 窗口播放器的高,当小于=0时用默认
@@ -230,7 +264,22 @@ public interface IPlayerControl<V extends BaseController> {
     /**
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置
+     * @param radius 窗口的圆角 单位:像素
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     */
+    void startWindow(int width,int height,float startX,float startY,float radius,boolean isAutoSorption);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启
      * @param height 窗口播放器的高,当小于=0时用默认
@@ -241,6 +290,22 @@ public interface IPlayerControl<V extends BaseController> {
      * @param bgColor 窗口的背景颜色
      */
     void startWindow(int width,int height,float startX,float startY,float radius,int bgColor);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置
+     * @param radius 窗口的圆角 单位:像素
+     * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     */
+    void startWindow(int width,int height,float startX,float startY,float radius,int bgColor,boolean isAutoSorption);
 
     /**
      * 关闭窗口播放
@@ -254,7 +319,7 @@ public interface IPlayerControl<V extends BaseController> {
 
     /**
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -265,9 +330,23 @@ public interface IPlayerControl<V extends BaseController> {
     boolean startGlobalWindow();
 
     /**
+     * 开启可拖拽的全局悬浮窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
+     * 需要声明权限：
+     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     */
+
+    boolean startGlobalWindow(boolean isAutoSorption);
+
+    /**
      * @param radius 窗口的圆角 单位:像素
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -279,9 +358,24 @@ public interface IPlayerControl<V extends BaseController> {
     boolean startGlobalWindow(float radius,int bgColor);
 
     /**
+     * @param radius 窗口的圆角 单位:像素
+     * 开启可拖拽的全局悬浮窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
+     * 需要声明权限：
+     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+     * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     */
+    boolean startGlobalWindow(float radius,int bgColor,boolean isAutoSorption);
+
+    /**
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -298,7 +392,25 @@ public interface IPlayerControl<V extends BaseController> {
     /**
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
+     * 需要声明权限：
+     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     */
+    boolean startGlobalWindow(int width,int height,float startX,float startY,boolean isAutoSorption);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的全局悬浮窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -315,7 +427,25 @@ public interface IPlayerControl<V extends BaseController> {
     /**
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
+     * 需要声明权限：
+     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param radius 窗口的圆角 单位:像素
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     */
+    boolean startGlobalWindow(int width,int height,float startX,float startY,float radius,boolean isAutoSorption);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的全局悬浮窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -329,6 +459,25 @@ public interface IPlayerControl<V extends BaseController> {
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
      */
     boolean startGlobalWindow(int width,int height,float startX,float startY,float radius,int bgColor);
+
+    /**
+     * @param width 窗口播放器的宽,当小于=0时用默认
+     * 开启可拖拽的全局悬浮窗口播放
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 全局悬浮窗口和局部小窗口不能同时开启
+     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
+     * 需要声明权限：
+     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+     * @param height 窗口播放器的高,当小于=0时用默认
+     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
+     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
+     * @param radius 窗口的圆角 单位:像素
+     * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     */
+    boolean startGlobalWindow(int width,int height,float startX,float startY,float radius,int bgColor,boolean isAutoSorption);
 
     /**
      * 关闭全局悬浮窗口播放

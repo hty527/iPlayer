@@ -1,24 +1,30 @@
 package com.android.iplayer.widget.view;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import com.android.iplayer.R;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
+import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**
  * created by hty
  * 2022/7/4
- * Desc:
+ * Desc:Activity窗口和全局悬浮窗窗口播放器的容器包装，处理了手势操作
  * 1、解决了Activity级别和全局悬浮窗级别的窗口手势冲突
  * 2、当前View范围内拦截了ACTION_MOVE事件，点击事件不拦截
  * 3、内部根据activity window窗口和全局的悬浮窗窗口最了区别处理
+ * 4、用户松手后自动吸附至屏幕最近的X轴边缘
  */
 public final class WindowPlayerFloatView extends FrameLayout {
 
@@ -31,6 +37,8 @@ public final class WindowPlayerFloatView extends FrameLayout {
     private ViewGroup mPlayerViewGroup;//Activity内的窗口模式下播放器父容器手势拖拽目标View
     private BasePlayer mBasePlayer;//当全局悬浮窗启用时,此播放器实例不为空
     private int mStatusBarHeight;
+    private int mHorMargin,mScreenWidth;//吸附至屏幕边缘的边距,屏幕宽
+    private boolean isAutoSorption=false;//是否自动吸附
 
     public WindowPlayerFloatView(Context context) {
         this(context,null);
@@ -111,59 +119,6 @@ public final class WindowPlayerFloatView extends FrameLayout {
         return mStatusBarHeight;
     }
 
-    // 这里的手势拖拽已被废弃,由新的onTouchEvent代替,解决了滑动手势和播放器的交互手势冲突问题
-    // 这种模式是findViewById(R.id.player_window_handel).setOnTouchListener(this);实现接口:View.OnTouchListener 生效
-    // 缺点：拦截了子控制器的所有手势事件，拦截移动事件(改由WindiwnGestureListener处理)，点击事件不拦截。
-//    @Override
-//    public boolean onTouch(View view, MotionEvent e) {
-//        ILogger.d(TAG,"onTouch--"+e.getAction());
-//        switch (e.getAction()) {
-//            case MotionEvent.ACTION_DOWN:
-//                //记录手指按下时手在父View中的位置
-//                xInView = e.getX();
-//                yInView = e.getY();
-//                xDownInScreen =e.getRawX();
-//                yDownInScreen = e.getRawY();
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                //实时获取相对于屏幕X,Y位置刷新
-//                //手指在屏幕上的实时X、Y坐标
-//                float xInScreen,yInScreen;
-//                if(null!=mPlayerViewGroup){
-//                    xInScreen = e.getRawX();
-//                    yInScreen = e.getRawY();
-//                    float toX = xInScreen - xInView;
-//                    float toY = yInScreen - yInView;
-//                    if(toX< 0){
-//                        toX= 0;
-//                    }else if(toX>(mGroupWidth -getParentViewWidth())){
-//                        toX= mGroupWidth -getParentViewWidth();
-//                    }
-//                    if(toY<0){
-//                        toY=0;
-//                    }else if(toY>(mGroupHeight -getParentViewHeight())){
-//                        toY= mGroupHeight -getParentViewHeight();
-//                    }
-//                    mPlayerViewGroup.setX(toX);
-//                    mPlayerViewGroup.setY(toY);
-//                }else{
-//                    xInScreen = e.getRawX();
-//                    yInScreen = e.getRawY()-getStatusBarHeight();
-//                    if(null!= mWindowActionListener){
-//                        mWindowActionListener.onMovie((int) (xInScreen - xInView),(int) (yInScreen - yInView));
-//                    }
-//                }
-//                break;
-//            case MotionEvent.ACTION_UP:
-//            case MotionEvent.ACTION_CANCEL:
-//                break;
-//        }
-//        if(null!=mGestureDetector){
-//            return mGestureDetector.onTouchEvent(e);
-//        }
-//        return false;
-//    }
-
     /**
      * 处理拦截事件,是否拦截滑动事件
      * @param e
@@ -233,8 +188,88 @@ public final class WindowPlayerFloatView extends FrameLayout {
                     }
                 }
                 break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                adsorptionDisplay();
+                break;
         }
         return super.onTouchEvent(e);
+    }
+
+    /**
+     * 检测是否需要自动吸附到屏幕边缘
+     */
+    private void adsorptionDisplay() {
+        if(!isAutoSorption) return;
+//        xInView=0;yInView=0;
+        int[] locations=new int[2];
+        if(null!=mPlayerViewGroup){
+            mPlayerViewGroup.getLocationInWindow(locations);//Activity悬浮窗口
+        }else{
+            getLocationOnScreen(locations);//全局悬浮窗口
+        }
+        int centerX=locations[0]+(getParentViewWidth()/2);
+        ILogger.d(TAG,"adsorptionDisplay,x:"+locations[0]+",y:"+locations[1]+",centerX:"+centerX);
+        scrollToPixel(locations[0],centerX,200);
+    }
+
+    /**
+     * 自动滚动并吸附至屏幕边缘
+     * @param startX 窗口当前在屏幕的X点
+     * @param centerX 播放器位于屏幕的X中心点
+     * @param scrollDurtion 滚动时间，单位：毫秒
+     */
+    private void scrollToPixel(int startX, int centerX, long scrollDurtion) {
+        int toPixelX=getHorMargin();//初始的默认停靠在左侧15dp处
+        if(centerX>(getScreenWidth()/2)){//检测是否在屏幕右侧
+            //左边停靠最大X：屏幕宽-自身宽-边距大小
+            toPixelX=(getScreenWidth()-getParentViewWidth()- getHorMargin());
+        }
+        if(scrollDurtion<=0){
+            moveToX(toPixelX);
+            return;
+        }
+        ILogger.d(TAG,"scrollToPixel,startX:"+startX+",toPixelX:"+toPixelX+",centerX:"+centerX);
+        @SuppressLint("ObjectAnimatorBinding") ObjectAnimator objectAnimator = ObjectAnimator.ofInt(this, "number", startX, toPixelX);
+        objectAnimator.setDuration(scrollDurtion);
+        objectAnimator.setInterpolator(new LinearInterpolator());
+        objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                int animatedValue = (int) valueAnimator.getAnimatedValue();
+                moveToX(animatedValue);
+            }
+        });
+        objectAnimator.start();
+    }
+
+    /**
+     * 移动至某个位于屏幕的x点
+     * @param toPixelX 位于屏幕的x点
+     */
+    private void moveToX(int toPixelX) {
+        if(null!=mPlayerViewGroup){
+//            setTranslationX(toPixelX);
+            mPlayerViewGroup.setX(toPixelX);
+        }else{
+            if(null!= mWindowActionListener){
+                mWindowActionListener.onMovie(toPixelX,-1);
+            }
+        }
+    }
+
+    private int getHorMargin(){
+        if(0==mHorMargin){
+            mHorMargin = PlayerUtils.getInstance().dpToPxInt(12f);
+        }
+        return mHorMargin;
+    }
+
+    private int getScreenWidth(){
+        if(0==mScreenWidth){
+            mScreenWidth = PlayerUtils.getInstance().getScreenWidth(getContext());
+        }
+        return mScreenWidth;
     }
 
     /**
@@ -246,9 +281,11 @@ public final class WindowPlayerFloatView extends FrameLayout {
      * @param startY 窗口Y轴起始位置
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘
      */
-    public void addPlayerView(BasePlayer basePlayer,int width,int height,float startX,float startY, float radius, int bgColor){
+    public void addPlayerView(BasePlayer basePlayer,int width,int height,float startX,float startY, float radius, int bgColor,boolean isAutoSorption){
         if(null==basePlayer )return;
+        this.isAutoSorption=isAutoSorption;
         //被移动的View宽高确定
         mPlayerViewGroup = findViewById(R.id.player_window_group);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) mPlayerViewGroup.getLayoutParams();
@@ -265,6 +302,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
         if(bgColor!=0) mPlayerViewGroup.setBackgroundColor(bgColor);
 
         setListener(basePlayer);
+//        adsorptionDisplay();//防止参数调用意外自动吸附
     }
 
     /**
@@ -274,9 +312,11 @@ public final class WindowPlayerFloatView extends FrameLayout {
      * @param height 窗口组件高
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘
      */
-    public void addPlayerView(BasePlayer basePlayer, int width, int height,float radius, int bgColor){
+    public void addPlayerView(BasePlayer basePlayer, int width, int height,float radius, int bgColor,boolean isAutoSorption){
         if(null==basePlayer )return;
+        this.isAutoSorption=isAutoSorption;
         //将播放器添加到容器里
         FrameLayout windowGroup = findViewById(R.id.player_window_group);
         FrameLayout.LayoutParams layoutParams = (LayoutParams) windowGroup.getLayoutParams();
@@ -289,18 +329,13 @@ public final class WindowPlayerFloatView extends FrameLayout {
         if(bgColor!=0) playerContainer.setBackgroundColor(bgColor);
 
         setListener(basePlayer);
+//        adsorptionDisplay();//防止参数调用意外自动吸附
     }
 
     /**
      * 设置监听器
      */
     private void setListener(BasePlayer basePlayer) {
-        //设置手势识别监听
-//        findViewById(R.id.player_window_handel).setOnTouchListener(this);
-        //回调给开发者处理跳转
-//        if(null!= mWindowActionListener){
-//            mWindowActionListener.onClick(mBasePlayer,null);
-//        }
         /**
          * 关闭事件,优先通知给开发者处理,如果开发者未监听则直接销毁
          */

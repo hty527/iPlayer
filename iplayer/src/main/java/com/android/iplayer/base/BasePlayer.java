@@ -770,66 +770,56 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         startFullScreen();
     }
 
-    /**
-     * 开启Activity级别的小窗口播放
-     */
     @Override
     public void startWindow() {
-        startWindow(0,0,0,0);
+        startWindow(true);
     }
 
-    /**
-     * 开启Activity级别的小窗口播放
-     * @param radius 窗口的圆角 单位:像素
-     * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启
-     * @param bgColor 窗口的背景颜色
-     */
+    @Override
+    public void startWindow(boolean isAutoSorption) {
+        startWindow(0,0,0,0,0,0,isAutoSorption);
+    }
+
     @Override
     public void startWindow(float radius, int bgColor) {
-        startWindow(0,0,0,0,radius,bgColor);
+        startWindow(radius,bgColor,true);
     }
 
-    /**
-     * 开启Activity级别的小窗口播放
-     * @param width 窗口播放器的宽,当小于=0时用默认
-     * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置
-     */
+    @Override
+    public void startWindow(float radius, int bgColor, boolean isAutoSorption) {
+        startWindow(0,0,0,0,radius,bgColor,isAutoSorption);
+    }
+
     @Override
     public void startWindow(int width, int height, float startX, float startY) {
-        startWindow(width,height,startX,startY,0);
+        startWindow(width,height,startX,startY,true);
     }
 
-    /**
-     * 开启Activity级别的小窗口播放
-     * @param width 窗口播放器的宽,当小于=0时用默认
-     * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置
-     * @param radius 窗口的圆角 单位:像素
-     */
+    @Override
+    public void startWindow(int width, int height, float startX, float startY, boolean isAutoSorption) {
+        startWindow(width,height,startX,startY,0,0,true);
+    }
+
     @Override
     public void startWindow(int width, int height, float startX, float startY, float radius) {
-        startWindow(width,height,startX,startY,radius,Color.parseColor("#99000000"));
+        startWindow(width, height, startX, startY, radius, true);
+    }
+
+    @Override
+    public void startWindow(int width, int height, float startX, float startY, float radius, boolean isAutoSorption) {
+        startWindow(width,height,startX,startY,radius,Color.parseColor("#99000000"),isAutoSorption);
+    }
+
+    @Override
+    public void startWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
+        startWindow(width,height,startX,startY,radius,bgColor,true);
     }
 
     /**
      * 开启Activity级别的小窗口播放
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置)
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启
      * @param height 窗口播放器的高,当小于=0时用默认
@@ -837,10 +827,11 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * @param startY 窗口位于屏幕中的Y轴起始位置
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
      */
     @Override
-    public void startWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
-        ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+ mIsActivityWindow +",screenOrientation:"+mScreenOrientation);
+    public void startWindow(int width, int height, float startX, float startY, float radius, int bgColor, boolean isAutoSorption) {
+        ILogger.d(TAG,"startWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor+",windowProperty:"+ mIsActivityWindow +",screenOrientation:"+mScreenOrientation+",isAutoSorption:"+isAutoSorption);
         if(mIsActivityWindow ||mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE) return;//已开启窗口模式或者横屏情况下不允许开启小窗口
         Activity activity = PlayerUtils.getInstance().getActivity(getTargetContext());
         if (null != activity&& !activity.isFinishing()) {
@@ -872,13 +863,13 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             }
             //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方15dp处
             if(startX<=0&&null!=mParent){
-                startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(15f);
-                startY=screenLocation[1]+mParent.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
+                startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
+                startY=screenLocation[1]+mParent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
 //                ILogger.d(TAG,"startWindow-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
             }
             //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于屏幕高度-Window View 高度+15dp位置处
             if(startX<=0){
-                startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(15f);
+                startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                 startY=PlayerUtils.getInstance().dpToPxInt(60f);
 //                ILogger.d(TAG,"startWindow-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
             }
@@ -903,7 +894,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                 }
             });
             container.setId(R.id.player_window);
-            container.addPlayerView(this,width,height,startX,startY,radius,bgColor);//先将播放器包装到可托拽的容器中
+            container.addPlayerView(this,width,height,startX,startY,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
             viewGroup.addView(container, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         }
     }
@@ -961,78 +952,56 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         startWindow();
     }
 
-    /**
-     * 开启全局悬浮窗窗口播放
-     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
-     */
     @Override
     public boolean startGlobalWindow() {
-        return startGlobalWindow(0,0,0,0);
+        return startGlobalWindow(true);
     }
 
-    /**
-     * 开启全局悬浮窗窗口播放
-     * @param radius 窗口的圆角 单位:像素
-     * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
-     * 需要声明权限：
-     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param bgColor 窗口的背景颜色
-     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
-     */
+    @Override
+    public boolean startGlobalWindow(boolean isAutoSorption) {
+        return startGlobalWindow(0,0,0,0,0,0,isAutoSorption);
+    }
+
     @Override
     public boolean startGlobalWindow(float radius, int bgColor) {
-        return startGlobalWindow(0,0,0,0,radius,bgColor);
+        return startGlobalWindow(radius,bgColor,true);
     }
 
-    /**
-     * 开启全局悬浮窗窗口播放
-     * @param width 窗口播放器的宽,当小于=0时用默认
-     * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
-     * 需要声明权限：
-     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置
-     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
-     */
+    @Override
+    public boolean startGlobalWindow(float radius, int bgColor, boolean isAutoSorption) {
+        return startGlobalWindow(0,0,0,0,radius,bgColor,isAutoSorption);
+    }
+
     @Override
     public boolean startGlobalWindow(int width, int height, float startX, float startY) {
-        return startGlobalWindow(width,height,startX,startY,0);
+        return startGlobalWindow(width,height,startX,startY,true);
     }
 
-    /**
-     * 开启全局悬浮窗窗口播放
-     * @param width 窗口播放器的宽,当小于=0时用默认
-     * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
-     * 全局悬浮窗口和局部小窗口不能同时开启
-     * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
-     * 需要声明权限：
-     *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-     *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
-     * @param radius 窗口的圆角 单位:像素
-     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
-     */
+    @Override
+    public boolean startGlobalWindow(int width, int height, float startX, float startY, boolean isAutoSorption) {
+        return startGlobalWindow(width,height,startX,startY,0,0,isAutoSorption);
+    }
+
     @Override
     public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius) {
-        return startGlobalWindow(width,height,startX,startY,radius,Color.parseColor("#99000000"));
+        return startGlobalWindow(width,height,startX,startY,radius,true);
+    }
+
+    @Override
+    public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius, boolean isAutoSorption) {
+        return startGlobalWindow(width,height,startX,startY,radius,0,isAutoSorption);
+    }
+
+    @Override
+    public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
+        return startGlobalWindow(width,height,startX,startY,radius,bgColor,true);
     }
 
     /**
+     *
      * @param width 窗口播放器的宽,当小于=0时用默认
      * 开启可拖拽的全局悬浮窗口播放
-     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部15dp,右边15dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
+     * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
      * 横屏下不允许开启,需要在取得悬浮窗权限之后再调用
      * 需要声明权限：
@@ -1043,10 +1012,11 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
-     * @return true:开启悬浮窗成功 false:开启悬浮窗失败
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
+     * @return
      */
     @Override
-    public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius, int bgColor) {
+    public boolean startGlobalWindow(int width, int height, float startX, float startY, float radius, int bgColor, boolean isAutoSorption) {
         ILogger.d(TAG,"startGlobalWindow-->width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY+",radius:"+radius+",bgColor:"+bgColor +",screenOrientation:"+mScreenOrientation);
         if(mScreenOrientation==IMediaPlayer.ORIENTATION_LANDSCAPE){
             return false;
@@ -1083,19 +1053,19 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                     }
                     //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方15dp处
                     if(startX<=0&&null!=parent){
-                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(15f);
-                        startY=screenLocation[1]+parent.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
+                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
+                        startY=screenLocation[1]+parent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
 //                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
                     }
                     //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于屏幕高度-Window View 高度+15dp位置处
                     if(startX<=0){
-                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(15f);
+                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                         startY=PlayerUtils.getInstance().dpToPxInt(60f);
 //                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
                     }
                     ILogger.d(TAG,"startGlobalWindow-->final:width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
                     //3.转场到window中,并指定宽高和x,y轴
-                    boolean success= IWindowManager.getInstance().addGolbalWindow(getContext(), this, width, height, startX, startY,radius,bgColor);
+                    boolean success= IWindowManager.getInstance().addGolbalWindow(getContext(), this, width, height, startX, startY,radius,bgColor,isAutoSorption);
 //                    ILogger.d(TAG,"startGlobalWindow--悬浮窗创建结果："+success);
                     //4.改变播放器横屏或窗口播放状态
                     if(success){

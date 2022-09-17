@@ -311,7 +311,10 @@
 ##### 8.1、Activity级别悬浮窗
 * 8.1.1、Activity级别悬浮窗无需悬浮窗权限直接开启：
 ```
-    //startWindow支持多参传入，请阅读api。参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色
+    //开启Activity级别窗口播放并启用拖拽窗口松手后自动吸附至屏幕边缘
+    mVideoPlayer.startWindow(true);
+
+    //startWindow支持多参传入，示例参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色，其它更多参数请阅读api。
     mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f), Color.parseColor("#99000000"));
 ```
 * 8.1.2、SDK支持在任意位置直接启动Activity级别悬浮窗播放：
@@ -366,7 +369,10 @@
     <!--如您的播放器需要支持全局悬浮窗窗口播放请申明此权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    //2、开启全局悬浮窗窗口播放，startGlobalWindow支持多参传入，请阅读api。参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色
+    //2、开启全局悬浮窗窗口播放并启用拖拽窗口松手后自动吸附至屏幕边缘
+    boolean globalWindow = mVideoPlayer.startGlobalWindow(true);
+
+    //startGlobalWindow支持多参传入，示例参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色，其它更多参数请阅读api。
     boolean globalWindow = mVideoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
 ```
 * 8.2.1.2、SDK支持在任意位置直接启动全局悬浮窗窗口播放：
