@@ -189,6 +189,7 @@ public class MainActivity extends BaseActivity {
         VideoController controller = videoPlayer.createController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
         WidgetFactory.bindDefaultControls(controller,false,true);
         controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
+        //悬浮窗口播放默认开启自动吸附悬停，如需禁用请阅读多参方法参数说明
         boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
         Logger.d(TAG,"startGoableWindow-->globalWindow:"+globalWindow);
         if(globalWindow) {
@@ -233,16 +234,18 @@ public class MainActivity extends BaseActivity {
             mVideoPlayer.setProgressCallBackSpaceMilliss(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
-            //自定义窗口播放的宽,高,起始X轴,起始Y轴属性,这里示例将播放器添加到标题栏下方右侧
+            //自定义窗口播放的宽,高,起始X轴,起始Y轴属性,这里示例将播放器添加到标题栏下方右侧，距离顶部及右侧编剧12dp
 //            mVideoPlayer.startWindow();
             int[] screenLocation=new int[2];
             TitleView titleView = findViewById(R.id.title_view);
             titleView.getLocationInWindow(screenLocation);
             int width = (PlayerUtils.getInstance().getScreenWidth(MainActivity.this)/2)+ScreenUtils.getInstance().dpToPxInt(30f);
             int height = width*9/16;
-            float startX=PlayerUtils.getInstance().getScreenWidth(MainActivity.this)/2-PlayerUtils.getInstance().dpToPxInt(45f);//开始位置
+            float startX=PlayerUtils.getInstance().getScreenWidth(MainActivity.this)/2-PlayerUtils.getInstance().dpToPxInt(42f);//开始位置
             float startY=screenLocation[1]+titleView.getHeight()+PlayerUtils.getInstance().dpToPxInt(15f);
             //启动窗口播放
+//            mVideoPlayer.startWindow(PlayerUtils.getInstance().dpToPxInt(3f),Color.parseColor("#80000000"),true);
+            //悬浮窗口播放默认开启自动吸附悬停，如需禁用请阅读多参方法参数说明
             mVideoPlayer.startWindow(width,height,startX,startY,ScreenUtils.getInstance().dpToPxInt(3f),Color.parseColor("#99000000"));//初始显示的位置并添加窗口颜色和圆角大小
             mVideoPlayer.prepareAsync();//开始异步准备播放
         }

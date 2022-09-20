@@ -116,8 +116,8 @@ public class IWindowManager {
                     }
                 }
             });
-            mPlayerContainer.addPlayerView(basePlayer,width,height,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
             windowManager.addView(mPlayerContainer, mLayoutParams);
+            mPlayerContainer.addPlayerView(basePlayer,width,height,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
             return true;
         }catch (Throwable e){
             e.printStackTrace();

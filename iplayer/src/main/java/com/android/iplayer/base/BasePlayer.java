@@ -861,13 +861,13 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                 height = width*9/16;
 //                ILogger.d(TAG,"startWindow-->未传入宽高,width:"+width+",height:"+height);
             }
-            //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方15dp处
+            //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧12dp位置，startY起点位于宿主View的下方12dp处
             if(startX<=0&&null!=mParent){
                 startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                 startY=screenLocation[1]+mParent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
 //                ILogger.d(TAG,"startWindow-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
             }
-            //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于屏幕高度-Window View 高度+15dp位置处
+            //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧12dp位置，startY起点位于屏幕高度-Window View 高度+12dp位置处
             if(startX<=0){
                 startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                 startY=PlayerUtils.getInstance().dpToPxInt(60f);
@@ -894,8 +894,8 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                 }
             });
             container.setId(R.id.player_window);
-            container.addPlayerView(this,width,height,startX,startY,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
             viewGroup.addView(container, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+            container.addPlayerView(this,width,height,startX,startY,radius,bgColor,isAutoSorption);//先将播放器包装到可托拽的容器中
         }
     }
 
@@ -1051,13 +1051,13 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                         height = width*9/16;
 //                        ILogger.d(TAG,"startGlobalWindow-->未传入宽高,width:"+width+",height:"+height);
                     }
-                    //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方15dp处
+                    //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方12dp处
                     if(startX<=0&&null!=parent){
                         startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                         startY=screenLocation[1]+parent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
 //                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
                     }
-                    //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于屏幕高度-Window View 高度+15dp位置处
+                    //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧12dp位置，startY起点位于屏幕高度-Window View 高度+12dp位置处
                     if(startX<=0){
                         startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
                         startY=PlayerUtils.getInstance().dpToPxInt(60f);

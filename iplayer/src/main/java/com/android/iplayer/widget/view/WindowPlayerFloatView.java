@@ -14,7 +14,6 @@ import android.widget.FrameLayout;
 import com.android.iplayer.R;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**
@@ -23,8 +22,8 @@ import com.android.iplayer.utils.PlayerUtils;
  * Desc:Activity窗口和全局悬浮窗窗口播放器的容器包装，处理了手势操作
  * 1、解决了Activity级别和全局悬浮窗级别的窗口手势冲突
  * 2、当前View范围内拦截了ACTION_MOVE事件，点击事件不拦截
- * 3、内部根据activity window窗口和全局的悬浮窗窗口最了区别处理
- * 4、用户松手后自动吸附至屏幕最近的X轴边缘
+ * 3、内部根据activity window窗口和全局的悬浮窗窗口做了区别处理
+ * 4、用户松手后自动吸附至屏幕最近的X轴边缘,距离边缘12dp位置悬停
  */
 public final class WindowPlayerFloatView extends FrameLayout {
 
@@ -36,8 +35,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
     private float xInView,yInView, translationX,translationY;
     private ViewGroup mPlayerViewGroup;//Activity内的窗口模式下播放器父容器手势拖拽目标View
     private BasePlayer mBasePlayer;//当全局悬浮窗启用时,此播放器实例不为空
-    private int mStatusBarHeight;
-    private int mHorMargin,mScreenWidth;//吸附至屏幕边缘的边距,屏幕宽
+    private int mStatusBarHeight,mHorMargin,mScreenWidth,mScreenHeight,mOldToPixelX;//状态栏高度,吸附至屏幕边缘的边距,屏幕宽,屏幕高,实时的上一次平移偏移量X轴像素点
     private boolean isAutoSorption=false;//是否自动吸附
 
     public WindowPlayerFloatView(Context context) {
@@ -161,12 +159,11 @@ public final class WindowPlayerFloatView extends FrameLayout {
     public boolean onTouchEvent(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                float xInScreen,yInScreen;
                 //activity内窗口
                 if(null!=mPlayerViewGroup){
                     float toX = getX() + (e.getX() - xInView);
                     float toY = getY() + (e.getY() - yInView);
-//                    ILogger.d(TAG,"onTouchEvent-->xInView:"+xInView+",yInView:"+yInView+",toX:"+toX+",toY:"+toY);
+//                    ILogger.d(TAG,"onTouchEvent-->getX():"+getX()+",e.getX():"+e.getX()+",toX:"+toX+",toY:"+toY);
                     if(toX<=-translationX){//屏幕最左侧
                         toX=-translationX;
                     }else if(toX>=(mGroupWidth-(translationX+getParentViewWidth()))){//屏幕最右侧
@@ -182,6 +179,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
                 //全局悬浮窗口
                 }else{
                     if(null!= mWindowActionListener){
+                        float xInScreen,yInScreen;
                         xInScreen = e.getRawX();
                         yInScreen = e.getRawY()-getStatusBarHeight();
                         mWindowActionListener.onMovie((int) (xInScreen - xInView),(int) (yInScreen - yInView));
@@ -201,6 +199,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
      */
     private void adsorptionDisplay() {
         if(!isAutoSorption) return;
+        this.mOldToPixelX=0;
 //        xInView=0;yInView=0;
         int[] locations=new int[2];
         if(null!=mPlayerViewGroup){
@@ -209,7 +208,6 @@ public final class WindowPlayerFloatView extends FrameLayout {
             getLocationOnScreen(locations);//全局悬浮窗口
         }
         int centerX=locations[0]+(getParentViewWidth()/2);
-        ILogger.d(TAG,"adsorptionDisplay,x:"+locations[0]+",y:"+locations[1]+",centerX:"+centerX);
         scrollToPixel(locations[0],centerX,200);
     }
 
@@ -219,42 +217,64 @@ public final class WindowPlayerFloatView extends FrameLayout {
      * @param centerX 播放器位于屏幕的X中心点
      * @param scrollDurtion 滚动时间，单位：毫秒
      */
-    private void scrollToPixel(int startX, int centerX, long scrollDurtion) {
-        int toPixelX=getHorMargin();//初始的默认停靠在左侧15dp处
-        if(centerX>(getScreenWidth()/2)){//检测是否在屏幕右侧
-            //左边停靠最大X：屏幕宽-自身宽-边距大小
-            toPixelX=(getScreenWidth()-getParentViewWidth()- getHorMargin());
-        }
-        if(scrollDurtion<=0){
-            moveToX(toPixelX);
-            return;
-        }
-        ILogger.d(TAG,"scrollToPixel,startX:"+startX+",toPixelX:"+toPixelX+",centerX:"+centerX);
-        @SuppressLint("ObjectAnimatorBinding") ObjectAnimator objectAnimator = ObjectAnimator.ofInt(this, "number", startX, toPixelX);
-        objectAnimator.setDuration(scrollDurtion);
-        objectAnimator.setInterpolator(new LinearInterpolator());
-        objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int animatedValue = (int) valueAnimator.getAnimatedValue();
-                moveToX(animatedValue);
+    private void scrollToPixel(final int startX, int centerX, long scrollDurtion) {
+        try {
+            boolean isLeft=true;
+            int toPixelX=getHorMargin();//初始的默认停靠在左侧15dp处
+            if(centerX>(getScreenWidth()/2)){//检测是否在屏幕右侧
+                //右边停靠最大X：屏幕宽-自身宽-边距大小
+                isLeft=false;
+                toPixelX=(getScreenWidth()-getParentViewWidth()- getHorMargin());
             }
-        });
-        objectAnimator.start();
+            if(scrollDurtion<=0){
+                moveToX(startX,toPixelX,isLeft);
+                return;
+            }
+//            ILogger.d(TAG,"scrollToPixel,startX:"+startX+",toPixelX:"+toPixelX+",centerX:"+centerX);
+            @SuppressLint("ObjectAnimatorBinding") ObjectAnimator objectAnimator = ObjectAnimator.ofInt(this, "number", startX, toPixelX);
+            objectAnimator.setDuration(scrollDurtion);
+            objectAnimator.setInterpolator(new LinearInterpolator());
+            final boolean finalIsLeft = isLeft;
+            objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int animatedValue = (int) valueAnimator.getAnimatedValue();
+                    moveToX(startX,animatedValue, finalIsLeft);
+                }
+            });
+            objectAnimator.start();
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
     }
 
     /**
      * 移动至某个位于屏幕的x点
-     * @param toPixelX 位于屏幕的x点
+     * @param startX 起点,位于屏幕的x点
+     * @param toPixelX 终点,位于屏幕的x点
+     * @param isLeft 是否往左边吸附悬停,true:往左边吸附悬停,false:往右边吸附悬停
      */
-    private void moveToX(int toPixelX) {
+    private void moveToX(int startX,int toPixelX,boolean isLeft) {
+        //Activity级别悬浮窗口
         if(null!=mPlayerViewGroup){
-//            setTranslationX(toPixelX);
-            mPlayerViewGroup.setX(toPixelX);
-        }else{
-            if(null!= mWindowActionListener){
-                mWindowActionListener.onMovie(toPixelX,-1);
+            //根据实时偏移量计算当前应当偏移多少像素点
+            float translationX = getTranslationX();
+            float toTranslationX=0;
+//            ILogger.d(TAG,"moveToX-->translationX:"+translationX+",toPixelX:"+toPixelX+",startX:"+startX+",leLeft:"+isLeft);
+            if(isLeft){//往左边越来越小，也就是TranslationX偏移量越来越大
+                int offset=0==mOldToPixelX?startX-toPixelX:mOldToPixelX-toPixelX;//本次往左边偏移量
+                toTranslationX=translationX-offset;//最终递减往左边偏移量
+//                ILogger.d(TAG,"moveToLeftX-->offset:"+offset+",toTranslationX:"+toTranslationX);
+            }else {
+                int offset=0==mOldToPixelX?toPixelX-startX:toPixelX-mOldToPixelX;
+                toTranslationX=translationX+offset;//最终累加往右边偏移量
+//                ILogger.d(TAG,"moveToRightX-->offset:"+offset+",toTranslationX:"+toTranslationX);
             }
+            setTranslationX(toTranslationX);
+            this.mOldToPixelX=toPixelX;
+        }else{
+            //全局悬浮窗口，交给WindowManager更新位置
+            if(null!= mWindowActionListener) mWindowActionListener.onMovie(toPixelX,-1);
         }
     }
 
@@ -270,6 +290,13 @@ public final class WindowPlayerFloatView extends FrameLayout {
             mScreenWidth = PlayerUtils.getInstance().getScreenWidth(getContext());
         }
         return mScreenWidth;
+    }
+
+    private int getScreenHeight(){
+        if(0==mScreenHeight){
+            mScreenHeight = PlayerUtils.getInstance().getScreenHeight(getContext());
+        }
+        return mScreenHeight;
     }
 
     /**
@@ -302,11 +329,11 @@ public final class WindowPlayerFloatView extends FrameLayout {
         if(bgColor!=0) mPlayerViewGroup.setBackgroundColor(bgColor);
 
         setListener(basePlayer);
-//        adsorptionDisplay();//防止参数调用意外自动吸附
+//        adsorptionDisplay();//防止参数调用意外，处理自动吸附
     }
 
     /**
-     * 全局悬浮窗调用--将窗口播放器添加到可推拽的容器中
+     * 全局悬浮窗调用--将窗口播放器添加到可推拽的容器中,选举悬浮窗窗口的宽高被WindowManager.LayoutParams约束
      * @param basePlayer
      * @param width 窗口组件宽
      * @param height 窗口组件高
@@ -329,7 +356,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
         if(bgColor!=0) playerContainer.setBackgroundColor(bgColor);
 
         setListener(basePlayer);
-//        adsorptionDisplay();//防止参数调用意外自动吸附
+//        adsorptionDisplay();//防止参数调用意外，处理自动吸附
     }
 
     /**
@@ -337,7 +364,7 @@ public final class WindowPlayerFloatView extends FrameLayout {
      */
     private void setListener(BasePlayer basePlayer) {
         /**
-         * 关闭事件,优先通知给开发者处理,如果开发者未监听则直接销毁
+         * 关闭事件,优先通知给开发者处理,如果开发者未监听则直接销毁播放器
          */
         findViewById(R.id.player_window_close).setOnClickListener(new OnClickListener() {
             @Override

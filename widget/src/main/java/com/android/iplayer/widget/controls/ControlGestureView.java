@@ -9,13 +9,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.android.iplayer.widget.R;
+
 import com.android.iplayer.base.BaseControlWidget;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.media.IMediaPlayer;
 import com.android.iplayer.model.PlayerState;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
+import com.android.iplayer.widget.R;
 
 /**
  * created by hty
@@ -49,7 +49,6 @@ public class ControlGestureView extends BaseControlWidget implements IGestureCon
 
     @Override
     public void onStartSlide() {
-        ILogger.d(TAG,"onStartSlide");
         //请求其它控制器处于不可见状态
         hideAllController(true);
         show();
