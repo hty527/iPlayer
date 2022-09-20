@@ -130,9 +130,7 @@ public class ControlToolBarView extends BaseControlWidget implements View.OnClic
             show();
             findViewById(R.id.controller_title).setVisibility(View.VISIBLE);//视频标题
             findViewById(R.id.controller_title_back).setVisibility(View.VISIBLE);//返回按钮
-            findViewById(R.id.controller_title_tv).setVisibility(View.GONE);//投屏
-            findViewById(R.id.controller_title_window).setVisibility(View.GONE);//悬浮窗
-            findViewById(R.id.controller_title_menu).setVisibility(View.GONE);//菜单按钮
+            findViewById(R.id.controller_menus).setVisibility(View.GONE);//菜单栏(投屏\悬浮窗\菜单按钮)
             //添加系统时间\电池电量组件
             FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
             controllerBattery.setVisibility(View.VISIBLE);
@@ -144,9 +142,7 @@ public class ControlToolBarView extends BaseControlWidget implements View.OnClic
         }else{
             findViewById(R.id.controller_title).setVisibility(View.GONE);//视频标题
             findViewById(R.id.controller_title_back).setVisibility(showBack?View.VISIBLE:View.GONE);//返回按钮
-            findViewById(R.id.controller_title_tv).setVisibility(showTv?View.VISIBLE:View.GONE);//投屏
-            findViewById(R.id.controller_title_window).setVisibility(showWindow?View.VISIBLE:View.GONE);//悬浮窗
-            findViewById(R.id.controller_title_menu).setVisibility(showMenu?View.VISIBLE:View.GONE);//菜单按钮
+            findViewById(R.id.controller_menus).setVisibility(View.VISIBLE);//菜单栏(投屏\悬浮窗\菜单按钮)
             //移除系统时间\电池电量组件
             FrameLayout controllerBattery = (FrameLayout) findViewById(R.id.controller_battery);
             controllerBattery.removeAllViews();

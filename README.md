@@ -9,6 +9,7 @@
 * 支持重力感应横竖屏旋转及开关设置</br>
 * 支持任意位置启动Activity级别悬浮窗口播放</br>
 * 支持任意位置启动全局悬浮窗口播放</br>
+* 窗口播放器支持自动吸附悬停</br>
 * 支持任意位置直接启动全屏播放</br>
 * 支持连续播放视频列表</br>
 * Demo：列表或组件之间无缝转场播放</br>
@@ -24,7 +25,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.0.apk?version=2.1.0 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.1.apk?version=2.1.1 "下载apk"
 
 ##### 1、项目根build.gradle配置</br>
 ```
@@ -38,16 +39,16 @@
 ```
     dependencies {
         //播放器(无UI交互)
-        implementation 'com.github.hty527.iPlayer:iplayer:2.1.0'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.1.1'
         //UI交互组件,可根据需要使用
-        implementation 'com.github.hty527.iPlayer:widget:2.1.0'
+        implementation 'com.github.hty527.iPlayer:widget:2.1.1'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.1.0'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.1.1'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.1.0'
+        //implementation 'com.github.hty527.iPlayer:exo:2.1.1'
         //音视频预缓存+边播边存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:cache:2.1.0'
+        //implementation 'com.github.hty527.iPlayer:cache:2.1.1'
     }
 ```
 ##### 3、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>

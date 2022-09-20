@@ -34,7 +34,7 @@
         android:layout_height="38dp"
         android:orientation="horizontal"
         android:layout_gravity="bottom"
-        android:background="@drawable/player_bg_bottom_controller"
+        android:background="@mipmap/ic_player_shadow_bottom"
         android:gravity="right|center_vertical"
         android:visibility="gone"
         android:paddingRight="6dp">

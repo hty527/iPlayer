@@ -76,7 +76,6 @@ public abstract class GestureController extends BaseController implements View.O
      * @param canTouchInPortrait true:开始竖屏状态下的手势交互 false:关闭竖屏状态下的手势交互
      */
     public void setCanTouchInPortrait(boolean canTouchInPortrait) {
-        ILogger.d(TAG,"setCanTouchInPortrait-->canTouchInPortrait:"+canTouchInPortrait);
         mCanTouchInPortrait = canTouchInPortrait;
         mCanSlide=mCanTouchInPortrait;
     }

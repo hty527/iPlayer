@@ -14,8 +14,8 @@
         android:visibility="gone">
         <ImageView
             android:id="@+id/controller_locker_ic"
-            android:layout_width="@dimen/player_play_width"
-            android:layout_height="@dimen/player_play_width"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_marginRight="32dp"
             android:src="@mipmap/ic_player_locker_false"
             android:scaleType="center"

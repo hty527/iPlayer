@@ -505,16 +505,13 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
      * 获得音频焦点
      */
     @Override
-    public void onFocusStart() {
-        ILogger.d(TAG,"onFocusStart-->");
-    }
+    public void onFocusStart() {}
 
     /**
      * 失去音频焦点
      */
     @Override
     public void onFocusStop() {
-        ILogger.d(TAG,"onFocusStop-->");
         if(isPlaying()){
             onPause();
         }
