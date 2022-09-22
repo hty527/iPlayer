@@ -34,6 +34,7 @@ import com.android.videoplayer.base.adapter.interfaces.OnItemClickListener;
 import com.android.videoplayer.bean.Menu;
 import com.android.videoplayer.pager.activity.PagerPlayerActivity;
 import com.android.videoplayer.ui.adapter.MainMenuAdapter;
+import com.android.videoplayer.ui.widget.ProjectDialog;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
@@ -135,10 +136,18 @@ public class MainActivity extends BaseActivity {
                             intent = new Intent(MainActivity.this, VideoCacheActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_cache,"视频预缓存"));
                             break;
-                        case 18://项目主页 https://gitee.com/hty_Yuye/iPlayer
-                            intent = new Intent(Intent.ACTION_VIEW);
-                            intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                            intent.setData(Uri.parse("https://github.com/hty527/iPlayer"));
+                        case 18://项目主页 https://gitee.com/hy_Yuye/iPlayer
+                            ProjectDialog dialog=new ProjectDialog(MainActivity.this);
+                            dialog.setOnMenuActionListener(new ProjectDialog.OnMenuActionListener() {
+                                @Override
+                                public void onSelected(String url) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                                    intent.setData(Uri.parse(url));
+                                    startActivity(intent);
+                                }
+                            });
+                            dialog.show();
                             break;
                     }
                     if(null!=intent){

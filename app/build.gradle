@@ -77,24 +77,24 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     //播放器SDK
-    implementation project(':iplayer')
+//    implementation project(':iplayer')
     //UI交互组件
-    implementation project(':widget')
+//    implementation project(':widget')
     //ijk音视频解码器
-    implementation project(':ijk')
+//    implementation project(':ijk')
     //exo音视频解码器
-    implementation project(':exo')
+//    implementation project(':exo')
     //音视频缓存
-    implementation project(':cache')
+//    implementation project(':cache')
 
     //播放器SDK
-//    implementation 'com.github.hty527.iPlayer:iplayer:2.1.1'
+    implementation 'com.github.hty527.iPlayer:iplayer:2.1.1'
     //UI交互组件,可根据需要使用
-//    implementation 'com.github.hty527.iPlayer:widget:2.1.1'
+    implementation 'com.github.hty527.iPlayer:widget:2.1.1'
     //音视频预缓存+边播边存,根据需要使用
-//    implementation 'com.github.hty527.iPlayer:cache:2.1.1'
+    implementation 'com.github.hty527.iPlayer:cache:2.1.1'
     //ijk音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:ijk:2.1.1'
+    implementation 'com.github.hty527.iPlayer:ijk:2.1.1'
     //exo音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:exo:2.1.1'
+    implementation 'com.github.hty527.iPlayer:exo:2.1.1'
 }
