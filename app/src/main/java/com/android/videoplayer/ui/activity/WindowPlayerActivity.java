@@ -6,13 +6,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.WidgetFactory;
@@ -67,7 +65,7 @@ public class WindowPlayerActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return IjkPlayerFactory.create().createPlayer(WindowPlayerActivity.this);
+                return ExoPlayerFactory.create().createPlayer(WindowPlayerActivity.this);
             }
 
             @Override

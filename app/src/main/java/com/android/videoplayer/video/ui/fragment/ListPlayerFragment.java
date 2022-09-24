@@ -6,12 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BaseController;
 import com.android.iplayer.controller.VideoController;
@@ -21,7 +19,7 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
@@ -49,7 +47,6 @@ import com.android.videoplayer.video.bean.OpenEyesIndexItemBean;
 import com.android.videoplayer.video.contract.VideoListContract;
 import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerNewbieView;
-
 import java.util.List;
 
 /**
@@ -425,7 +422,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return IjkPlayerFactory.create().createPlayer(getContext());
+                    return ExoPlayerFactory.create().createPlayer(getContext());
                 }
 
                 @Override

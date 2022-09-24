@@ -12,12 +12,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.controller.VideoController;
@@ -27,7 +25,7 @@ import com.android.iplayer.interfaces.IVideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.controls.ControWindowView;
@@ -55,7 +53,6 @@ import com.android.videoplayer.video.presenter.VideoListPersenter;
 import com.android.videoplayer.video.ui.widget.PlayerMenuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 
 /**
@@ -289,7 +286,7 @@ public class VideoDetailsActivity extends AppCompatActivity implements VideoList
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return IjkPlayerFactory.create().createPlayer(VideoDetailsActivity.this);
+                    return ExoPlayerFactory.create().createPlayer(VideoDetailsActivity.this);
                 }
 
                 @Override

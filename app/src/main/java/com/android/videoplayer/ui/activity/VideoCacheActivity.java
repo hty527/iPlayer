@@ -3,12 +3,10 @@ package com.android.videoplayer.ui.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.video.cache.VideoCache;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.WidgetFactory;
@@ -60,7 +58,7 @@ public class VideoCacheActivity extends BaseActivity {
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return IjkPlayerFactory.create().createPlayer(VideoCacheActivity.this);
+                return ExoPlayerFactory.create().createPlayer(VideoCacheActivity.this);
             }
         });
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度

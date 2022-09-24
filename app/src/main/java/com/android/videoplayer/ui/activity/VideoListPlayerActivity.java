@@ -1,13 +1,11 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.widget.VideoPlayer;
 import com.android.iplayer.widget.WidgetFactory;
@@ -17,7 +15,6 @@ import com.android.videoplayer.base.BasePresenter;
 import com.android.videoplayer.ui.widget.TitleView;
 import com.android.videoplayer.utils.DataFactory;
 import com.android.videoplayer.utils.Logger;
-
 import java.util.List;
 
 /**
@@ -68,7 +65,7 @@ public class VideoListPlayerActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return IjkPlayerFactory.create().createPlayer(VideoListPlayerActivity.this);
+                return ExoPlayerFactory.create().createPlayer(VideoListPlayerActivity.this);
             }
 
             @Override

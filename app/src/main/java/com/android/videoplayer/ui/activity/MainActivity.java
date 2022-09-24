@@ -15,7 +15,7 @@ import com.android.iplayer.controller.VideoController;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.manager.IWindowManager;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.media.core.IjkPlayerFactory;
+import com.android.iplayer.media.core.ExoPlayerFactory;
 import com.android.iplayer.model.PlayerState;
 import com.android.iplayer.utils.PlayerUtils;
 import com.android.iplayer.widget.VideoPlayer;
@@ -227,7 +227,7 @@ public class MainActivity extends BaseActivity {
                  */
                 @Override
                 public AbstractMediaPlayer createMediaPlayer() {
-                    return IjkPlayerFactory.create().createPlayer(MainActivity.this);
+                    return ExoPlayerFactory.create().createPlayer(MainActivity.this);
                 }
 
                 @Override
@@ -290,7 +290,7 @@ public class MainActivity extends BaseActivity {
              */
             @Override
             public AbstractMediaPlayer createMediaPlayer() {
-                return IjkPlayerFactory.create().createPlayer(MainActivity.this);
+                return ExoPlayerFactory.create().createPlayer(MainActivity.this);
             }
 
             @Override
