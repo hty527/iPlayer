@@ -75,7 +75,10 @@ public class ControlLoadingView extends BaseControlWidget {
      * @param playIcon 播放按钮
      */
     private void changedUi(int loading, int playIcon) {
-        if(null!= mLoadingView) mLoadingView.setVisibility(loading);
+        if(null!= mLoadingView){
+            mLoadingView.setVisibility(loading);
+            mLoadingView.setIndeterminate(View.VISIBLE==loading);
+        }
         if(null!=mControllerPlay) mControllerPlay.setVisibility(playIcon);
     }
 }
