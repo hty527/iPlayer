@@ -675,7 +675,7 @@
     implementation 'com.github.hty527.iPlayer:exo:lastversion'
 
     //SDK内部实现EXO解码器逻辑，必须依赖
-    //以下为必须项，SDK内部已引用
+    //以下为必须项，SDK内部已引用，集成时无需引用
     //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
     //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
     //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）

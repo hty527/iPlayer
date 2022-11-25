@@ -1,5 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="com.iplayer.cache">
-    <application />
-</manifest>
+<manifest package="com.android.iplayer.cache"></manifest>

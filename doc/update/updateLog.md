@@ -1,6 +1,6 @@
 历史版本
 
-###  2.1.2
+###  2.1.20
 **更新日期：** 2022-11-25<br/>
 **更新内容：**<br/>
 >1. 播放器新增左右声道音量设置方法：setVolume(float leftVolume, float rightVolume);<br/>

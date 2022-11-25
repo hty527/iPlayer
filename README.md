@@ -39,19 +39,19 @@
 ```
     dependencies {
         //播放器(无UI交互)
-        implementation 'com.github.hty527.iPlayer:iplayer:2.1.2'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.1.20'
         //UI交互组件,可根据需要使用
-        implementation 'com.github.hty527.iPlayer:widget:2.1.2'
+        implementation 'com.github.hty527.iPlayer:widget:2.1.20'
 
         //音视频预缓存+边播边存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:cache:2.1.2'
+        //implementation 'com.github.hty527.iPlayer:cache:2.1.20'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.1.2'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.1.20'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.1.2'
+        //implementation 'com.github.hty527.iPlayer:exo:2.1.20'
         //选择exo音视频解码器时需引用
-        //以下为必须项，SDK内部已引用
+        //以下为必须项，SDK内部已引用，集成时无需引用
         //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
         //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
         //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）

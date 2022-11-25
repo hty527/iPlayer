@@ -1,7 +1,5 @@
 package com.danikula.videocache;
 
-import com.iplayer.cache.BuildConfig;
-
 /**
  * Indicates any error in work of {@link ProxyCache}.
  *
@@ -9,7 +7,7 @@ import com.iplayer.cache.BuildConfig;
  */
 public class ProxyCacheException extends Exception {
 
-    private static final String LIBRARY_VERSION = ". Version: " + BuildConfig.VERSION_NAME;
+    private static final String LIBRARY_VERSION = "";
 
     public ProxyCacheException(String message) {
         super(message + LIBRARY_VERSION);

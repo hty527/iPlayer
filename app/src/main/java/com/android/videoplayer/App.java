@@ -1,9 +1,8 @@
 package com.android.videoplayer;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-
+import androidx.multidex.MultiDexApplication;
 import com.android.iplayer.base.BasePlayer;
 import com.android.iplayer.listener.OnWindowActionListener;
 import com.android.iplayer.manager.IVideoManager;
@@ -20,7 +19,7 @@ import com.android.videoplayer.video.ui.activity.VideoDetailsActivity;
  * 2022/7/1
  * Desc:
  */
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     private static final String TAG ="App";
     private static App mInstance;
