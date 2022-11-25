@@ -28,11 +28,15 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //播放器
     implementation project(':iplayer')
-    //EXO解码器
+    //SDK内部实现EXO解码器逻辑，必须依赖
     api 'com.google.android.exoplayer:exoplayer:2.18.1'
-    api 'com.google.android.exoplayer:exoplayer-core:2.18.1'
-    api 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
-    api "com.google.android.exoplayer:extension-rtmp:2.18.1"
-    api "com.google.android.exoplayer:exoplayer-hls:2.18.1"
-    api "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"
+    api 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+    api "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议
+    //以下为可选依赖，请根据需要实现
+    //api 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+    //api "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+    //api "com.google.android.exoplayer:exoplayer-smoothstreaming:2.18.1"//支持SmoothStreaming内容
+    //api "com.google.android.exoplayer:exoplayer-transformer:2.18.1"//媒体转换功能，需要minSdkVersion>=21
+    //api "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
+    //api 'com.google.android.exoplayer:exoplayer-ui:2.18.1'//用于ExoPlayer的UI组件和资源
 }

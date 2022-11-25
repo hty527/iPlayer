@@ -69,9 +69,16 @@ public interface IPlayerControl<V extends BaseController> {
 
     /**
      * 设置播放速度
-     * @param speed 设置播放速度 从0.5f-2.0f
+     * @param speed 设置播放速度，仅在播放中设置生效。 从0.5f-2.0f
      */
     void setSpeed(float speed);
+
+    /**
+     * 设置左右声道音量，从0.0f-1.0f
+     * @param leftVolume 设置左声道音量，1.0f-1.0f
+     * @param rightVolume 设置右声道音量，1.0f-1.0f
+     */
+    void setVolume(float leftVolume, float rightVolume);
 
     /**
      * @param mute 设置是否静音,true:无声 false:跟随系统音量

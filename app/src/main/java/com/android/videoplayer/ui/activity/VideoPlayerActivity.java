@@ -169,6 +169,7 @@ public class VideoPlayerActivity extends BaseActivity {
         mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
         mVideoPlayer.setMirror(false);//是否镜像显示
         mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
+        //mVideoPlayer.setVolume(1.0f,1.0f);//设置左右声道，0.0f(小)-1.0f(大)
         //mVideoPlayer.setPlayCompletionRestoreDirection(true);//播放器在横屏状态下播放完成是否自动还原到竖屏状态,默认自动还原到竖屏
         //mVideoPlayer.setMobileNetwork(true);//移动网络下是否允许播放网络视频,需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
         //mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放

@@ -14,6 +14,7 @@
     mVideoPlayer.setSoundMute(false);//是否开启静音播放，默认为false
     mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
     mVideoPlayer.setMirror(false);//是否镜像显示，默认为false
+    mVideoPlayer.setVolume(1.0f,1.0f);//设置左右声道，0.0f(小)-1.0f(大)
     mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,如需网络提示交互需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
@@ -634,7 +635,77 @@
 ```
     ILogger.DEBUG=true;//或 ILogger.setDebug(true);
 ```
-### 二、异常现象及注意点
+### 二、第三方解码器
+* SDK默认使用系统MediaPlayer作为音视频解码器，SDK支持自定义任意解码器实现音视频解码。请阅读《自定义解码器》部分。
+#### 1、IJK解码器
+##### 1.1、依赖
+```
+    //对IJK解码器的二次封装实现（版本号与iPlayer SDK一致）
+    implementation 'com.github.hty527.iPlayer:ijk:lastversion'
+```
+* 请根据需要选择ABI平台
+```
+    defaultConfig {
+            ndk {
+                abiFilters 'arm64-v8a','armeabi-v7a','armeabi','x86','x86_64'
+            }
+    }
+```
+##### 1.2、使用
+```
+    //开始播放视频前设置实现生效
+    mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+        @Override
+        public AbstractMediaPlayer createMediaPlayer() {
+            return IjkPlayerFactory.create().createPlayer(LivePlayerActivity.this);
+        }
+    });
+```
+##### 1.3、混淆
+```
+    # IjkPlayer
+    -keep class tv.danmaku.ijk.** { *; }
+    -dontwarn tv.danmaku.ijk.**
+```
+#### 2、EXO解码器
+##### 2.1、依赖
+* SDK内部引用的EXO SDK版本号为：2.18.1
+```
+    //对EXO解码器的二次封装实现，必须依赖（版本号与iPlayer SDK一致）
+    implementation 'com.github.hty527.iPlayer:exo:lastversion'
+
+    //SDK内部实现EXO解码器逻辑，必须依赖
+    //以下为必须项，SDK内部已引用
+    //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+    //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
+
+    //以下为可选依赖，请根据需要实现
+    //implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+    //implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+    //implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
+    //以下为自定义解码器场景根据需要实现，直接使用com.github.hty527.iPlayer:exo SDK时无需引用
+    //implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:2.18.1"//支持SmoothStreaming内容
+    //implementation "com.google.android.exoplayer:exoplayer-transformer:2.18.1"//媒体转换功能，需要minSdkVersion>=21
+    //implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'//用于ExoPlayer的UI组件和资源
+```
+##### 2.2、使用
+```
+    //开始播放视频前设置实现生效
+    mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
+        @Override
+        public AbstractMediaPlayer createMediaPlayer() {
+            return ExoPlayerFactory.create().createPlayer(LivePlayerActivity.this);
+        }
+    });
+```
+##### 2.3、混淆
+```
+    # ExoPlayer
+    -keep class com.google.android.exoplayer2.** { *; }
+    -dontwarn com.google.android.exoplayer2.**
+```
+### 三、异常现象及注意点
 #### 1、网络地址无法播放
 * 请检查AndroidManifest文件中是否声明INTERNET权限
 ```

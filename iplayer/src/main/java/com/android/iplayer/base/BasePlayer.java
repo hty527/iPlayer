@@ -487,6 +487,16 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     }
 
     /**
+     * 设置左右声道音量，从0.0f-1.0f
+     * @param leftVolume 设置左声道音量，1.0f-1.0f
+     * @param rightVolume 设置右声道音量，1.0f-1.0f
+     */
+    @Override
+    public void setVolume(float leftVolume, float rightVolume) {
+        if(null!=mIVideoPlayer) mIVideoPlayer.setVolume(leftVolume,rightVolume);
+    }
+
+    /**
      * 设置是否静音
      * @param mute 设置是否静音,true:无声 false:跟随系统音量
      * @return 是否静音,true:无声 false:跟随系统音量

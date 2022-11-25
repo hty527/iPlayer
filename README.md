@@ -25,7 +25,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.1.apk?version=2.1.1 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.2.apk?version=2.1.2 "下载apk"
 
 ##### 1、项目根build.gradle配置</br>
 ```
@@ -39,16 +39,26 @@
 ```
     dependencies {
         //播放器(无UI交互)
-        implementation 'com.github.hty527.iPlayer:iplayer:2.1.1'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.1.2'
         //UI交互组件,可根据需要使用
-        implementation 'com.github.hty527.iPlayer:widget:2.1.1'
+        implementation 'com.github.hty527.iPlayer:widget:2.1.2'
+
+        //音视频预缓存+边播边存,根据需要使用
+        //implementation 'com.github.hty527.iPlayer:cache:2.1.2'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.1.1'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.1.2'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.1.1'
-        //音视频预缓存+边播边存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:cache:2.1.1'
+        //implementation 'com.github.hty527.iPlayer:exo:2.1.2'
+        //选择exo音视频解码器时需引用
+        //以下为必须项，SDK内部已引用
+        //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
+        //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+        //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
+        //exo音视频解码器，以下为可选依赖，请根据需要实现
+        //implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+        //implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+        //implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
     }
 ```
 ##### 3、在需要播放视频的xml中添加如下代码,或在适合的位置new VideoPlayer()</br>
@@ -101,7 +111,7 @@
     }
 ```
 ##### 6、常用API、更换解码器、自定义解码器、UI交互组件和悬浮窗口播放等功能请阅读[wiki][3]</br>
-[3]:https://github.com/hty527/iPlayer/wiki/api "wiki"
+[3]:https://github.com/hty527/iPlayer/wiki "wiki"
 #### 四、遇到问题
 * 1、阅读接入文档[wiki][3]
 * 2、提交 [issue](https://github.com/hty527/iPlayer/issues)
@@ -110,7 +120,7 @@
 * 5、播放器框架结构图[点击][5]查看
 
 [4]:https://gitee.com/hty527/iPlayer "码云"
-[5]:https://github.com/hty527/iPlayer/wiki/api "点击"
+[5]:https://github.com/hty527/iPlayer/wiki "点击"
 #### 五、SDK及Demo部分功能预览
 <div align="center">
     <img src="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/src1.jpg?q=1" width="270",height="585">

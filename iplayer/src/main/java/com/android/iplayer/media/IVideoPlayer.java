@@ -41,6 +41,8 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     private PlayerState sPlayerState = PlayerState.STATE_RESET;
     //是否循环播放/是否静音/是否镜像
     private boolean mLoop=false,mSoundMute=false,mMirrors=false;
+    //左右声道设置
+    private float mLeftVolume=1.0f,mRightVolume=1.0f;
     //裁剪缩放模式，默认为原始大小，定宽等高，可能高度会留有黑边
     private int mZoomMode=IMediaPlayer.MODE_ZOOM_TO_FIT;
     //远程资源地址
@@ -125,7 +127,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
             if(mSoundMute){
                 mMediaPlayer.setVolume(0,0);
             }else{
-                mMediaPlayer.setVolume(1.0f,1.0f);
+                mMediaPlayer.setVolume(mLeftVolume,mRightVolume);
             }
             //设置播放参数
             mMediaPlayer.setBufferTimeMax(2.0f);
@@ -656,6 +658,16 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
     }
 
     /**
+     * 设置左右声道音量，从0.0f-1.0f
+     * @param leftVolume 设置左声道音量，1.0f-1.0f
+     * @param rightVolume 设置右声道音量，1.0f-1.0f
+     */
+    public void setVolume(float leftVolume, float rightVolume) {
+        this.mLeftVolume=leftVolume;this.mRightVolume=rightVolume;
+        if(null!=mMediaPlayer) mMediaPlayer.setVolume(leftVolume,rightVolume);
+    }
+
+    /**
      * 设置View旋转角度
      * @param rotation
      */
@@ -957,7 +969,7 @@ public final class IVideoPlayer implements OnMediaEventListener , AudioFocus.OnA
         }
         mLoop=false;mSoundMute=false;mMirrors=false;mVideoWidth=0;mVideoHeight=0;mPrepareTimeout=0;mReadTimeout=0;mZoomMode=0;
         mReCount =0;
-        mBasePlayer =null;mDataSource=null;mAssetsSource=null;
+        mBasePlayer =null;mDataSource=null;mAssetsSource=null;mLeftVolume=1.0f;mRightVolume=1.0f;
         mCallBackSpaceMilliss =DEFAULT_CALLBACK_TIME;
     }
 }
