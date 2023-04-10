@@ -50,7 +50,7 @@
     //exo音视频解码器,根据自己需要实现
     implementation 'com.github.hty527.iPlayer:exo:lastversion'
 ```
-* 4.2、SDK默认使用MediaPlayer解码器，自定义解码器的使用,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
+* 4.2、SDK默认使用MediaPlayer解码器，自定义解码器的开发,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
 
 [4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/java/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
 [5]:https://github.com/hty527/iPlayer/blob/main/exo/src/main/java/com/android/iplayer/media/core/ExoMediaPlayer.java "ExoMediaPlayer"
