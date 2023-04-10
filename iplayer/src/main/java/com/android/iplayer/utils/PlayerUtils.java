@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import com.android.iplayer.widget.view.LayoutProvider;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -205,16 +204,17 @@ public class PlayerUtils {
      * @return
      */
     public int getStatusBarHeight(Context context) {
+        int StatusBarHeight = 0;
         try {
-            Class<?> c = Class.forName("com.android.internal.R$dimen");
-            Object o = c.newInstance();
-            Field field = c.getField("status_bar_height");
-            int x = (Integer) field.get(o);
-            return context.getResources().getDimensionPixelSize(x);
-        } catch (Exception e) {
+            int resourceId = context.getApplicationContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                StatusBarHeight = context.getApplicationContext().getResources().getDimensionPixelSize(resourceId);
+            }
+        }catch (Exception e){
             e.printStackTrace();
+            StatusBarHeight=dpToPxInt(25f);
         }
-        return 0;
+        return StatusBarHeight;
     }
 
     /**

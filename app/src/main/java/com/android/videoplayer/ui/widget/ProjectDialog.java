@@ -35,6 +35,12 @@ public class ProjectDialog extends BottomSheetDialog {
                 if(null!=mOnMenuActionListener) mOnMenuActionListener.onSelected("https://gitee.com/hty527/iPlayer");
             }
         });
+        findViewById(R.id.dialog_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
     protected void initLayoutPrams(){

@@ -1324,7 +1324,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     @Override
     public void onPause(){
         if(null!=mIVideoPlayer) mIVideoPlayer.onPause();
-        if(null!= mController) mController.onResume();
+        if(null!= mController) mController.onPause();
     }
 
     /**

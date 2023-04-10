@@ -19,7 +19,7 @@
             android:id="@+id/item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="2"
+            android:maxLines="2"
             android:textColor="@color/white"
             android:textSize="14dp"
             android:padding="10dp"
@@ -27,6 +27,10 @@
             android:lineSpacingExtra="3dp"
             android:gravity="bottom"
             android:background="@drawable/fg_video_info"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+            android:shadowRadius="2"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowColor="#80000000"/>
     </FrameLayout>
 </LinearLayout>

@@ -50,12 +50,14 @@ public class ViewPagerLayoutManager extends LinearLayoutManager implements Recyc
         if (state == RecyclerView.SCROLL_STATE_IDLE) {
             if(null!=mPagerSnapHelper){
                 View viewIdle = mPagerSnapHelper.findSnapView(ViewPagerLayoutManager.this);
-                int position = getPosition(viewIdle);
-                Logger.d(TAG,"onScrollStateChanged-->position:"+position+",currentPostion:"+mCurrentPostion);
-                //过滤重复选中
-                if (mOnViewPagerListener != null && this.mCurrentPostion != position) {
-                    this.mCurrentPostion = position;
-                    mOnViewPagerListener.onPageSelected(viewIdle, position,position==getItemCount()-2);
+                if(null!=viewIdle){
+                    int position = getPosition(viewIdle);
+                    Logger.d(TAG,"onScrollStateChanged-->position:"+position+",currentPostion:"+mCurrentPostion);
+                    //过滤重复选中
+                    if (mOnViewPagerListener != null && this.mCurrentPostion != position) {
+                        this.mCurrentPostion = position;
+                        mOnViewPagerListener.onPageSelected(viewIdle, position,position==getItemCount()-2);
+                    }
                 }
             }
         }

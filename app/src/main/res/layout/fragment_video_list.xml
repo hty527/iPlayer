@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
     <ImageView
-        android:id="@+id/status_bar"
+        android:id="@+id/bar_image"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:scaleType="centerCrop"/>

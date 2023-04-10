@@ -7,8 +7,9 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
 import com.android.videoplayer.App;
-import java.lang.reflect.Field;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -108,18 +109,17 @@ public class ScreenUtils {
      * @return
      */
     public int getStatusBarHeight(Context context) {
+        int StatusBarHeight = 0;
         try {
-            Class<?> c = Class.forName("com.android.internal.R$dimen");
-            Object obj = c.newInstance();
-            Field field = c.getField("status_bar_height");
-            int x = Integer.parseInt(field.get(obj).toString());
-            int dimensionPixelSize = context.getResources().getDimensionPixelSize(x);
-            if(dimensionPixelSize<=0) dimensionPixelSize=ScreenUtils.getInstance().dpToPxInt(25f);
-            return dimensionPixelSize;
-        } catch (Exception e) {
+            int resourceId = context.getApplicationContext().getResources().getIdentifier("status_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                StatusBarHeight = context.getApplicationContext().getResources().getDimensionPixelSize(resourceId);
+            }
+        }catch (Exception e){
             e.printStackTrace();
+            StatusBarHeight=dpToPxInt(25f);
         }
-        return ScreenUtils.getInstance().dpToPxInt(25f);
+        return StatusBarHeight;
     }
 
     /**

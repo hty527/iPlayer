@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.view.Surface;
 import android.view.SurfaceHolder;
-import androidx.annotation.RequiresApi;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.utils.PlayerUtils;
 import java.io.IOException;
@@ -112,8 +111,7 @@ public class MediaPlayer extends AbstractMediaPlayer implements android.media.Me
         if(null!=mMediaPlayer) mMediaPlayer.seekTo((int) msec);
     }
 
-    @SuppressLint("WrongConstant")
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @SuppressLint({"WrongConstant", "NewApi"})
     @Override
     public void seekTo(long msec, boolean accurate) throws IllegalStateException {
         if(null!=mMediaPlayer){

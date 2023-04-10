@@ -32,7 +32,7 @@ public class VideoListFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        ImageView status_bar = (ImageView) findViewById(R.id.status_bar);
+        ImageView status_bar = (ImageView) findViewById(R.id.bar_image);
         status_bar.getLayoutParams().height= ScreenUtils.getInstance().getStatusBarHeight(getContext())+ScreenUtils.getInstance().dpToPxInt(49f);
         status_bar.setImageResource(R.mipmap.ic_title_bg);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);

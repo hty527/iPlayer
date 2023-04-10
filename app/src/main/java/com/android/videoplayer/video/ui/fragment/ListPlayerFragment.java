@@ -196,12 +196,12 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         consumption.setCollectionCount(44541);
         consumption.setReplyCount(1860223);
         consumption.setShareCount(58954);
-        itemBean.setTitle("漫威惊奇队长");
+        itemBean.setTitle("惊奇队长2");
         itemBean.setConsumption(consumption);
         itemBean.setDuration(31);
         itemBean.setDate(1657167889000L);
-        itemBean.setPlayUrl("http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4");
-        itemBean.setDescription("漫威惊奇队长，是什么让她成为复联最强战力，能力堪比六钻满配灭霸？据说惊奇2已开拍，2023年上映？");
+        itemBean.setPlayUrl("https://vd3.bdstatic.com/mda-pd736fppd4m1muub/sc/cae_h264/1680924082856978562/mda-pd736fppd4m1muub.mp4");
+        itemBean.setDescription("惊奇队长2 华丽蜕变！最新官方预告片 2023年11月上映");
         mAdapter.addData(0,itemBean);
         //开始播放第一个视频
         mRecyclerView.postDelayed(new Runnable() {

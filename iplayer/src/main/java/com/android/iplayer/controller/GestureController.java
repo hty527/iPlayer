@@ -12,7 +12,6 @@ import com.android.iplayer.base.BaseController;
 import com.android.iplayer.interfaces.IControllerView;
 import com.android.iplayer.interfaces.IGestureControl;
 import com.android.iplayer.media.IMediaPlayer;
-import com.android.iplayer.utils.ILogger;
 import com.android.iplayer.utils.PlayerUtils;
 
 /**

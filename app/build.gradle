@@ -78,15 +78,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     //播放器SDK
-    implementation 'com.github.hty527.iPlayer:iplayer:2.1.20'
+    implementation 'com.github.hty527.iPlayer:iplayer:2.1.21'
     //UI交互组件,可根据需要使用
-    implementation 'com.github.hty527.iPlayer:widget:2.1.20'
+    implementation 'com.github.hty527.iPlayer:widget:2.1.21'
     //音视频预缓存+边播边存,根据需要使用
-    implementation 'com.github.hty527.iPlayer:cache:2.1.20'
+    implementation 'com.github.hty527.iPlayer:cache:2.1.21'
     //ijk音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:ijk:2.1.20'
+    implementation 'com.github.hty527.iPlayer:ijk:2.1.21'
     //exo音视频解码器,根据自己需要实现
-    implementation 'com.github.hty527.iPlayer:exo:2.1.20'
+    implementation 'com.github.hty527.iPlayer:exo:2.1.21'
 
 //    //播放器SDK
 //    implementation project(':iplayer')
@@ -96,7 +96,7 @@ dependencies {
 //    implementation project(':cache')
 //    //ijk音视频解码器
 //    implementation project(':ijk')
-    //exo音视频解码器
+//    //exo音视频解码器
 //    implementation project(':exo')
 
     //以下为必须项，SDK内部已引用

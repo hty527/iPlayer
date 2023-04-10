@@ -30,7 +30,7 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     /**
      * 点播测试流，以下格式视频流已测试支持
      */
-    public static final String MP4_URL0          ="http://vfx.mtime.cn/Video/2019/02/04/mp4/190204084208765161.mp4";//惊奇队长预告
+    public static final String MP4_URL0          ="https://vd3.bdstatic.com/mda-pd736fppd4m1muub/sc/cae_h264/1680924082856978562/mda-pd736fppd4m1muub.mp4";//惊奇队长2预告
     public static final String MP4_URL1          ="http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";//叶问1预告
     public static final String MP4_URL2          ="https://upload.dongfeng-nissan.com.cn/nissan/video/202204/4cfde6f0-bf80-11ec-95c3-214c38efbbc8.mp4";//2021款第七代天籁
     public static final String MP4_URL3          ="http://cdnxdc.tanzi88.com/XDC/dvideo/2017/11/29/15f22f48466180232ca50ec25b0711a7.mp4";//网络视频-七舅脑爷

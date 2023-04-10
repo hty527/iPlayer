@@ -47,8 +47,10 @@ public class PagerPlayerActivity extends BaseActivity {
         setFullScreen(true);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager_simple);
-        StatusUtils.setStatusTextColor1(true, PagerPlayerActivity.this);//黑色字体
+
+        View statusBar = findViewById(R.id.status_bar);
         findViewById(R.id.status_bar).getLayoutParams().height= ScreenUtils.getInstance().getStatusBarHeight(getApplicationContext());
+        StatusUtils.setStatusTextColor1(true, PagerPlayerActivity.this);//黑色字体
 
         mBtnBack = (ImageView) findViewById(R.id.btn_back);
         mBtnBack.setColorFilter(Color.parseColor("#333333"));

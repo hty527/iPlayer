@@ -25,5 +25,4 @@ task sourcesJar(type: Jar) {
 }
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    api 'org.slf4j:slf4j-android:1.7.21'
 }
