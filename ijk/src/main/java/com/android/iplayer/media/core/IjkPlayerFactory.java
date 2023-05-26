@@ -10,6 +10,8 @@ import com.android.iplayer.media.MediaFactory;
  */
 public class IjkPlayerFactory extends MediaFactory<IJkMediaPlayer> {
 
+    private static boolean isLive=false;
+
     public static IjkPlayerFactory create() {
         return create(false);
     }
@@ -20,11 +22,12 @@ public class IjkPlayerFactory extends MediaFactory<IJkMediaPlayer> {
      * @return
      */
     public static IjkPlayerFactory create(boolean isLive) {
+        IjkPlayerFactory.isLive=isLive;
         return new IjkPlayerFactory();
     }
 
     @Override
     public IJkMediaPlayer createPlayer(Context context) {
-        return new IJkMediaPlayer(context);
+        return new IJkMediaPlayer(context,isLive);
     }
 }

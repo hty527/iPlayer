@@ -25,7 +25,7 @@
 #### 三、SDK集成
 * 建议集成前先[下载apk][2]体验，找到自己想要实现的功能模块，后续集成可参考demo源码。
 
-[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.21.apk?version=2.1.21 "下载apk"
+[2]:https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/apk/iPlayer-2.1.22.apk?version=2.1.22 "下载apk"
 
 ##### 1、项目根build.gradle配置</br>
 ```
@@ -39,17 +39,17 @@
 ```
     dependencies {
         //播放器(无UI交互)
-        implementation 'com.github.hty527.iPlayer:iplayer:2.1.21'
+        implementation 'com.github.hty527.iPlayer:iplayer:2.1.22'
         //UI交互组件,可根据需要使用
-        implementation 'com.github.hty527.iPlayer:widget:2.1.21'
+        implementation 'com.github.hty527.iPlayer:widget:2.1.22'
 
         //音视频预缓存+边播边存,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:cache:2.1.21'
+        //implementation 'com.github.hty527.iPlayer:cache:2.1.22'
 
         //ijk音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:ijk:2.1.21'
+        //implementation 'com.github.hty527.iPlayer:ijk:2.1.22'
         //exo音视频解码器,根据需要使用
-        //implementation 'com.github.hty527.iPlayer:exo:2.1.21'
+        //implementation 'com.github.hty527.iPlayer:exo:2.1.22'
         //选择exo音视频解码器时需引用
         //以下为必须项，SDK内部已引用，集成时无需引用
         //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）

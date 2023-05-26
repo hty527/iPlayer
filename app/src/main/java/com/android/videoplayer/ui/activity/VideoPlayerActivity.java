@@ -40,7 +40,7 @@ public class VideoPlayerActivity extends BaseActivity {
     private int RENDER_CORE=0;//画面渲染器 0:TextureView 1:SurfaceView
     private VideoController mController;//控制器
     private SdkDefaultFuncation mSdkDefaultFuncation;//播放器支持更多功能的交互示例
-    private String mUrl=MP4_URL1;
+    private String mUrl=MP4_URL2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
