@@ -95,48 +95,52 @@ public class MainActivity extends BaseActivity {
                             intent=new Intent(MainActivity.this, VideoListPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_list,"连续播放一个列表示例"));
                             break;
-                        case 8://列表自动播放(无缝转场)
+                        case 8://Pad和TV
+                            intent=new Intent(MainActivity.this, PadActivity.class);
+                            intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_pad,"Pad和TV"));
+                            break;
+                        case 9://列表自动播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_auto,"列表自动播放"));
                             intent.putExtra("auto_play","1");
                             break;
-                        case 9://列表点击播放(无缝转场)
+                        case 10://列表点击播放(无缝转场)
                             intent = new Intent(MainActivity.this, PagerListActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_click,"列表点击播放"));
                             intent.putExtra("auto_play","0");
                             break;
-                        case 10://Activity小窗口
+                        case 11://Activity小窗口
                             intent = new Intent(MainActivity.this, WindowPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_window,"Activity局部悬浮窗"));
                             break;
-                        case 11://全局悬浮窗
+                        case 12://全局悬浮窗
                             intent = new Intent(MainActivity.this, WindowGlobalPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_goable_window,"全局悬浮窗"));
                             break;
-                        case 12://任意界面开启窗口播放器
+                        case 13://任意界面开启窗口播放器
                             startMiniWindowPlayer();
                             break;
-                        case 13://任意界面开启全局悬浮窗播放器
+                        case 14://任意界面开启全局悬浮窗播放器
                             checkedPermission();
                             break;
-                        case 14://画中画
+                        case 15://画中画
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 intent=new Intent(MainActivity.this, PiPPlayerActivity.class);
                                 intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_dip,"画中画"));
                             }
                             break;
-                        case 15://类抖音垂直滚动播放
+                        case 16://类抖音垂直滚动播放
                             intent=new Intent(MainActivity.this, PagerPlayerActivity.class);
                             break;
-                        case 16://自定义弹幕控制器功能示例
+                        case 17://自定义弹幕控制器功能示例
                             intent = new Intent(MainActivity.this, DanmuPlayerActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_title_danmu,"自定义弹幕控制器"));
                             break;
-                        case 17://预缓存
+                        case 18://预缓存
                             intent = new Intent(MainActivity.this, VideoCacheActivity.class);
                             intent.putExtra("title",DataFactory.getInstance().getString(R.string.text_item_cache,"视频预缓存"));
                             break;
-                        case 18://项目主页 https://gitee.com/hy_Yuye/iPlayer
+                        case 19://项目主页 https://gitee.com/hy_Yuye/iPlayer
                             ProjectDialog dialog=new ProjectDialog(MainActivity.this);
                             dialog.setOnMenuActionListener(new ProjectDialog.OnMenuActionListener() {
                                 @Override

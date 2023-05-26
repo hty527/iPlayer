@@ -169,6 +169,11 @@ public interface IPlayerControl<V extends BaseController> {
     void playOrPause(Object dataSource);
 
     /**
+     * 关闭全屏/退出全屏时旋转Activity方向,默认开启
+     */
+    void shutFullScreenOrientation();
+
+    /**
      * 开启全屏模式播放
      */
     void startFullScreen();

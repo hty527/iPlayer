@@ -58,7 +58,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     private ViewGroup mParent;//自己的宿主
     private int[] mPlayerParams;//自己的宽高属性和位于父容器的层级位置
     private IVideoPlayer mIVideoPlayer;
-    private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true,mLandscapeWindowTranslucent;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态\横屏状态下是否启用沉浸式全屏
+    private boolean mIsActivityWindow,mIsGlobalWindow,mContinuityPlay,mRestoreDirection=true,mLandscapeWindowTranslucent,mShutFullScreenOrientation;//是否开启了Activity级别悬浮窗\是否开启了全局悬浮窗\是否开启了连续播放模式\当播放器在横屏状态下收到播放完成事件时是否自动还原到竖屏状态\横屏状态下是否启用沉浸式全屏\横竖屏切换时是否禁止Activity旋转方向
     private Context mParentContext;//临时的上下文,播放器内部会优先使用这个上下文来获取当前的Activity.业务方便开启转场、全局悬浮窗后设置此上下文。在Activity销毁时置空此上下文
     private ScreenOrientationRotate mOrientationRotate;//屏幕方向监听
     private int mDisplayLastOrientation;//设备最近一次的屏幕方向
@@ -683,6 +683,11 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
         }
     }
 
+    @Override
+    public void shutFullScreenOrientation() {
+        this.mShutFullScreenOrientation=true;
+    }
+
     /**
      * 全屏播放
      */
@@ -715,7 +720,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             }
             PlayerUtils.getInstance().removeViewFromParent(this);//从原宿主中移除自己
             //2.改变屏幕方向为横屏状态,播放器所在的Activity需要添加属性：android:configChanges="orientation|screenSize"
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);//改变屏幕方向
+            if(!mShutFullScreenOrientation) activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_LANDSCAPE);//更新控制器方向状态
             //3.隐藏NavigationBar和StatusBar
             hideSystemBar(viewGroup);
@@ -741,7 +746,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
             //1:从Window窗口中移除自己
             PlayerUtils.getInstance().removeViewFromParent(this);
             //2.改变屏幕方向为竖屏
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//改变屏幕方向
+            if(!mShutFullScreenOrientation) activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);//改变屏幕方向
             setScreenOrientation(IMediaPlayer.ORIENTATION_PORTRAIT);
             findViewById(R.id.player_surface).setBackgroundColor(Color.parseColor("#00000000"));//设置纯透明背景
             //3.还原全屏设置为正常设置

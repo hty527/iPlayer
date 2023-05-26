@@ -124,6 +124,12 @@
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
+        <!--Pad和Tv-->
+        <activity android:name="com.android.videoplayer.ui.activity.PadActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout">
+        </activity>
         <!--权限申请-悬浮窗-->
         <activity android:name="com.android.videoplayer.ui.activity.WindowPermissionActivity"
             android:launchMode="singleTask"

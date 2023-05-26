@@ -19,6 +19,7 @@
     mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
     mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
+    mVideoPlayer.shutFullScreenOrientation();//开启/退出全屏时禁止旋转Activity方向，默认开启
 ```
 #### 2、控制器API
 * 2.1、请阅读[IVideoController][2]
@@ -266,9 +267,9 @@
         }
     });
 ```
-#### 7、全屏播放
+#### 7、全屏播放(横/竖屏切换)
 ##### 7.1、横竖屏切换
-* 7.1.1、全屏播放api
+* 7.1.1、启动全屏播放api
 ```
     mVideoPlayer.startFullScreen();//开启全屏播放
 ```
@@ -276,7 +277,11 @@
 ```
     android:configChanges="orientation|screenSize"
 ```
-* 7.1.3、SDK支持全屏播放下全屏幕沉浸效果
+* 7.1.3、退出全屏播放api
+```
+    mVideoPlayer.quitFullScreen();
+```
+* 7.1.4、SDK支持全屏播放下全屏幕沉浸效果
 ```
     //全屏沉浸样式
     mVideoPlayer.setLandscapeWindowTranslucent(true);
@@ -308,9 +313,23 @@
     videoPlayer.startFullScreen();//开启全屏播放
     videoPlayer.prepareAsync();//开始异步准备播放
 ```
-#### 8、窗口播放
-##### 8.1、Activity级别悬浮窗
-* 8.1.1、Activity级别悬浮窗无需悬浮窗权限直接开启：
+#### 8、全屏播放
+* 要实现类似Pad\TV横屏(或竖屏)下全屏播放效果，只需要在启动横屏播放前禁止Activity横竖屏切换即可
+##### 8.1、禁止Activity横竖屏切换
+```
+    mVideoPlayer.shutFullScreenOrientation();//开启/退出全屏时禁止旋转Activity方向，默认开启
+```
+##### 8.2、启动全屏播放
+```
+    mVideoPlayer.startFullScreen();
+```
+##### 8.3、退出全屏播放
+```
+    mVideoPlayer.quitFullScreen();
+```
+#### 9、窗口播放
+##### 9.1、Activity级别悬浮窗
+* 9.1.1、Activity级别悬浮窗无需悬浮窗权限直接开启：
 ```
     //开启Activity级别窗口播放并启用拖拽窗口松手后自动吸附至屏幕边缘
     mVideoPlayer.startWindow(true);
@@ -318,7 +337,7 @@
     //startWindow支持多参传入，示例参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色，其它更多参数请阅读api。
     mVideoPlayer.startWindow(ScreenUtils.getInstance().dpToPxInt(3f), Color.parseColor("#99000000"));
 ```
-* 8.1.2、SDK支持在任意位置直接启动Activity级别悬浮窗播放：
+* 9.1.2、SDK支持在任意位置直接启动Activity级别悬浮窗播放：
 ```
     private void startMiniWindowPlayer() {
         //播放器内部在收到返回事件时，检查到没有宿主ViewGroup时会自动销毁播放器，此时应该在收到PlayerState.STATE_DESTROY状态时清除播放器变量
@@ -361,11 +380,11 @@
         }
     }
 ```
-* 8.1.3、Activity级别悬浮窗默认是开启松手后自定吸附悬停至最近的X轴方向的屏幕边缘功能的，如需关闭，请查阅：startWindow()多参方法参数说明。
+* 9.1.3、Activity级别悬浮窗默认是开启松手后自定吸附悬停至最近的X轴方向的屏幕边缘功能的，如需关闭，请查阅：startWindow()多参方法参数说明。
 
-##### 8.2、全局悬浮窗
-###### 8.2.1、悬浮窗开启
-* 8.2.1.1、全局悬浮窗需要SYSTEM_ALERT_WINDOW权限，SDK内部会自动检测和申请SYSTEM_ALERT_WINDOW权限。
+##### 9.2、全局悬浮窗
+###### 9.2.1、悬浮窗开启
+* 9.2.1.1、全局悬浮窗需要SYSTEM_ALERT_WINDOW权限，SDK内部会自动检测和申请SYSTEM_ALERT_WINDOW权限。
 ``` 
     //1、申明SYSTEM_ALERT_WINDOW权限
     <!--如您的播放器需要支持全局悬浮窗窗口播放请申明此权限-->
@@ -377,7 +396,7 @@
     //startGlobalWindow支持多参传入，示例参数1：给窗口设置一个圆角，参数2：给窗口设置一个背景色，其它更多参数请阅读api。
     boolean globalWindow = mVideoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
 ```
-* 8.2.1.2、SDK支持在任意位置直接启动全局悬浮窗窗口播放：
+* 9.2.1.2、SDK支持在任意位置直接启动全局悬浮窗窗口播放：
 ```
     VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
     videoPlayer.setLoop(false);
@@ -394,10 +413,10 @@
         videoPlayer.prepareAsync();//开始异步准备播放,注意界面关闭不要销毁播放器实例
     }
 ```
-* 8.2.1.3、全局悬浮窗默认是开启松手后自定吸附悬停至最近的X轴方向的屏幕边缘功能的，如需关闭，请查阅：startGlobalWindow()多参方法参数说明。
+* 9.2.1.3、全局悬浮窗默认是开启松手后自定吸附悬停至最近的X轴方向的屏幕边缘功能的，如需关闭，请查阅：startGlobalWindow()多参方法参数说明。
 
-###### 8.2.2、悬浮窗点击
-* 8.2.2.1、SDK内部提供了监听悬浮窗窗口播放器的关闭、点击回调监听器
+###### 9.2.2、悬浮窗点击
+* 9.2.2.1、SDK内部提供了监听悬浮窗窗口播放器的关闭、点击回调监听器
 ```
     1、在Application中注册监听器
     IWindowManager.getInstance().setOnWindowActionListener(new OnWindowActionListener() {
@@ -428,26 +447,26 @@
 
     3、点击悬浮窗的全屏按钮后会回调至第1步的onClick中。
 ```
-* 8.2.2.2、如果设置了setOnWindowActionListener需要在收到onClose回调后关闭悬浮窗，未设置SDK内部会自定关闭。
-* 8.2.2.3、自定义悬浮窗UI交互组件全屏点击事件请回调至播放器！！！
+* 9.2.2.2、如果设置了setOnWindowActionListener需要在收到onClose回调后关闭悬浮窗，未设置SDK内部会自定关闭。
+* 9.2.2.3、自定义悬浮窗UI交互组件全屏点击事件请回调至播放器！！！
 ```
     IWindowManager.getInstance().onClickWindow();
 ```
-#### 9、多播放器同时播放
-* 9.1、SDK内部默认不支持并发播放，如需支持多播放器同时工作，需要设置允许播放器同时播放。
+#### 10、多播放器同时播放
+* 10.1、SDK内部默认不支持并发播放，如需支持多播放器同时工作，需要设置允许播放器同时播放。
 ```
     //告诉播放器忽略音频焦点丢失事件，播放器内部即可支持多播放器同时播放
     IVideoManager.getInstance().setInterceptTAudioFocus(false);
 ```
-#### 10、直播拉流
-* 10.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请使用ijk或exo,或自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
+#### 11、直播拉流
+* 11.1、SDK内部自带的系统MediaPlayer对直播流的拓展仅限于.m3u8格式，如需支持更多的直播流视频格式，请使用ijk或exo,或自定义解码器拓展。直播流相关请参考[LivePlayerActivity][11]类
 ```
     //ijk音视频解码器,根据自己需要实现
     implementation 'com.github.hty527.iPlayer:ijk:lastversion'
     //exo音视频解码器,根据自己需要实现
     implementation 'com.github.hty527.iPlayer:exo:lastversion'
 ```
-* 10.2、更多格式支持：
+* 11.2、更多格式支持：
 ```
     int MEDIA_CORE=1;
     /**
@@ -466,8 +485,8 @@
 ```
 
 [11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
-#### 11、收费试看模式
-* 11.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
+#### 12、收费试看模式
+* 12.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
     VideoController controller = new VideoController(mVideoPlayer.getContext());//创建一个默认控制器
     WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器
@@ -493,7 +512,7 @@
     });
     controller.addControllerWidget(controPerviewView);
 ```
-#### 12、连续播放
+#### 13、连续播放
 * 可参考Demo中的[VideoListPlayerActivity][12]类
 
 [12]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
@@ -527,16 +546,16 @@
         }
     });
 ```
-#### 13、转场衔接播放
-###### 13.1、列表转场
-* 13.1.1、列表转场衔接继续播放原理：
+#### 14、转场衔接播放
+###### 14.1、列表转场
+* 14.1.1、列表转场衔接继续播放原理：
 ```
     1、点击跳转到新的界面时将播放器从父容器中移除，并保存到全局变量
     2、将全局变量播放器对象添加到新的ViewGroup容器
     3、回到列表界面时如果播放的视频源没有被切换,关闭当前Activity不要销毁播放器,将播放器从当前父容器中移除
     4、重新添加到列表界面的此前正在播放的item中的ViewGroup中
 ```
-* 13.1.2、列表转场衔接继续播放实现：主要参考Demo中的[ListPlayerChangedFragment][13]、[ListPlayerFragment][14]、[VideoDetailsActivity][15]类
+* 14.1.2、列表转场衔接继续播放实现：主要参考Demo中的[ListPlayerChangedFragment][13]、[ListPlayerFragment][14]、[VideoDetailsActivity][15]类
 
 [13]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
 [14]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
@@ -548,18 +567,18 @@
     4、新的Activity销毁：新的Activity在关闭时如果播放器视频地址未被切换，则在onDestroy中不要销毁播放器，参考：VideoDetailsActivity类的onDestroy
     5、回到列表界面：如果处理了第4步，在回到列表界面时接收并处理播放器，参考：ListPlayerChangedFragment类的onActivityResult方法和ListPlayerFragment类的recoverPlayerParent方法
 ```
-###### 13.2、悬浮窗转场
-* 13.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo [WindowGlobalPlayerActivity][16]类的initPlayer方法或[VideoDetailsActivity][15]类的initPlayer方法
-#### 14、实现秒播功能
+###### 14.2、悬浮窗转场
+* 14.2.1、全局悬浮窗窗口播放器转场到新的Activity请参考：Demo [WindowGlobalPlayerActivity][16]类的initPlayer方法或[VideoDetailsActivity][15]类的initPlayer方法
+#### 15、实现秒播功能
 * 参考"视频预缓存"相关说明实现。
-#### 15、视频本地缓存
+#### 16、视频本地缓存
 * 注意预缓存和边播边存api，调用不一样！！！
-* 15.1、为方便视频缓存的业务需求，已基于AndroidVideoCache封装了一个独立SDK，具体api请阅读[VideoCache][20]
+* 16.1、为方便视频缓存的业务需求，已基于AndroidVideoCache封装了一个独立SDK，具体api请阅读[VideoCache][20]
 ```
     //音视频预缓存+边播边存,根据需要使用
     implementation 'com.github.hty527.iPlayer:cache:lastversion'
 ```
-* 15.2、缓存配置,SDK内部会自动处初始化！如果需要自定义缓存大小、缓存目录，可自行调用初始化。
+* 16.2、缓存配置,SDK内部会自动处初始化！如果需要自定义缓存大小、缓存目录，可自行调用初始化。
 ```
     /**
      * SDK内部会在使用缓存相关功能时自动初始化。如果需要自行定义缓存目录、缓存目录最大长度大小可自行调用初始化。必须在使用缓存功能之前初始化
@@ -570,16 +589,16 @@
     //参数2：缓存大小(单位：字节),参数3：缓存路径,不设置默认在sd_card/Android/data/[app_package_name]/cache中
     VideoCache.getInstance().initCache(context,1024*1024*1024,cachePath);//缓存大小为1024M，路径为SD卡下的cachePath。请注意SD卡权限状态。
 ```
-* 15.3、targetSdk=29时Android 10及以上机型创建本地目录失败？
+* 16.3、targetSdk=29时Android 10及以上机型创建本地目录失败？
 ```
     //在你的AndroidManifest中添加此属性配置
     <application
         android:requestLegacyExternalStorage="true">
     </application>
 ```
-##### 15.1、视频预缓存
+##### 16.1、视频预缓存
 * 预缓存一般用于列表、类似抖音的播放场景，在渲染画面时，提前缓存好指定大小的视频文件，实现秒播的功能。参考Demo中的[PagerPlayerAdapter][17]和[VideoCacheActivity][21]用法
-* 15.1.1、开始\结束预缓存
+* 16.1.1、开始\结束预缓存
 ```
     //开始预缓存|缓存，此方法为多参方法，可选preloadLength(预缓存大小)和position(位于列表中的position)
     VideoCache.getInstance().startPreloadTask(rawUrl);//rawUrl为你的源http/https视频地址
@@ -590,14 +609,14 @@
     //取消所有预缓存任务
     VideoCache.getInstance().removeAllPreloadTask();
 ```
-* 15.1.2、使用预缓存地址播放视频
+* 16.1.2、使用预缓存地址播放视频
 ```
     //开始播放时使用此播放地址来播放
     String cacheUrl = VideoPreloadManager.getInstance(getContext()).getPlayPreloadUrl(rawUrl);//rawUrl为你的源视频地址
     mVideoPlayer.setDataSource(cacheUrl);//播放地址设置
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
-##### 15.2、边播边存
+##### 16.2、边播边存
 ```
     //边播边存api非常简单，只需要传入你的地址，内部会转换为本地代理地址，播放完成后，再次播放不再消耗流量(不删除缓存情况下)
     String playUrl = VideoCache.getInstance().getPlayUrl(rawUrl);//rawUrl为你的源视频地址
@@ -611,8 +630,8 @@
 [20]:https://github.com/hty527/iPlayer/tree/main/cache/src/main/java/com/android/iplayer/video/cache/VideoCache.java "VideoCache"
 [21]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoCacheActivity.java "VideoCacheActivity"
 
-#### 16、本地SD卡视频播放
-* 16.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
+#### 17、本地SD卡视频播放
+* 17.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
 ```
     //本地file需要转称file://协议
     File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
@@ -620,18 +639,18 @@
     mVideoPlayer.setDataSource(filePath);
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
-* 16.2、Android9及以上设备提示：Permission denied？请先检查是否动态申请存储权限，若已申请添加如下配置
+* 17.2、Android9及以上设备提示：Permission denied？请先检查是否动态申请存储权限，若已申请添加如下配置
 ```
     //在application中加入
     android:requestLegacyExternalStorage="true"
 ```
-* 16.3、或直接调用api
+* 17.3、或直接调用api
 ```
     File file=new File(Environment.getExternalStorageDirectory(),"190204084208765161.mp4");
     mVideoPlayer.setDataSource(file);
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
-#### 17、Log日志
+#### 18、Log日志
 ```
     ILogger.DEBUG=true;//或 ILogger.setDebug(true);
 ```

@@ -23,6 +23,7 @@
     <string name="text_item_perview">收费试看模式</string>
     <string name="text_item_resouce">Assets或Raw本地资源播放</string>
     <string name="text_item_continuity">连续播放一个视频列表</string>
+    <string name="text_item_pad">Pad和TV</string>
     <string name="text_item_auto">列表自动播放(转场衔接播放)</string>
     <string name="text_item_click">列表点击播放(转场衔接播放)</string>
     <string name="text_item_window">Activity悬浮窗</string>
