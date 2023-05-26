@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true" >
+        <shape>
+            <solid android:color="@color/menu_selected_live"></solid>
+            <corners android:topLeftRadius="3dp" android:bottomLeftRadius="3dp"></corners>
+        </shape>
+    </item>
+    <item android:state_selected="false">
+        <shape>
+            <solid android:color="@color/player_transparent"></solid>
+            <corners android:topLeftRadius="3dp" android:bottomLeftRadius="3dp"></corners>
+            <stroke android:width="1dp" android:color="@color/menu_stroke_live"></stroke>
+        </shape>
+    </item>
+</selector>

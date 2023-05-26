@@ -8,7 +8,7 @@ import com.android.iplayer.model.PlayerState;
 import com.android.videoplayer.R;
 
 /**
- * created by hty
+ * created by htyL
  * 2022/8/25
  * Desc:自定义组件-直播交互UI组件
  */
@@ -52,6 +52,8 @@ public class ControlLiveView extends BaseControlWidget implements View.OnClickLi
         super.onPlayerState(state, message);
         if(PlayerState.STATE_START==state){
             findViewById(R.id.live_controller).setVisibility(View.VISIBLE);
+        }else if(PlayerState.STATE_ERROR==state||PlayerState.STATE_RESET==state||PlayerState.STATE_STOP==state||PlayerState.STATE_DESTROY==state){
+            findViewById(R.id.live_controller).setVisibility(View.INVISIBLE);
         }
     }
 

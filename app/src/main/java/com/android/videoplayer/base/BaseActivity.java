@@ -48,6 +48,7 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     public static final String LIVE_RTSP         ="rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4";//动画视频 (MediaPlayer(支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP1        ="rtmp://ns8.indexforce.com/home/mystream";//伊拉克 Al Sharqiya 电视台 (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP2        ="rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp";//韩国GOOD TV  (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
+    public static final String LIVE_FLV          ="http://115.231.143.224/playtv-live.ifeng.com/live/06OLEGEGM4G.flv";//凤凰卫视中文台
 
     protected PlayerMenuDialog mMenuDialog;//功能交互菜单
     private boolean isFullScreen=false,isForbidCycle=false;//是否开启全屏模式,是否禁止生命周期(悬浮窗必须设置)

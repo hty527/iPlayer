@@ -1,7 +1,10 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
@@ -22,9 +25,11 @@ import com.android.videoplayer.pager.widget.ControlLiveView;
  * 2022/8/25
  * Desc:这是一个直播拉流和简单的自定义直播组件交互的实例
  */
-public class LivePlayerActivity extends BaseActivity {
+public class LivePlayerActivity extends BaseActivity implements View.OnClickListener {
 
+    private String mUrl=LIVE_FLV;
     private int MEDIA_CORE=2;//这里用IJkMediaPlayer作为初始解码器
+    private View[] buttons=new View[3];
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +42,35 @@ public class LivePlayerActivity extends BaseActivity {
                 onBackPressed();
             }
         });
+        initViews();
         initPlayer();
+    }
+
+    private void initViews() {
+        buttons[0]=findViewById(R.id.btn_core_1);
+        buttons[1]=findViewById(R.id.btn_core_2);
+        buttons[2]=findViewById(R.id.btn_core_3);
+        buttons[MEDIA_CORE].setSelected(true);
+        buttons[0].setOnClickListener(this);
+        buttons[1].setOnClickListener(this);
+        buttons[2].setOnClickListener(this);
+        buttons[0].setTag(0);
+        buttons[1].setTag(1);
+        buttons[2].setTag(2);
+        //测试地址播放
+        findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText editText = (EditText) findViewById(R.id.input);
+                String url = editText.getText().toString().trim();
+                if(TextUtils.isEmpty(url)){
+                    Toast.makeText(getApplicationContext(),"请粘贴或输入直播流地址后再播放!",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mUrl=url;
+                reStartPlay();
+            }
+        });
     }
 
     @Override
@@ -71,7 +104,39 @@ public class LivePlayerActivity extends BaseActivity {
                 }
             }
         });
-        mVideoPlayer.setDataSource(LIVE_RTMP2);
+        mVideoPlayer.setDataSource(mUrl);
         mVideoPlayer.prepareAsync();//准备播放
+    }
+
+    @Override
+    public void onClick(View view) {
+        if((int)view.getTag()==MEDIA_CORE) return;
+        switch (view.getId()) {
+            case R.id.btn_core_1:
+                MEDIA_CORE =0;
+                break;
+            case R.id.btn_core_2:
+                MEDIA_CORE =1;
+                break;
+            case R.id.btn_core_3:
+                MEDIA_CORE =2;
+                break;
+        }
+        for (View button : buttons) {
+            button.setSelected(false);
+        }
+        buttons[MEDIA_CORE].setSelected(true);
+        reStartPlay();
+    }
+
+    /**
+     * 重新播放
+     */
+    private void reStartPlay() {
+        if(null!=mVideoPlayer){
+            mVideoPlayer.onReset();
+            mVideoPlayer.setDataSource(mUrl);
+            mVideoPlayer.prepareAsync();
+        }
     }
 }

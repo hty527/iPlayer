@@ -16,11 +16,12 @@ import com.android.videoplayer.video.listener.OnMenuActionListener;
  * 2022/8/25
  * Desc:SDK提供的默认播放器、控制器、UI交互组件等示例
  */
-public class SdkDefaultFuncation extends LinearLayout {
+public class SdkDefaultFuncation extends LinearLayout implements View.OnClickListener {
 
     private PlayerMenuView mMenuView;
     private int MEDIA_CORE=0;//多媒体解码器 0:系统默认 1:ijk 2:exo
     private int RENDER_CORE=0;//画面渲染器 0:TextureView 1:SurfaceView
+    private View[] buttons=new View[3];//解码器按钮
 
     public SdkDefaultFuncation(Context context) {
         this(context,null);
@@ -63,52 +64,23 @@ public class SdkDefaultFuncation extends LinearLayout {
                 if(null!=mOnActionListener) mOnActionListener.setMirror(mirror);
             }
         });
-        View btnCore1 = findViewById(R.id.btn_core_1);
-        btnCore1.setSelected(true);
+
+        //解码器
+        buttons[0]=findViewById(R.id.btn_core_1);
+        buttons[1]=findViewById(R.id.btn_core_2);
+        buttons[2]=findViewById(R.id.btn_core_3);
+        buttons[MEDIA_CORE].setSelected(true);
+        buttons[0].setOnClickListener(this);
+        buttons[1].setOnClickListener(this);
+        buttons[2].setOnClickListener(this);
+        buttons[0].setTag(0);
+        buttons[1].setTag(1);
+        buttons[2].setTag(2);
         if(null!=mOnActionListener){
             mOnActionListener.onMediaCore(MEDIA_CORE);
             mOnActionListener.setCanTouchInPortrait(true);
         }
-        //解码器切换监听
-        btnCore1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                findViewById(R.id.btn_core_3).setSelected(false);
-                findViewById(R.id.btn_core_2).setSelected(false);
-                findViewById(R.id.btn_core_1).setSelected(true);
-                MEDIA_CORE =0;
-                if(null!=mOnActionListener) {
-                    mOnActionListener.onMediaCore(MEDIA_CORE);
-                    mOnActionListener.rePlay(null);
-                }
-            }
-        });
-        findViewById(R.id.btn_core_2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                findViewById(R.id.btn_core_1).setSelected(false);
-                findViewById(R.id.btn_core_3).setSelected(false);
-                findViewById(R.id.btn_core_2).setSelected(true);
-                MEDIA_CORE =1;
-                if(null!=mOnActionListener) {
-                    mOnActionListener.onMediaCore(MEDIA_CORE);
-                    mOnActionListener.rePlay(null);
-                }
-            }
-        });
-        findViewById(R.id.btn_core_3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                findViewById(R.id.btn_core_1).setSelected(false);
-                findViewById(R.id.btn_core_2).setSelected(false);
-                findViewById(R.id.btn_core_3).setSelected(true);
-                MEDIA_CORE =2;
-                if(null!=mOnActionListener) {
-                    mOnActionListener.onMediaCore(MEDIA_CORE);
-                    mOnActionListener.rePlay(null);
-                }
-            }
-        });
+
         //渲染器
         View render1 = findViewById(R.id.btn_render_1);
         render1.setSelected(true);
@@ -188,6 +160,30 @@ public class SdkDefaultFuncation extends LinearLayout {
                 if(null!=mOnActionListener) mOnActionListener.rePlay(url);
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        if((int)view.getTag()==MEDIA_CORE) return;
+        switch (view.getId()) {
+            case R.id.btn_core_1:
+                MEDIA_CORE =0;
+                break;
+            case R.id.btn_core_2:
+                MEDIA_CORE =1;
+                break;
+            case R.id.btn_core_3:
+                MEDIA_CORE =2;
+                break;
+        }
+        for (View button : buttons) {
+            button.setSelected(false);
+        }
+        buttons[MEDIA_CORE].setSelected(true);
+        if(null!=mOnActionListener) {
+            mOnActionListener.onMediaCore(MEDIA_CORE);
+            mOnActionListener.rePlay(null);
+        }
     }
 
     public void onReset() {
