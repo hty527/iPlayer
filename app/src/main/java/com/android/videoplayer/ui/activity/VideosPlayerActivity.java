@@ -77,7 +77,7 @@ public class VideosPlayerActivity extends BaseActivity {
                 });
                 mCorePlayerViews.add(corePlayerView);
                 mPlayerContainer.addView(corePlayerView);
-                corePlayerView.start("https://upload.dongfeng-nissan.com.cn/nissan/video/202204/4cfde6f0-bf80-11ec-95c3-214c38efbbc8.mp4");//天籁宣传片
+                corePlayerView.start(MP4_URL2);//天籁宣传片
             }
         });
     }

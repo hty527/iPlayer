@@ -5,9 +5,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
-
 import androidx.annotation.Nullable;
-
 import com.android.iplayer.base.AbstractMediaPlayer;
 import com.android.iplayer.listener.OnPlayerEventListener;
 import com.android.iplayer.media.IMediaPlayer;
@@ -24,7 +22,7 @@ import com.android.videoplayer.R;
  */
 public class CorePlayerView extends LinearLayout {
 
-    private static final String PATH = "http://vfx.mtime.cn/Video/2019/03/18/mp4/190318231014076505.mp4";//叶问预告片
+    private static final String PATH = "https://vd3.bdstatic.com/mda-pd736fppd4m1muub/sc/cae_h264/1680924082856978562/mda-pd736fppd4m1muub.mp4";//惊奇队长2预告
     protected VideoPlayer mVideoPlayer;
     private int mCurrentMediaCore;//当前正在使用的解码器类型 0:系统 1:ijk 2:exo
     private String mUrl;
