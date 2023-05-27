@@ -33,6 +33,7 @@ import com.android.videoplayer.video.ui.widget.SdkDefaultFuncation;
  * created by hty
  * 2022/6/22
  * Desc:这是一个SDK播放器+默认控制器+默认自定义UI交互组件使用的示例
+ * ！！！播放器生命周期请留意BaseActivity中的生命周期处理！！！
  */
 public class VideoPlayerActivity extends BaseActivity {
 

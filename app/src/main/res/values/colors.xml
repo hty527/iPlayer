@@ -9,7 +9,7 @@
     <color name="menu_sub_title_color">#72747B</color>
     <color name="menu_color">#666666</color>
     <color name="menu_stroke">#888888</color>
-    <color name="menu_stroke_live">#333333</color>
+    <color name="menu_stroke_live">#4DFFFFFF</color>
     <color name="menu_selected_live">#33E5E5E5</color>
     <color name="menu_selected_color">#FFFFFF</color>
     <color name="bg_color">#F2F6FA</color>

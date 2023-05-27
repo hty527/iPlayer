@@ -30,11 +30,10 @@
         android:layout_marginBottom="32dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="40dp"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp">
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
             <TextView
                 android:id="@+id/btn_core_1"
                 android:layout_width="0dp"
@@ -42,7 +41,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_menu_left_live"
                 android:textColor="@color/menu_text_selector"
-                android:textSize="13dp"
+                android:layout_marginRight="-1.2dp"
+                android:textSize="15dp"
                 android:text="MediaPlayer"
                 android:gravity="center"/>
             <TextView
@@ -52,8 +52,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_menu_center_live"
                 android:textColor="@color/menu_text_selector"
-                android:textSize="13dp"
-                android:layout_marginLeft="-1dp"
+                android:textSize="15dp"
                 android:text="IjkPlayer"
                 android:gravity="center"/>
             <TextView
@@ -63,18 +62,18 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_menu_right_live"
                 android:textColor="@color/menu_live_text_selector"
-                android:textSize="13dp"
-                android:layout_marginLeft="-1dp"
+                android:textSize="15dp"
                 android:text="ExoPlayer"
                 android:gravity="center"
+                android:layout_marginLeft="-1.2dp"
                 android:visibility="visible"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_marginTop="12dp">
             <EditText
                 android:id="@+id/input"
@@ -84,7 +83,7 @@
                 android:hint="请粘贴或输入直播流地址"
                 android:textColorHint="#666666"
                 android:textColor="#CCCCCC"
-                android:textSize="14dp"
+                android:textSize="15dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -94,9 +93,10 @@
                 android:layout_width="68dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
-                android:textColor="#666666"
+                android:textColor="@color/menu_text_selector"
                 android:textSize="16dp"
                 android:text="播放"
+                android:textStyle="bold"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/bg_live_play"/>

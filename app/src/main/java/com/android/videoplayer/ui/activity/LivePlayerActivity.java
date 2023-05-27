@@ -1,9 +1,12 @@
 package com.android.videoplayer.ui.activity;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.android.iplayer.base.AbstractMediaPlayer;
@@ -27,9 +30,10 @@ import com.android.videoplayer.pager.widget.ControlLiveView;
  */
 public class LivePlayerActivity extends BaseActivity implements View.OnClickListener {
 
-    private String mUrl=LIVE_FLV;
+    private String mUrl=LIVE_M3U;
     private int MEDIA_CORE=2;//这里用IJkMediaPlayer作为初始解码器
     private View[] buttons=new View[3];
+    private TextView mPlay;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +62,8 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
         buttons[1].setTag(1);
         buttons[2].setTag(2);
         //测试地址播放
-        findViewById(R.id.play).setOnClickListener(new View.OnClickListener() {
+        mPlay = (TextView) findViewById(R.id.play);
+        mPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditText editText = (EditText) findViewById(R.id.input);
@@ -69,6 +74,22 @@ public class LivePlayerActivity extends BaseActivity implements View.OnClickList
                 }
                 mUrl=url;
                 reStartPlay();
+            }
+        });
+        ((EditText) findViewById(R.id.input)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(null!=mPlay) mPlay.setSelected(!TextUtils.isEmpty(charSequence));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }

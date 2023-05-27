@@ -36,8 +36,8 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     public static final String MP4_URL3          ="http://cdnxdc.tanzi88.com/XDC/dvideo/2017/11/29/15f22f48466180232ca50ec25b0711a7.mp4";//网络视频-七舅脑爷
     public static final String MP4_URL4          ="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_30mb.mp4";//国外CDN-熊,慢
     public static final String FLV_URL1          ="https://sf1-hscdn-tos.pstatp.com/obj/media-fe/xgplayer_doc_video/flv/xgplayer-demo-360p.flv";//FLV格式测试流
-    public static final String MP3               ="http://mpge.5nd.com/2022/2022-8-22/3277829/1.mp3";//FLV格式测试流
-    public static final String WMV               ="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/video/ts_1080.ts";//FLV格式测试流
+    public static final String MP3               ="http://mpge.5nd.com/2022/2022-8-22/3277829/1.mp3";//MP3音频
+    public static final String WMV               ="https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/video/ts_1080.ts";//切片格式测试流
 
     /**
      * 直播测试流
@@ -48,7 +48,7 @@ public abstract class BaseActivity <P extends BasePresenter> extends AppCompatAc
     public static final String LIVE_RTSP         ="rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4";//动画视频 (MediaPlayer(支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP1        ="rtmp://ns8.indexforce.com/home/mystream";//伊拉克 Al Sharqiya 电视台 (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
     public static final String LIVE_RTMP2        ="rtmp://mobliestream.c3tv.com:554/live/goodtv.sdp";//韩国GOOD TV  (MediaPlayer(不支持)、IJKMediaPlayer(支持)、ExoPlayer(支持))
-    public static final String LIVE_FLV          ="http://115.231.143.224/playtv-live.ifeng.com/live/06OLEGEGM4G.flv";//凤凰卫视中文台
+    public static final String LIVE_M3U          ="http://stream.lytv.net.cn/2/sd/live.m3u8";//综合
 
     protected PlayerMenuDialog mMenuDialog;//功能交互菜单
     private boolean isFullScreen=false,isForbidCycle=false;//是否开启全屏模式,是否禁止生命周期(悬浮窗必须设置)
