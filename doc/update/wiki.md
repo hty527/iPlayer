@@ -4,24 +4,24 @@
 ## 全量SDK
 ```
     //音视频预缓存+边播边存
-    //implementation 'com.github.hty527.iPlayer:cache:2.1.26.1'
+    implementation 'com.github.hty527.iPlayer:cache:2.1.26.1'
 
     //ijk音视频解码器
-    //implementation 'com.github.hty527.iPlayer:ijk:2.1.26.1'
+    implementation 'com.github.hty527.iPlayer:ijk:2.1.26.1'
 
     //exo音视频解码器
-    //implementation 'com.github.hty527.iPlayer:exo:2.1.26.1'
+    implementation 'com.github.hty527.iPlayer:exo:2.1.26.1'
 
     //选择exo音视频解码器时需引用
     //以下为必须项，SDK内部已引用，集成时无需引用
-    //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
-    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
-    //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+    implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
 
     //以下为exo解码器可选依赖，请根据需要实现
-    //implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
-    //implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
-    //implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
 ```
 ## 常用文档
 ### 一、常用api使用说明
@@ -99,7 +99,7 @@
     VideoController controller=new VideoController(videoPlayer.getContext());
     mVideoPlayer.setController(controller);//将控制器绑定到播放器
     //或使用SDK内置的
-    mVideoPlayer.createController();
+    //mVideoPlayer.setController(mVideoPlayer.initController());
 ```
 ##### 5.2、自定义UI交互组件
 * 5.2.1、为什么有自定义Controller还要整个"自定义UI交互组件"出来？<br>
@@ -198,7 +198,7 @@
 * 5.4.2、使用UI交互组件
 ```
     //创建一个默认控制器
-    VideoController controller = new VideoController(mVideoPlayer.getContext());
+    VideoController controller = mVideoPlayer.initController();
     //将播放器绑定到控制器
     mVideoPlayer.setController(controller);
     //一键使用默认UI交互组件绑定到控制器
