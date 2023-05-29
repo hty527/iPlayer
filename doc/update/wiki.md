@@ -26,8 +26,7 @@
 ## 常用文档
 ### 一、常用api使用说明
 #### 1、播放器API
-* 1.1、请阅读[IPlayerControl][1]
-* 1.2、常用API
+* 1.1、常用API
 ```
     mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置画面缩放|裁剪模式为居中显示(原始大小),定宽等高 (更多缩放模式请参考IMediaPlayer设置)，默认为IMediaPlayer.MODE_ZOOM_TO_FIT
     mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏播放下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳，默认为false
@@ -43,9 +42,9 @@
     mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效伽玛琪
     mVideoPlayer.shutFullScreenOrientation();//开启/退出全屏时禁止旋转Activity方向，默认开启
 ```
+* 1.2、更多API请阅读[IPlayerControl][1]
 #### 2、控制器API
-* 2.1、请阅读[IVideoController][2]
-* 2.2、常用API
+* 2.1、常用API
 ```
     mController.setTitle("测试地址播放");//视频标题(默认控制器横屏状态下可见),所有UI交互组件都会收到setTitle回调
     mController.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)，试看结束回调至OnControllerEventListener的onCompletion()方法，启用试看流程时播放器必须设置为mVideoPlayer.setLoop(true);
@@ -59,6 +58,7 @@
     //mController.setGestureEnabled(true);//是否开启手势控制，默认关闭，关闭之后，手势调节进度，音量，亮度功能将关闭
     //mController.setDoubleTapTogglePlayEnabled(true);//是否开启双击播放/暂停，默认关闭
 ```
+* 2.2、更多API请阅读[IVideoController][2]
 #### 3、交互组件API
 * 3.1、请阅读[IControllerView][3]
 #### 4、自定义解码器
