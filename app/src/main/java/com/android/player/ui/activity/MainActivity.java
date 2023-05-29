@@ -46,6 +46,7 @@ import com.android.player.video.ui.activity.PagerListActivity;
  * created by hty
  * 2022/6/28
  * Desc:示例入口
+ * md:[issue](https://github.com/hty527/iPlayer/issues)
  */
 public class MainActivity extends BaseActivity {
 
@@ -201,7 +202,7 @@ public class MainActivity extends BaseActivity {
         videoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);
         videoPlayer.setProgressCallBackSpaceTime(300);
         videoPlayer.setDataSource(MP4_URL2);//播放地址设置
-        VideoController controller = videoPlayer.createController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
+        VideoController controller = videoPlayer.initController();//初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
         WidgetFactory.bindDefaultControls(controller,false,true);
         controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
         //悬浮窗口播放默认开启自动吸附悬停，如需禁用请阅读多参方法参数说明
@@ -219,9 +220,7 @@ public class MainActivity extends BaseActivity {
     private void startMiniWindowPlayer() {
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(this);
-            VideoController controller=new VideoController(this);
-            //给播放器设置控制器
-            mVideoPlayer.setController(controller);
+            VideoController controller = mVideoPlayer.initController();
             //给播放器控制器绑定需要的自定义UI交互组件
             ControWindowView controWindowView=new ControWindowView(this);//加载中、开始播放
             controller.addControllerWidget(controWindowView);
@@ -272,14 +271,7 @@ public class MainActivity extends BaseActivity {
     private void startFullScreen() {
         VideoPlayer videoPlayer = new VideoPlayer(this);
         videoPlayer.setBackgroundColor(Color.parseColor("#000000"));
-        VideoController controller=new VideoController(videoPlayer.getContext());
-        /**
-         * 给播放器设置控制器
-         */
-        videoPlayer.setController(controller);
-        /**
-         * 给播放器控制器绑定需要的自定义UI交互组件
-         */
+        VideoController controller = videoPlayer.initController();//给播放器设置控制器
         ControlToolBarView toolBarView=new ControlToolBarView(this);//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
         ControlFunctionBarView functionBarView=new ControlFunctionBarView(this);//底部时间、seek、静音、全屏功能栏
         functionBarView.showSoundMute(true,false);//启用静音功能交互\默认不静音

@@ -40,7 +40,7 @@ public class CorePlayerView extends LinearLayout {
         View.inflate(context, R.layout.view_player_core, this);
         mVideoPlayer = findViewById(R.id.view_video_player);
         findViewById(R.id.view_player_container).getLayoutParams().height = getResources().getDisplayMetrics().widthPixels * 9 / 16;//给播放器固定一个高度
-        WidgetFactory.bindDefaultControls(mVideoPlayer.createController());//不显示返回按钮\不添加悬浮窗窗口交互UI组件
+        WidgetFactory.bindDefaultControls(mVideoPlayer.initController());//不显示返回按钮\不添加悬浮窗窗口交互UI组件
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override
             public AbstractMediaPlayer createMediaPlayer() {

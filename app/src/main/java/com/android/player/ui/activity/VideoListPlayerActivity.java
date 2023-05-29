@@ -54,7 +54,7 @@ public class VideoListPlayerActivity extends BaseActivity {
     private void initPlayer() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-        VideoController controller = mVideoPlayer.createController();//绑定默认的控制器
+        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
         WidgetFactory.bindDefaultControls(controller);
 //        controller.setPreViewTotalDuration("3600");//注意:设置虚拟总时长(一旦设置播放器内部走片段试看流程)
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器

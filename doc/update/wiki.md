@@ -1,6 +1,28 @@
 ## 播放器框架结构图
 ![iPlayer架构关系图](https://amuse-1259486925.cos.ap-hongkong.myqcloud.com/image/iPlayer%E6%9E%B6%E6%9E%84%E5%85%B3%E7%B3%BB%E5%9B%BE.png)
 * 如图所示，通过架构图可以直观的看到面向用户层的模块和交互都支持自定义，也包括视频解码器在内。
+## 全量SDK
+```
+    //音视频预缓存+边播边存
+    //implementation 'com.github.hty527.iPlayer:cache:2.1.26.1'
+
+    //ijk音视频解码器
+    //implementation 'com.github.hty527.iPlayer:ijk:2.1.26.1'
+
+    //exo音视频解码器
+    //implementation 'com.github.hty527.iPlayer:exo:2.1.26.1'
+
+    //选择exo音视频解码器时需引用
+    //以下为必须项，SDK内部已引用，集成时无需引用
+    //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+    //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
+
+    //以下为exo解码器可选依赖，请根据需要实现
+    //implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+    //implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+    //implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
+```
 ## 常用文档
 ### 一、常用api使用说明
 #### 1、播放器API
@@ -39,12 +61,8 @@
 ```
 #### 3、交互组件API
 * 3.1、请阅读[IControllerView][3]
-
-[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IPlayerControl.java "IPlayerControl"
-[2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
-[3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 #### 4、自定义解码器
-* 4.1、为方便开发者和减少工作量，特意封装了ijk和exo第三方解码器SDK：
+* 4.1、为方便开发者和减少工作量，特意封装了ijk和exo第三方解码器SDK(版本号见[全量SDK][22])：
 ```
     //ijk音视频解码器,根据自己需要实现
     implementation 'com.github.hty527.iPlayer:ijk:lastversion'
@@ -52,9 +70,6 @@
     implementation 'com.github.hty527.iPlayer:exo:lastversion'
 ```
 * 4.2、SDK默认使用MediaPlayer解码器，自定义解码器的开发,请参考：[IJkMediaPlayer][4]和[ExoMediaPlayer][5]
-
-[4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/java/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
-[5]:https://github.com/hty527/iPlayer/blob/main/exo/src/main/java/com/android/iplayer/media/core/ExoMediaPlayer.java "ExoMediaPlayer"
 * 4.3、更换解码器或应用自定义解码器
 ```
     int MEDIA_CORE=1;
@@ -80,9 +95,6 @@
 ##### 5.1、自定义Controller
 * 5.1.1、继承[BaseController][6]实现自己的控制器，如需手势交互，请继承[GestureController][7]
 * 5.1.2、设置控制器到播放器
-
-[6]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseController.java "BaseController"
-[7]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/controller/GestureController.java "GestureController"
 ```
     VideoController controller=new VideoController(videoPlayer.getContext());
     mVideoPlayer.setController(controller);//将控制器绑定到播放器
@@ -94,9 +106,6 @@
 因为Controller在处理交互比较复杂或功能比较多的场景下耦合性太高，于是Controller就拓展了自定义UI交互组件能力，可根据需要来添加自己的UI交互组件和任意自定义单个交互模块的UI组件。
 * 5.2.2、SDK提供了一套标题栏、底部控制栏、播放器状态(网络提示、播放失败)、播放完成、手势交互相应处理、Window窗口、列表模式 等UI交互组件。Controller的任意UI交互组件均支持自定义。
 * 5.2.3、自定义UI交互组件需要继承[BaseControlWidget][8]，参考[IControllerView][9]接口回调来实现自己的交互：
-
-[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControlWidget.java "BaseControlWidget"
-[9]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
 ```
     /**
      * 1、给播放器设置一个控制器
@@ -202,8 +211,6 @@
 ```
 * 5.4.4、使用默认Controller+自定义交互组件时，SDK内部会为添加的每一个自定义UI组件绑定一个target，默认target请阅读[IVideoController][10]类。
 * 根据默认target寻找组件示例：
-
-[10]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
 ```
     //这里以标题栏为示例
     IControllerView controllerView = controller.findControlWidgetByTag(IVideoController.TARGET_CONTROL_TOOL);
@@ -491,8 +498,6 @@
         }
     });
 ```
-
-[11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
 #### 12、收费试看模式
 * 12.1、SDK默认Controller支持试看模式，请参考[PerviewPlayerActivity][18]分两步实现：
 ```
@@ -522,8 +527,6 @@
 ```
 #### 13、连续播放
 * 可参考Demo中的[VideoListPlayerActivity][12]类
-
-[12]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
 ```
     //1、mVideoPlayer.setLoop(false);//连续播放模式下只能设置为false
     //2、实现连续播放可在收到播放完成时切换视频流
@@ -564,10 +567,6 @@
     4、重新添加到列表界面的此前正在播放的item中的ViewGroup中
 ```
 * 14.1.2、列表转场衔接继续播放实现：主要参考Demo中的[ListPlayerChangedFragment][13]、[ListPlayerFragment][14]、[VideoDetailsActivity][15]类
-
-[13]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
-[14]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
-[15]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/activity/VideoDetailsActivity.java "VideoDetailsActivity"
 ``` 
     1、开始播放：参考ListPlayerFragment类的startPlayer()方法，注意标记当前mCurrentPosition和mPlayerContainer
     2、点击item跳转：参考ListPlayerChangedFragment类的onItemClick()方法，跳转到新的Activity
@@ -631,13 +630,6 @@
     mVideoPlayer.setDataSource(playUrl);//播放地址设置
     mVideoPlayer.prepareAsync();//开始异步准备播放
 ```
-[16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
-[17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
-[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
-[19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IRenderView.java "IRenderView"
-[20]:https://github.com/hty527/iPlayer/tree/main/cache/src/main/java/com/android/iplayer/video/cache/VideoCache.java "VideoCache"
-[21]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoCacheActivity.java "VideoCacheActivity"
-
 #### 17、本地SD卡视频播放
 * 17.1、本地SD卡视频播放需要注意获取存储权限及File文件协议，设置本地播放地址如下：
 ```
@@ -696,26 +688,7 @@
 ```
 #### 2、EXO解码器
 ##### 2.1、依赖
-* SDK内部引用的EXO SDK版本号为：2.18.1
-```
-    //对EXO解码器的二次封装实现，必须依赖（版本号与iPlayer SDK一致）
-    implementation 'com.github.hty527.iPlayer:exo:lastversion'
-
-    //SDK内部实现EXO解码器逻辑，必须依赖
-    //以下为必须项，SDK内部已引用，集成时无需引用
-    //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
-    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
-    //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
-
-    //以下为可选依赖，请根据需要实现
-    //implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
-    //implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
-    //implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
-    //以下为自定义解码器场景根据需要实现，直接使用com.github.hty527.iPlayer:exo SDK时无需引用
-    //implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:2.18.1"//支持SmoothStreaming内容
-    //implementation "com.google.android.exoplayer:exoplayer-transformer:2.18.1"//媒体转换功能，需要minSdkVersion>=21
-    //implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'//用于ExoPlayer的UI组件和资源
-```
+* SDK内部引用的EXO SDK版本号详见：[全量SDK][22]
 ##### 2.2、使用
 ```
     //开始播放视频前设置实现生效
@@ -865,3 +838,27 @@
     -dontwarn com.google.android.exoplayer2.**
 ```
 #### 更多文档持续更新中...
+
+
+[1]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IPlayerControl.java "IPlayerControl"
+[2]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
+[3]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
+[4]:https://github.com/hty527/iPlayer/blob/main/ijk/src/main/java/com/android/iplayer/media/core/IJkMediaPlayer.java "IJkMediaPlayer"
+[5]:https://github.com/hty527/iPlayer/blob/main/exo/src/main/java/com/android/iplayer/media/core/ExoMediaPlayer.java "ExoMediaPlayer"
+[6]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseController.java "BaseController"
+[7]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/controller/GestureController.java "GestureController"
+[8]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/base/BaseControlWidget.java "BaseControlWidget"
+[9]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IControllerView.java "IControllerView"
+[10]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IVideoController.java "IVideoController"
+[11]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/LivePlayerActivity.java "LivePlayerActivity"
+[12]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoListPlayerActivity.java "VideoListPlayerActivity"
+[13]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerChangedFragment.java "ListPlayerChangedFragment"
+[14]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/fragment/ListPlayerFragment.java "ListPlayerFragment"
+[15]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/video/ui/activity/VideoDetailsActivity.java "VideoDetailsActivity"
+[16]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/WindowGlobalPlayerActivity.java "WindowGlobalPlayerActivity"
+[17]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/pager/adapter/PagerPlayerAdapter.java "PagerPlayerAdapter"
+[18]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/PerviewPlayerActivity.java "PerviewPlayerActivity"
+[19]:https://github.com/hty527/iPlayer/blob/main/iplayer/src/main/java/com/android/iplayer/interfaces/IRenderView.java "IRenderView"
+[20]:https://github.com/hty527/iPlayer/tree/main/cache/src/main/java/com/android/iplayer/video/cache/VideoCache.java "VideoCache"
+[21]:https://github.com/hty527/iPlayer/blob/main/app/src/main/java/com/android/videoplayer/ui/activity/VideoCacheActivity.java "VideoCacheActivity"
+[22]:https://github.com/hty527/iPlayer/wiki#全量SDK "全量SDK"

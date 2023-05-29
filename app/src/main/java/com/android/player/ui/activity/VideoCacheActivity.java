@@ -53,7 +53,7 @@ public class VideoCacheActivity extends BaseActivity {
     private void initPlayer() {
         //播放器播放之前准备工作
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
-        WidgetFactory.bindDefaultControls(mVideoPlayer.createController());//使用默认的UI交互
+        WidgetFactory.bindDefaultControls(mVideoPlayer.initController());//使用默认的UI交互
         mVideoPlayer.setLandscapeWindowTranslucent(true);
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {
             @Override

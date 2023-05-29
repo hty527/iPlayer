@@ -54,7 +54,7 @@ public class DanmuPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
         //给播放器设置一个控制器
-        VideoController controller = mVideoPlayer.createController();
+        VideoController controller = mVideoPlayer.initController();
         WidgetFactory.bindDefaultControls(controller);
         mDanmuWidgetView = new DanmuWidgetView(controller.getContext());
         //将弹幕组件添加到控制器最底层

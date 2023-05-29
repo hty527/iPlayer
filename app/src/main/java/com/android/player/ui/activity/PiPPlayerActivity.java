@@ -54,6 +54,7 @@ public class PiPPlayerActivity extends AppCompatActivity {
     private static final int REQUEST_PLAY = 1;//播放事件
     private static final int REQUEST_PAUSE = 2;
     private static final int REQUEST_REPLAY = 3;
+    private PipBroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class PiPPlayerActivity extends AppCompatActivity {
     private void initPlayer() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         mVideoPlayer.setLayoutParams(new LinearLayout.LayoutParams(ScreenUtils.getInstance().getScreenWidth(), ScreenUtils.getInstance().getScreenWidth() * 9 /16));
-        VideoController controller = mVideoPlayer.createController();//绑定默认的控制器
+        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
         WidgetFactory.bindDefaultControls(controller);
         controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         //如果适用自定义解码器则必须实现setOnPlayerActionListener并返回一个多媒体解码器
@@ -179,18 +180,16 @@ public class PiPPlayerActivity extends AppCompatActivity {
         if(isInPictureInPictureMode){
             mVideoPlayer.enterPipWindow();//告诉播放器进入画中画场景(画中画场景时controller不可用)
             mVideoPlayer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            mReceiver = new PipBroadcastReceiver();
             registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));//注册广播事件
         }else{
-            if(null!=mReceiver){
-                unregisterReceiver(mReceiver);
-                mReceiver=null;
-            }
+            release();
             mVideoPlayer.setLayoutParams(new LinearLayout.LayoutParams(ScreenUtils.getInstance().getScreenWidth(), ScreenUtils.getInstance().getScreenWidth() * 9 /16));
             mVideoPlayer.quitPipWindow();//告诉播放器退出画中画场景(退出画中画场景时恢复controller可用)
         }
     }
 
-    private BroadcastReceiver mReceiver =new BroadcastReceiver(){
+    private class PipBroadcastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -207,7 +206,7 @@ public class PiPPlayerActivity extends AppCompatActivity {
                     break;
             }
         }
-    };
+    }
 
     /**
      * 动态更新窗口宽高比例
@@ -218,6 +217,17 @@ public class PiPPlayerActivity extends AppCompatActivity {
         mBuilder.setAspectRatio(aspectRatio);
         //设置更新PictureInPictureParams
         setPictureInPictureParams(mBuilder.build());
+    }
+
+    private void release() {
+        if(null!=mReceiver){
+            try {
+                unregisterReceiver(mReceiver);
+                mReceiver=null;
+            }catch (Throwable e){
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -250,10 +260,7 @@ public class PiPPlayerActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(null!=mReceiver){
-            unregisterReceiver(mReceiver);
-            mReceiver=null;
-        }
+        release();
     }
 
     @Override
@@ -265,10 +272,7 @@ public class PiPPlayerActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-        if(null!=mReceiver){
-            unregisterReceiver(mReceiver);
-            mReceiver=null;
-        }
+        release();
         if(null!=mVideoPlayer){
             mVideoPlayer.onDestroy();
         }

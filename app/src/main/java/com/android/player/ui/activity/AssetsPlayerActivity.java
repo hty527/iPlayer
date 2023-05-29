@@ -48,9 +48,7 @@ public class AssetsPlayerActivity extends BaseActivity {
     private void init() {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         findViewById(R.id.player_container).getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;
-
-        VideoController controller = new VideoController(mVideoPlayer.getContext());//创建一个默认控制器
-        mVideoPlayer.setController(controller);//将播放器绑定到控制器
+        VideoController controller = mVideoPlayer.initController();//创建一个默认控制器
         WidgetFactory.bindDefaultControls(controller);//一键使用默认UI交互组件绑定到控制器
 
         mVideoPlayer.setLoop(false);

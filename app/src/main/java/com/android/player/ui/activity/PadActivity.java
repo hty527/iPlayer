@@ -52,7 +52,7 @@ public class PadActivity extends BaseActivity {
     private void initPlayer() {
         findViewById(R.id.player_container).getLayoutParams().height= ScreenUtils.getInstance().dpToPxInt(300f) * 10 /16;//给播放器固定一个高度
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
-        VideoController controller = mVideoPlayer.createController();//绑定默认的控制器
+        VideoController controller = mVideoPlayer.initController();//绑定默认的控制器
         WidgetFactory.bindDefaultControls(controller);
         controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
         mVideoPlayer.setOnPlayerActionListener(new OnPlayerEventListener() {

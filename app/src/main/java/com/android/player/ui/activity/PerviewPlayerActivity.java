@@ -53,7 +53,7 @@ public class PerviewPlayerActivity extends BaseActivity {
         mVideoPlayer = (VideoPlayer) findViewById(R.id.video_player);
         mVideoPlayer.getLayoutParams().height= getResources().getDisplayMetrics().widthPixels * 9 /16;//给播放器固定一个高度
 //        mVideoPlayer.setPlayCompletionRestoreDirection(false);
-        VideoController controller = mVideoPlayer.createController();
+        VideoController controller = mVideoPlayer.initController();
         WidgetFactory.bindDefaultControls(controller);
         //1、试看需要现设置虚拟总时长
         controller.setPreViewTotalDuration(DURATION+"");//注意:设置虚拟总时长(一旦设置控制器部走片段试看流程)

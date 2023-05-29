@@ -363,8 +363,7 @@ public class ListPlayerFragment extends BaseFragment<VideoListPersenter> impleme
         if(null==mVideoPlayer){
             mVideoPlayer = new VideoPlayer(getContext());
             //为播放器添加控制器
-            VideoController controller=new VideoController(mVideoPlayer.getContext());
-            mVideoPlayer.setController(controller);
+            VideoController controller = mVideoPlayer.initController();
             //为控制器添加UI交互组件
             ControlToolBarView toolBarView=new ControlToolBarView(controller.getContext());//标题栏，返回按钮、视频标题、功能按钮、系统时间、电池电量等组件
             toolBarView.setTarget(IVideoController.TARGET_CONTROL_TOOL);

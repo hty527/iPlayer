@@ -86,7 +86,7 @@ public class WindowGlobalPlayerActivity extends BaseActivity {
             playerParent.addView(mVideoPlayer, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
 
             //为播放器添加控制器和Ui交互组件
-            VideoController controller = mVideoPlayer.createController();
+            VideoController controller = mVideoPlayer.initController();
             WidgetFactory.bindDefaultControls(controller,false,true);
             controller.setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
 
