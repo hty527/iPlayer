@@ -21,9 +21,9 @@ public interface IPlayerControl<V extends BaseController> {
 
     /**
      * 设置播放进度回调间隔时间
-     * @param callBackSpaceMilliss 设置播放进度回调间隔时间 单位：毫秒,数字越大性能越好,越小回调越频繁
+     * @param millisecond 设置播放进度回调间隔时间 单位：毫秒,数字越大性能越好,越小回调越频繁
      */
-    void setProgressCallBackSpaceMilliss(int callBackSpaceMilliss);
+    void setProgressCallBackSpaceTime(int millisecond);
 
     /**
      * 设置播放状态监听
@@ -135,9 +135,9 @@ public interface IPlayerControl<V extends BaseController> {
 
     /**
      * 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
-     * @param reCatenationCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     * @param retryCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
      */
-    void setReCatenationCount(int reCatenationCount);
+    void setRetryCount(int retryCount);
 
     /**
      * 驾驶异步准备播放
@@ -385,7 +385,10 @@ public interface IPlayerControl<V extends BaseController> {
     boolean startGlobalWindow(float radius,int bgColor,boolean isAutoSorption);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -393,16 +396,15 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
      */
     boolean startGlobalWindow(int width,int height,float startX,float startY);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -410,17 +412,16 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置
      * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
      */
     boolean startGlobalWindow(int width,int height,float startX,float startY,boolean isAutoSorption);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -428,16 +429,16 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
      * @param radius 窗口的圆角 单位:像素
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
      */
     boolean startGlobalWindow(int width,int height,float startX,float startY,float radius);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -445,9 +446,6 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
      * @param radius 窗口的圆角 单位:像素
      * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
@@ -455,7 +453,10 @@ public interface IPlayerControl<V extends BaseController> {
     boolean startGlobalWindow(int width,int height,float startX,float startY,float radius,boolean isAutoSorption);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -463,9 +464,6 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
      * @return true:开启悬浮窗成功 false:开启悬浮窗失败
@@ -473,7 +471,10 @@ public interface IPlayerControl<V extends BaseController> {
     boolean startGlobalWindow(int width,int height,float startX,float startY,float radius,int bgColor);
 
     /**
-     * @param width 窗口播放器的宽,当小于=0时用默认
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      * 开启可拖拽的全局悬浮窗口播放
      * 默认宽为屏幕1/2+30dp,高为1/2+30dp的16:9比例,X起始位置为:播放器原宿主的右下方,距离原宿主View顶部12dp,右边12dp(如果原宿主不存在,则位于屏幕右上角距离顶部60dp位置),
      * 全局悬浮窗口和局部小窗口不能同时开启
@@ -481,9 +482,6 @@ public interface IPlayerControl<V extends BaseController> {
      * 需要声明权限：
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
-     * @param height 窗口播放器的高,当小于=0时用默认
-     * @param startX 窗口位于屏幕中的X轴起始位置,当小于=0时用默认
-     * @param startY 窗口位于屏幕中的Y轴起始位置,当小于=0时用默认
      * @param radius 窗口的圆角 单位:像素
      * @param bgColor 窗口的背景颜色
      * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘(悬停时距离屏幕边缘12dp),true:自动吸附,false:保持在床后的最后位置状态
@@ -497,7 +495,7 @@ public interface IPlayerControl<V extends BaseController> {
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
      */
-    void quitGlobaWindow();
+    void quitGlobalWindow();
 
     /**
      * 开启\关闭可拖拽的全局悬浮窗口播放
@@ -505,7 +503,7 @@ public interface IPlayerControl<V extends BaseController> {
      *     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
      *     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
      */
-    void toggleGlobaWindow();
+    void toggleGlobalWindow();
 
     /**
      * 告诉播放器进入了画中画模式

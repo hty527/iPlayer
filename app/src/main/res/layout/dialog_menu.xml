@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.android.videoplayer.video.ui.widget.RoundCornerImageView
+    <com.android.player.video.ui.widget.RoundCornerImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/ic_dialog_bg"
@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.android.videoplayer.video.ui.widget.PlayerMenuView
+        <com.android.player.video.ui.widget.PlayerMenuView
             android:id="@+id/dialog_menus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

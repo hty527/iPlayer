@@ -391,7 +391,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * @param callBackSpaceMilliss 设置播放进度回调间隔时间 单位：毫秒,数字越大性能越好,越小回调越频繁
      */
     @Override
-    public void setProgressCallBackSpaceMilliss(int callBackSpaceMilliss) {
+    public void setProgressCallBackSpaceTime(int callBackSpaceMilliss) {
         if(null!=mIVideoPlayer) mIVideoPlayer.setCallBackSpaceMilliss(callBackSpaceMilliss);
     }
 
@@ -606,12 +606,12 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
     }
 
     /**
-     * @param reCatenationCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
+     * @param retryCount 设置当播放器遇到链接视频文件失败时自动重试的次数，内部自动重试次数为3次
      */
     @Override
-    public void setReCatenationCount(int reCatenationCount) {
+    public void setRetryCount(int retryCount) {
         if(null!=mIVideoPlayer){
-            mIVideoPlayer.setReCatenationCount(reCatenationCount);
+            mIVideoPlayer.setReCatenationCount(retryCount);
         }
     }
 
@@ -898,7 +898,7 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
                 }
 
                 @Override
-                public void onClick(BasePlayer basePlayer, Object coustomParams) {
+                public void onClick(BasePlayer basePlayer, Object customParams) {
 
                 }
 
@@ -1050,37 +1050,8 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
 //            ILogger.d(TAG,"startGlobalWindow-->1,activity:"+activity+",isFinishing:"+(null!=activity?activity.isFinishing():true));
             if (null != activity&&!activity.isFinishing()) {//将this添加到悬浮窗,然后从悬浮窗移除之后又将this添加到Activity中。此时Activity的isFinishing()状态为:true。所有这里干脆不判断isFinishing()了
                 try {
-                    int[] screenLocation=new int[2];
-                    ViewGroup parent=null;
-                    //1.从原有竖屏窗口移除自己前保存自己的Parent,直接开启全屏是不存在宿主ViewGroup的,可直接窗口转场
-                    if(null!=getParent()&& getParent() instanceof ViewGroup){
-                        parent = (ViewGroup) getParent();
-                        parent.getLocationInWindow(screenLocation);
-//                        ILogger.d(TAG,"startGlobalWindow-->parent_id:"+getId()+",parentX:"+screenLocation[0]+",parentY:"+screenLocation[1]+",parentWidth:"+parent.getWidth()+",parentHeight:"+parent.getHeight());
-                    }
-                    PlayerUtils.getInstance().removeViewFromParent(this);//从原宿主中移除自己
-                    //2.获取宿主的View属性和startX、Y轴
-                    //如果传入的宽高不存在,则使用默认的16：9的比例创建Window View
-                    if(width<=0){
-                        width = PlayerUtils.getInstance().getScreenWidth(getContext())/2+PlayerUtils.getInstance().dpToPxInt(30f);
-                        height = width*9/16;
-//                        ILogger.d(TAG,"startGlobalWindow-->未传入宽高,width:"+width+",height:"+height);
-                    }
-                    //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方12dp处
-                    if(startX<=0&&null!=parent){
-                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
-                        startY=screenLocation[1]+parent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
-//                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
-                    }
-                    //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧12dp位置，startY起点位于屏幕高度-Window View 高度+12dp位置处
-                    if(startX<=0){
-                        startX=(PlayerUtils.getInstance().getScreenWidth(getContext())/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
-                        startY=PlayerUtils.getInstance().dpToPxInt(60f);
-//                        ILogger.d(TAG,"startGlobalWindow-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
-                    }
-                    ILogger.d(TAG,"startGlobalWindow-->final:width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
-                    //3.转场到window中,并指定宽高和x,y轴
-                    boolean success= IWindowManager.getInstance().addGolbalWindow(getContext(), this, width, height, startX, startY,radius,bgColor,isAutoSorption);
+                    //3.转场到window中
+                    boolean success= IWindowManager.getInstance().addGlobalWindow(getContext(), this, width, height, startX, startY,radius,bgColor,isAutoSorption);
 //                    ILogger.d(TAG,"startGlobalWindow--悬浮窗创建结果："+success);
                     //4.改变播放器横屏或窗口播放状态
                     if(success){
@@ -1119,8 +1090,8 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * 退出全局悬浮窗口播放
      */
     @Override
-    public void quitGlobaWindow() {
-        IWindowManager.getInstance().quitGlobaWindow();
+    public void quitGlobalWindow() {
+        IWindowManager.getInstance().quitGlobalWindow();
         setWindowPropertyPlayer(false,false);
     }
 
@@ -1128,9 +1099,9 @@ public abstract class BasePlayer extends FrameLayout implements IPlayerControl, 
      * 开启\退出全局悬浮窗口播放
      */
     @Override
-    public void toggleGlobaWindow() {
+    public void toggleGlobalWindow() {
         if(mIsGlobalWindow){
-            quitGlobaWindow();
+            quitGlobalWindow();
             return;
         }
         //非工作中状态不允许开启窗口模式

@@ -1,6 +1,6 @@
 ext {
     sdk=[
-         versionCode    : 20123,
-         versionName    : "2.1.23"//SDK版本号
+         versionCode    : 20126,
+         versionName    : "2.1.26"//SDK版本号
     ]
 }

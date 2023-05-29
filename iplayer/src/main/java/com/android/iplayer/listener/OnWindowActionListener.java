@@ -19,9 +19,9 @@ public interface OnWindowActionListener {
     /**
      * 点击悬浮窗回调
      * @param basePlayer 播放器实例
-     * @param coustomParams 自定义参数
+     * @param customParams 自定义参数
      */
-    void onClick(BasePlayer basePlayer,Object coustomParams);
+    void onClick(BasePlayer basePlayer,Object customParams);
 
 
     /**

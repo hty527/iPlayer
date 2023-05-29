@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.videoplayer">
+    package="com.android.player">
 
     <!--播放网络视频需要声明此权限-->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.android.videoplayer.App"
+        android:name="com.android.player.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,7 +23,7 @@
         android:requestLegacyExternalStorage="true">
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <activity
-            android:name="com.android.videoplayer.ui.activity.MainActivity"
+            android:name="com.android.player.ui.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -33,106 +33,93 @@
         </activity>
         <!--常规播放器示例,注意！！！必须添加：android:configChanges="orientation|screenSize"属性！！！-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.VideoPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.VideoPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
         <!--直播拉流-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.LivePlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.LivePlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
         <!--双播放器同时播放示例,注意！！！必须添加：android:configChanges="orientation|screenSize"属性！！！-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.VideosPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.VideosPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
         <!--垂直切片播放示例-->
         <activity
-            android:name="com.android.videoplayer.pager.activity.PagerPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.pager.activity.PagerPlayerActivity"
             android:screenOrientation="portrait"/>
         <!--列表自动播放-->
         <activity
-            android:name="com.android.videoplayer.video.ui.activity.PagerListActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.video.ui.activity.PagerListActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
         <!--RAW和Assets资源播放-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.AssetsPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.AssetsPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
         <!--迷你窗口播放-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.WindowPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.WindowPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
         <!--悬浮窗口播放-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.WindowGlobalPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.WindowGlobalPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
         <!--连续播放一个视频列表-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.VideoListPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.VideoListPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"/>
         <!--无缝转场播放-->
         <activity
-            android:name="com.android.videoplayer.video.ui.activity.VideoDetailsActivity"
+            android:name="com.android.player.video.ui.activity.VideoDetailsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:theme="@style/VideoAppTheme"/>
         <!--画中画-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.PiPPlayerActivity"
-            android:resizeableActivity="true"
-            android:supportsPictureInPicture="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+            android:name="com.android.player.ui.activity.PiPPlayerActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:theme="@style/VideoAppTheme"/>
+            android:excludeFromRecents="true"
+            android:supportsPictureInPicture="true"
+            android:resizeableActivity="true"
+            android:launchMode="singleTask"
+            android:theme="@style/VideoAppTheme">
+        </activity>
         <!--弹幕交互示例-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.DanmuPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.DanmuPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
         <!--收费试看交互示例-->
         <activity
-            android:name="com.android.videoplayer.ui.activity.PerviewPlayerActivity"
-            android:launchMode="singleTask"
+            android:name="com.android.player.ui.activity.PerviewPlayerActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
         <!--视频预缓存-->
-        <activity android:name="com.android.videoplayer.ui.activity.VideoCacheActivity"
-            android:launchMode="singleTask"
+        <activity android:name="com.android.player.ui.activity.VideoCacheActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize">
         </activity>
         <!--Pad和Tv-->
-        <activity android:name="com.android.videoplayer.ui.activity.PadActivity"
-            android:launchMode="singleTask"
+        <activity android:name="com.android.player.ui.activity.PadActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout">
         </activity>
         <!--权限申请-悬浮窗-->
-        <activity android:name="com.android.videoplayer.ui.activity.WindowPermissionActivity"
-            android:launchMode="singleTask"
+        <activity android:name="com.android.player.ui.activity.WindowPermissionActivity"
             android:theme="@style/TranslucentTheme"/>
     </application>
 </manifest>

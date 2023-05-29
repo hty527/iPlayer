@@ -10,7 +10,7 @@
     mVideoPlayer.setZoomModel(IMediaPlayer.MODE_ZOOM_TO_FIT);//设置画面缩放|裁剪模式为居中显示(原始大小),定宽等高 (更多缩放模式请参考IMediaPlayer设置)，默认为IMediaPlayer.MODE_ZOOM_TO_FIT
     mVideoPlayer.setLandscapeWindowTranslucent(true);//全屏播放下是否启用沉浸样式，默认关闭。辅以setZoomModel为IMediaPlayer.MODE_ZOOM_CROPPING效果最佳，默认为false
     mVideoPlayer.setLoop(true);//是否循环播放，，默认为false
-    mVideoPlayer.setProgressCallBackSpaceMilliss(300);//设置进度条回调间隔时间(毫秒)，默认300毫秒
+    mVideoPlayer.setProgressCallBackSpaceTime(300);//设置进度条回调间隔时间(毫秒)，默认300毫秒
     mVideoPlayer.setSoundMute(false);//是否开启静音播放，默认为false
     mVideoPlayer.setSpeed(1.0f);//设置播放倍速(默认正常即1.0f，区间：0.5f-2.0f)
     mVideoPlayer.setMirror(false);//是否镜像显示，默认为false
@@ -18,7 +18,7 @@
     mVideoPlayer.setMobileNetwork(false);//移动网络下是否允许播放网络视频,如需网络提示交互需要声明权限：<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     mVideoPlayer.setInterceptTAudioFocus(true);//是否监听音频焦点状态，设置为true后SDK在监听焦点丢失时自动暂停播放，，默认为true
     mVideoPlayer.setPlayCompletionRestoreDirection(true);//横屏状态下播放完成是否自动还原到竖屏状态,默认为true
-    mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效
+    mVideoPlayer.setAutoChangeOrientation(true);//是否开启重力旋转。当系统"自动旋转"开启+正在播放生效伽玛琪
     mVideoPlayer.shutFullScreenOrientation();//开启/退出全屏时禁止旋转Activity方向，默认开启
 ```
 #### 2、控制器API
@@ -307,7 +307,7 @@
     ControlLoadingView loadingView=new ControlLoadingView(this);//加载中、开始播放
     controller.addControllerWidget(toolBarView,functionBarView,statusView,gestureView,completionView,loadingView);
     videoPlayer.setLoop(false);
-    videoPlayer.setProgressCallBackSpaceMilliss(300);
+    videoPlayer.setProgressCallBackSpaceTime(300);
     videoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
     videoPlayer.setDataSource(MP4_URL2);//播放地址设置
     videoPlayer.startFullScreen();//开启全屏播放
@@ -361,7 +361,7 @@
                 }
             });
             mVideoPlayer.setLoop(false);
-            mVideoPlayer.setProgressCallBackSpaceMilliss(300);
+            mVideoPlayer.setProgressCallBackSpaceTime(300);
             mVideoPlayer.getController().setTitle("测试播放地址");//视频标题(默认视图控制器横屏可见)
             mVideoPlayer.setDataSource(MP4_URL2);//播放地址设置
             //自定义窗口播放的宽,高,起始X轴,起始Y轴属性,这里示例将播放器添加到标题栏下方右侧
@@ -400,7 +400,7 @@
 ```
     VideoPlayer videoPlayer = new VideoPlayer(MainActivity.this);
     videoPlayer.setLoop(false);
-    videoPlayer.setProgressCallBackSpaceMilliss(300);
+    videoPlayer.setProgressCallBackSpaceTime(300);
     videoPlayer.setDataSource(MP4_URL2);//播放地址设置
     //初始化一个默认的控制器(内部适用默认的一套交互UI控制器组件)
     VideoController controller = new VideoController(mVideoPlayer.getContext());
@@ -409,7 +409,7 @@
     controller.setTitle("任意界面开启一个悬浮窗窗口播放器");//视频标题(默认视图控制器横屏可见)
     boolean globalWindow = videoPlayer.startGlobalWindow(ScreenUtils.getInstance().dpToPxInt(3), Color.parseColor("#99000000"));
     if(globalWindow) {
-        IWindowManager.getInstance().setCoustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
+        IWindowManager.getInstance().setCustomParams(null);//给悬浮窗口播放器绑定自定义参数，在点击窗口播放器跳转至Activity时有用
         videoPlayer.prepareAsync();//开始异步准备播放,注意界面关闭不要销毁播放器实例
     }
 ```
@@ -438,12 +438,12 @@
         @Override
         public void onClose() {
             Logger.d(TAG,"onClose-->");
-            IWindowManager.getInstance().quitGlobaWindow();//关闭悬浮窗播放器窗口
+            IWindowManager.getInstance().quitGlobalWindow();//关闭悬浮窗播放器窗口
         }
     });
 
     2、在启动全局悬浮窗窗口播放器播放成功后，设置自定义参数(在点击悬浮窗时转场到Activity继续播放时需要)
-    IWindowManager.getInstance().setCoustomParams(coustomParams);
+    IWindowManager.getInstance().setCustomParams(coustomParams);
 
     3、点击悬浮窗的全屏按钮后会回调至第1步的onClick中。
 ```
@@ -465,6 +465,14 @@
     implementation 'com.github.hty527.iPlayer:ijk:lastversion'
     //exo音视频解码器,根据自己需要实现
     implementation 'com.github.hty527.iPlayer:exo:lastversion'
+    //EXO解码器SDK使用的官方版本号：
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'//支持DASH内容
+    implementation "com.google.android.exoplayer:exoplayer-hls:2.18.1"//支持HLS内容
+    implementation "com.google.android.exoplayer:exoplayer-rtsp:2.18.1"//rtsp直播流解码协议
+    //exo音视频解码器，以下为可选依赖，请根据需要实现
+    //implementation 'com.google.android.exoplayer:exoplayer:2.18.1'//（必需）
+    //implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'//核心功能（必需）
+    //implementation "com.google.android.exoplayer:extension-rtmp:2.18.1"//rtmp直播流解码协议//（必需）
 ```
 * 11.2、更多格式支持：
 ```

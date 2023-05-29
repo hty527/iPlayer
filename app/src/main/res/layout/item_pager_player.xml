@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.android.videoplayer.pager.widget.PagerVideoController
+    <com.android.player.pager.widget.PagerVideoController
         android:id="@+id/item_video_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import com.android.iplayer.R;
 import com.android.iplayer.base.BasePlayer;
@@ -17,15 +18,17 @@ import com.android.iplayer.widget.view.WindowPlayerFloatView;
  * 2022/7/4
  * Desc:全局悬浮窗口播放管理者,开发者可自行调用api来添加自定义的VideoPlayer到窗口中
  */
-public class IWindowManager {
+public final class IWindowManager {
 
     private static final String TAG = "IWindowManager";
     private volatile static IWindowManager mInstance;
+    //以下二个变量将时常驻内存，只初始化一次
     private static WindowManager mWindowManager;
+    private WindowManager.LayoutParams mLayoutParams;
+
     private WindowPlayerFloatView mPlayerContainer;
     private OnWindowActionListener mWindowActionListener;
-    private WindowManager.LayoutParams mLayoutParams;
-    private Object mCoustomParams;//自定义参数
+    private Object mCustomParams;//自定义参数
 
     public static synchronized IWindowManager getInstance() {
         synchronized (IWindowManager.class) {
@@ -35,6 +38,8 @@ public class IWindowManager {
         }
         return mInstance;
     }
+
+    private IWindowManager(){}
 
     private WindowManager getWindowManager() {
         return getWindowManager(PlayerUtils.getInstance().getContext());
@@ -48,22 +53,16 @@ public class IWindowManager {
     }
 
     /**
-     * 将播放器添加到全局窗口中
-     * @param context context 上下文
-     * @param basePlayer 继承自BasePlayer的播放器实例
-     * @param width 窗口播放器的宽
-     * @param height 窗口播放器的高
-     * @param startX 窗口位于屏幕中的X轴起始位置
-     * @param startY 窗口位于屏幕中的Y轴起始位置
-     * @param radius 窗口的圆角 单位:像素
-     * @param bgColor 窗口的背景颜色
-     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘
+     * 初始化全局悬浮窗初始化参数
+     * @param context 播放器上下文
+     * @param basePlayer 播放器
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
      */
-    public boolean addGolbalWindow(Context context, BasePlayer basePlayer, int width, int height, float startX, float startY, float radius, int bgColor,boolean isAutoSorption) {
-        quitGlobaWindow();//清除可能存在的窗口播放器
-        try {
-            //悬浮窗口准备
-            WindowManager windowManager = getWindowManager(context);
+    private void initParams(Context context,BasePlayer basePlayer,int width,int height,float startX,float startY) {
+        if(null==mLayoutParams){
             mLayoutParams = new WindowManager.LayoutParams();
             //WindowManager.LayoutParams.TYPE_SYSTEM_ERROR
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -81,11 +80,67 @@ public class IWindowManager {
             mLayoutParams.format = PixelFormat.RGBA_8888;
             //需要默认位于屏幕的左上角，具体定位用x,y轴
             mLayoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+
+            int[] screenLocation=new int[2];
+            ViewGroup parent=null;
+            //1.从原有竖屏窗口移除自己前保存自己的Parent,直接开启全屏是不存在宿主ViewGroup的,可直接窗口转场
+            if(null!=basePlayer.getParent()&& basePlayer.getParent() instanceof ViewGroup){
+                parent = (ViewGroup) basePlayer.getParent();
+                parent.getLocationInWindow(screenLocation);
+            }
+            //2.获取宿主的View属性和startX、Y轴
+            if(width<=0||height<=0){
+                width = PlayerUtils.getInstance().getScreenWidth(context)/2+PlayerUtils.getInstance().dpToPxInt(30f);
+                height = width*9/16;
+//                ILogger.d(TAG,"initParams-->未传入宽或高,width:"+width+",height:"+height);
+            }
+            //如果传入的startX不存在，则startX起点位于屏幕宽度1/2-距离右侧15dp位置，startY起点位于宿主View的下方12dp处
+            if(startX<=0&&null!=parent){
+                startX=(PlayerUtils.getInstance().getScreenWidth(context)/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
+                startY=screenLocation[1]+parent.getHeight()+PlayerUtils.getInstance().dpToPxInt(12f);
+//                ILogger.d(TAG,"initParams-->未传入X,Y轴,取父容器位置,startX:"+startX+",startY:"+startY);
+            }
+            //如果宿主也不存在，则startX起点位于屏幕宽度1/2-距离右侧12dp位置，startY起点位于屏幕高度-Window View 高度+12dp位置处
+            if(startX<=0){
+                startX=(PlayerUtils.getInstance().getScreenWidth(context)/2-PlayerUtils.getInstance().dpToPxInt(30f))-PlayerUtils.getInstance().dpToPxInt(12f);
+                startY=PlayerUtils.getInstance().dpToPxInt(60f);
+//                ILogger.d(TAG,"initParams-->未传入X,Y轴或取父容器位置失败,startX:"+startX+",startY:"+startY);
+            }
+//            ILogger.d(TAG,"initParams-->final:width:"+width+",height:"+height+",startX:"+startX+",startY:"+startY);
             mLayoutParams.width = width;
             mLayoutParams.height = height;
             mLayoutParams.x= (int) startX;
             mLayoutParams.y= (int) startY;
             mLayoutParams.windowAnimations = R.style.WindowAnimation;//悬浮窗开启动画
+        }else{
+            if(width>0||height>0){
+                mLayoutParams.width = width;
+                mLayoutParams.height = height;
+            }
+        }
+    }
+
+    /**
+     * 将播放器添加到全局窗口中
+     * @param context context 上下文
+     * @param basePlayer 继承自BasePlayer的播放器实例
+     * @param width 悬浮窗的宽，默认为：屏幕宽度/2+30dp
+     * @param height 悬浮窗的高，默认为：width*9/16
+     * @param startX 位于屏幕的X起始位置，如果为0第一次渲染全局悬浮窗时：屏幕宽度/2-30dp-12dp；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param startY 位于屏幕的Y起始位置，如果为0第一次渲染全局悬浮窗时：播放器位于屏幕的Y轴+播放器高度+边距(12dp)；非初次渲染全局悬浮窗：使用最后一次关闭窗口前的位置
+     * @param radius 窗口的圆角 单位:像素
+     * @param bgColor 窗口的背景颜色
+     * @param isAutoSorption 触摸松手后是否自动吸附到屏幕边缘
+     */
+    public boolean addGlobalWindow(Context context, BasePlayer basePlayer, int width, int height, float startX, float startY, float radius, int bgColor, boolean isAutoSorption ) {
+        quitGlobalWindow();//清除可能存在的窗口播放器
+        try {
+            //悬浮窗口准备
+            WindowManager windowManager = getWindowManager(context);
+            initParams(context,basePlayer,width,height,startX,startY);
+            //从原宿主中移除播放器
+            PlayerUtils.getInstance().removeViewFromParent(basePlayer);
+            //初始化一个装载播放器的手势容器
             mPlayerContainer = new WindowPlayerFloatView(context);
             mPlayerContainer.setOnWindowActionListener(new OnWindowActionListener() {
                 @Override
@@ -100,10 +155,10 @@ public class IWindowManager {
                 }
 
                 @Override
-                public void onClick(BasePlayer basePlayer, Object coustomParams) {
-                    ILogger.d(TAG,"onClick-->coustomParams:"+coustomParams);
+                public void onClick(BasePlayer basePlayer, Object customParams) {
+                    ILogger.d(TAG,"onClick-->customParams:"+customParams);
                     if(null!=mWindowActionListener){
-                        mWindowActionListener.onClick(basePlayer,mCoustomParams);
+                        mWindowActionListener.onClick(basePlayer, mCustomParams);
                     }
                 }
 
@@ -112,7 +167,7 @@ public class IWindowManager {
                     if(null!=mWindowActionListener){
                         mWindowActionListener.onClose();
                     }else{
-                        quitGlobaWindow();
+                        quitGlobalWindow();
                     }
                 }
             });
@@ -128,14 +183,14 @@ public class IWindowManager {
     /**
      * 清除悬浮窗所有View
      */
-    public void quitGlobaWindow() {
+    public void quitGlobalWindow() {
         if(null!=mPlayerContainer){
             getWindowManager(mPlayerContainer.getContext()).removeViewImmediate(mPlayerContainer);
             //销毁此前的播放器
             mPlayerContainer.onReset();
             mPlayerContainer=null;
         }
-        mLayoutParams=null;mWindowManager=null;mCoustomParams=null;
+        mCustomParams =null;
     }
 
     public BasePlayer getBasePlayer() {
@@ -145,16 +200,16 @@ public class IWindowManager {
         return null;
     }
 
-    public Object getCoustomParams() {
-        return mCoustomParams;
+    public Object getCustomParams() {
+        return mCustomParams;
     }
 
     /**
      * 设置自定义参数，在收到
      * @param coustomParams
      */
-    public IWindowManager setCoustomParams(Object coustomParams) {
-        mCoustomParams = coustomParams;
+    public IWindowManager setCustomParams(Object coustomParams) {
+        mCustomParams = coustomParams;
         return mInstance;
     }
 
@@ -178,7 +233,7 @@ public class IWindowManager {
         if(null!=mWindowActionListener&&null!=mPlayerContainer){
             BasePlayer basePlayer = mPlayerContainer.getBasePlayer();
             if(null!=basePlayer){
-                mWindowActionListener.onClick(basePlayer,mCoustomParams);
+                mWindowActionListener.onClick(basePlayer, mCustomParams);
             }
         }
     }
@@ -211,13 +266,13 @@ public class IWindowManager {
             getWindowManager(mPlayerContainer.getContext()).removeViewImmediate(mPlayerContainer);
             mPlayerContainer=null;
         }
-        mLayoutParams=null;
     }
 
     /**
-     * 清除悬浮窗
+     * 清除悬浮窗及所有设置
      */
     public void onReset(){
-        quitGlobaWindow();
+        quitGlobalWindow();
+        mLayoutParams=null;mWindowManager=null;
     }
 }

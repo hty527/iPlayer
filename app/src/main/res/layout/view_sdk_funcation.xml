@@ -200,7 +200,7 @@
             android:text="关闭"
             android:gravity="center"/>
     </LinearLayout>
-    <com.android.videoplayer.video.ui.widget.PlayerMenuView
+    <com.android.player.video.ui.widget.PlayerMenuView
         android:id="@+id/menu_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

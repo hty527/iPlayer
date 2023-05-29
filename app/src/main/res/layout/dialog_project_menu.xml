@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.android.videoplayer.video.ui.widget.RoundCornerImageView
+    <com.android.player.video.ui.widget.RoundCornerImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/ic_dialog_bg"
@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <com.android.videoplayer.ui.widget.BoldTextView
+        <com.android.player.ui.widget.BoldTextView
             android:layout_width="match_parent"
             android:layout_height="66dp"
             android:text="请选择平台类型"
@@ -40,7 +40,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@mipmap/ic_github"/>
-                <com.android.videoplayer.ui.widget.BoldTextView
+                <com.android.player.ui.widget.BoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"
@@ -60,7 +60,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@mipmap/ic_gitee"/>
-                <com.android.videoplayer.ui.widget.BoldTextView
+                <com.android.player.ui.widget.BoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15dp"

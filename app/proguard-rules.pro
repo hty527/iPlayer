@@ -193,18 +193,18 @@
 -dontwarn tv.danmaku.ijk.**
 
 #其它
--keep class com.android.videoplayer.net.**{*;}
+-keep class com.android.player.net.**{*;}
 #通用适配器
--keep class com.android.videoplayer.base.adapter.** {*;}
--keep public class * extends com.android.videoplayer.base.adapter.widget.BaseViewHolder
--keepclassmembers  class **$** extends com.android.videoplayer.base.adapter.widget.BaseViewHolder {
+-keep class com.android.player.base.adapter.** {*;}
+-keep public class * extends com.android.player.base.adapter.widget.BaseViewHolder
+-keepclassmembers  class **$** extends com.android.player.base.adapter.widget.BaseViewHolder {
      <init>(...);
 }
 
 #bean对象
--keep class com.android.videoplayer.bean.**{*;}
--keep class com.android.videoplayer.pager.bean.**{*;}
--keep class com.android.videoplayer.video.bean.**{*;}
+-keep class com.android.player.bean.**{*;}
+-keep class com.android.player.pager.bean.**{*;}
+-keep class com.android.player.video.bean.**{*;}
 
 # IjkPlayer
 -keep class tv.danmaku.ijk.** { *; }

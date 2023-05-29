@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.android.videoplayer"
+        applicationId "com.android.player"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode rootProject.ext.sdk.versionCode
@@ -78,15 +78,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     //播放器SDK
-//    implementation 'com.github.hty527.iPlayer:iplayer:2.1.23'
+//    implementation 'com.github.hty527.iPlayer:iplayer:2.1.26'
     //UI交互组件,可根据需要使用
-//    implementation 'com.github.hty527.iPlayer:widget:2.1.23'
+//    implementation 'com.github.hty527.iPlayer:widget:2.1.26'
     //音视频预缓存+边播边存,根据需要使用
-//    implementation 'com.github.hty527.iPlayer:cache:2.1.23'
+//    implementation 'com.github.hty527.iPlayer:cache:2.1.26'
     //ijk音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:ijk:2.1.23'
+//    implementation 'com.github.hty527.iPlayer:ijk:2.1.26'
     //exo音视频解码器,根据自己需要实现
-//    implementation 'com.github.hty527.iPlayer:exo:2.1.23'
+//    implementation 'com.github.hty527.iPlayer:exo:2.1.26'
 
 //    //播放器SDK
     implementation project(':iplayer')

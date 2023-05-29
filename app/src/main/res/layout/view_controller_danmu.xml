@@ -8,7 +8,7 @@
         android:id="@+id/view_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
-    <com.android.videoplayer.danmu.DanmuPaserView
+    <com.android.player.danmu.DanmuPaserView
         android:id="@+id/view_danmu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

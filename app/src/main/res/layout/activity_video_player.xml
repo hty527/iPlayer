@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <com.android.videoplayer.ui.widget.TitleView
+    <com.android.player.ui.widget.TitleView
         android:id="@+id/title_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -65,7 +65,7 @@
                    android:layout_margin="20dp"
                    android:text="发送一条弹幕"/>
            </LinearLayout>
-           <com.android.videoplayer.video.ui.widget.SdkDefaultFuncation
+           <com.android.player.video.ui.widget.SdkDefaultFuncation
                android:id="@+id/controller_content"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"

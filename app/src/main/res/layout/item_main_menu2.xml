@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/menu_stroke"
                 android:layout_gravity="center_vertical"/>
-            <com.android.videoplayer.ui.widget.BoldTextView
+            <com.android.player.ui.widget.BoldTextView
                 android:id="@+id/item_version"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/menu_stroke"
             android:layout_marginTop="6dp"/>
-        <com.android.videoplayer.ui.widget.BoldTextView
+        <com.android.player.ui.widget.BoldTextView
             android:id="@+id/item_descript"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/menu_stroke"/>
-            <com.android.videoplayer.ui.widget.BoldTextView
+            <com.android.player.ui.widget.BoldTextView
                 android:id="@+id/item_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
